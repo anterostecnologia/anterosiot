@@ -1,0 +1,18 @@
+Manifest-Version: 1.0
+Built-By: edson
+Class-Path: lib/spring-data-redis-2.0.10.RELEASE.jar lib/spring-data-k
+ eyvalue-2.0.10.RELEASE.jar lib/spring-data-commons-2.0.10.RELEASE.jar
+  lib/spring-context-5.0.9.RELEASE.jar lib/spring-expression-5.0.9.REL
+ EASE.jar lib/spring-tx-5.0.9.RELEASE.jar lib/spring-beans-5.0.9.RELEA
+ SE.jar lib/spring-core-5.0.9.RELEASE.jar lib/spring-jcl-5.0.9.RELEASE
+ .jar lib/spring-oxm-5.0.9.RELEASE.jar lib/spring-aop-5.0.9.RELEASE.ja
+ r lib/spring-context-support-5.0.9.RELEASE.jar lib/slf4j-api-1.7.25.j
+ ar lib/Anteros-Core-1.1.4.jar lib/log4j-to-slf4j-2.2.jar lib/log4j-ap
+ i-2.11.0.jar lib/log4j-core-2.11.0.jar lib/joda-time-2.10.jar lib/org
+ .eclipse.paho.client.mqttv3-1.2.0.jar lib/pi4j-core-1.2-SNAPSHOT.jar 
+ lib/jackson-core-2.9.6.jar lib/jackson-databind-2.9.6.jar lib/jackson
+ -annotations-2.9.6.jar
+Build-Jdk: 1.8.0_151
+Created-By: Maven Integration for Eclipse
+Main-Class: br.com.versatil.controlaccess.domain.app.Slave2App
+
