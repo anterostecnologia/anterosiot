@@ -4,29 +4,28 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
+import br.com.anteros.core.utils.ReflectionUtils;
 import br.com.anteros.iot.Device;
+import br.com.anteros.iot.DeviceController;
 import br.com.anteros.iot.Part;
 import br.com.anteros.iot.Thing;
 import br.com.anteros.iot.ThingStatus;
+import br.com.anteros.iot.domain.PlantItemNode;
 import br.com.anteros.iot.plant.Place;
+import br.com.anteros.iot.plant.PlantItem;
 
-public class RaspberryPIZero implements Device  {
+public class RaspberryPIZero extends PlantItem implements Device  {
 	
-	protected Place place;
-	protected String thingId;
 	protected IpAddress ipAddress;
+	protected DeviceController deviceController;
 		
 	protected RaspberryPIZero(String id, IpAddress ipAddress) {
-		this.thingId = id;
+		this.itemId = id;
 		this.ipAddress = ipAddress;
 	}
 
-	public Place getPlace() {
-		return place;
-	}
-
 	public String getThingID() {
-		return thingId;
+		return itemId;
 	}
 
 	public ThingStatus getStatus() {
@@ -56,6 +55,32 @@ public class RaspberryPIZero implements Device  {
 	public Part getPartById(String part) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public Thing loadConfiguration(PlantItemNode node) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Device setIpAddress(IpAddress ipAddress) {
+		this.ipAddress = ipAddress;
+		return this;
+	}
+
+	@Override
+	protected boolean acceptThisTypeOfPlantItem(Class<?> child) {
+		return ReflectionUtils.isImplementsInterface(child, Thing.class) && !ReflectionUtils.isImplementsInterface(child, Part.class) 
+				&& !ReflectionUtils.isImplementsInterface(child, Device.class);
+	}
+
+	public DeviceController getDeviceController() {
+		return deviceController;
+	}
+
+	public void setDeviceController(DeviceController deviceController) {
+		this.deviceController = deviceController;
 	}
 
 }

@@ -1,9 +1,7 @@
 package br.com.anteros.iot;
 
-public interface Actuator {
-
-	public boolean isSupportedThing(Thing thing);
+public interface Actuator<T> extends Actuable {	
 	
-	public boolean executeAction(String action, Thing thing);
+	public T executeAction(String action, Thing thing);
 
 }

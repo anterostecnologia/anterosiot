@@ -1,5 +1,12 @@
 package br.com.anteros.iot;
 
-public interface Sensor extends Thing {
+import br.com.anteros.iot.things.Publishable;
 
+public interface Sensor extends Thing, Publishable {
+
+	public long getTimeIntervalForCollect();
+	
+	public SensorCollectionType getCollectionType();
+	
+	
 }

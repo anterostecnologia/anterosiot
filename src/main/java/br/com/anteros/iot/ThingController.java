@@ -2,11 +2,15 @@ package br.com.anteros.iot;
 
 public interface ThingController {
 	
+	public void beforePause();	
+	
 	public void beforeStart();
 
 	public void beforeStop();
 
 	public void beforeRestart();
+	
+	public void afterResume();
 
 	public void afterStart();
 

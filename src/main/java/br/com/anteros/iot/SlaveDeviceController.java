@@ -8,6 +8,8 @@ public interface SlaveDeviceController extends DeviceController, MqttCallback, R
 	
 	public MasterDeviceController getMaster();
 	
+	public void setMaster(MasterDeviceController master);
+	
 	public Set<DeviceController> controllers();
 
 }

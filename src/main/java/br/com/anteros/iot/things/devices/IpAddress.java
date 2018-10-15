@@ -3,6 +3,10 @@ package br.com.anteros.iot.things.devices;
 public class IpAddress {
 
 	private String ip;
+	
+	public IpAddress() {
+		
+	}
 
 	private IpAddress(String ip) {
 		this.ip = ip;

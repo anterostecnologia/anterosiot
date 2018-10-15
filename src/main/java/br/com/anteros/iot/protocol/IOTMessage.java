@@ -2,22 +2,14 @@ package br.com.anteros.iot.protocol;
 
 public class IOTMessage {
 	
-	private String deviceController;
 	private String thing;
 	private String part;
 	private String action;
 	
-
-	public String getDeviceController() {
-		return deviceController;
+	public IOTMessage() {
+		
 	}
-
-
-	public void setDeviceController(String deviceController) {
-		this.deviceController = deviceController;
-	}
-
-
+	
 	public String getThing() {
 		return thing;
 	}
@@ -46,5 +38,11 @@ public class IOTMessage {
 	public void setAction(String action) {
 		this.action = action;
 	}
+
+	@Override
+	public String toString() {
+		return "IOTMessage [thing=" + thing + ", part=" + part + ", action="
+				+ action + "]";
+	}	
 
 }

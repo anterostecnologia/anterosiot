@@ -3,69 +3,38 @@ package br.com.anteros.iot.things;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import br.com.anteros.iot.DeviceController;
 import br.com.anteros.iot.Part;
 import br.com.anteros.iot.Thing;
 import br.com.anteros.iot.ThingStatus;
-import br.com.anteros.iot.plant.Place;
+import br.com.anteros.iot.domain.PlantItemNode;
+import br.com.anteros.iot.domain.ThingNode;
+import br.com.anteros.iot.plant.PlantItem;
 import br.com.anteros.iot.things.exception.ThingException;
 import br.com.anteros.iot.things.parts.GreenLEDSemaphorePart;
 import br.com.anteros.iot.things.parts.LedSemaphore;
 import br.com.anteros.iot.things.parts.RedLEDSemaphorePart;
 import br.com.anteros.iot.things.parts.YellowLEDSemaphorePart;
 
-public class Semaphore implements Thing {
+public class Semaphore extends PlantItem implements Thing {
 	
-	public static final int GPIO_00 = 0;
-    public static final int GPIO_01 =  1;
-    public static final int GPIO_02 = 2;
-    public static final int GPIO_03 = 3;
-    public static final int GPIO_04 = 4;
-    public static final int GPIO_05 = 5;
-    public static final int GPIO_06 = 6;
-    public static final int GPIO_07 = 7;
-    public static final int GPIO_08 = 8; 
-    public static final int GPIO_09 = 9; 
-    public static final int GPIO_10 = 10;
-    public static final int GPIO_11 = 11;
-    public static final int GPIO_12 = 12;
-    public static final int GPIO_13 = 13;
-    public static final int GPIO_14 = 14;
-    public static final int GPIO_15 = 15;
-    public static final int GPIO_16 = 16;
+	protected DeviceController deviceController;
 
-    // the following GPIO Strings are only available on the Raspberry Pi Model A, B (revision 2.0)
-    public static final int GPIO_17 = 17;
-    public static final int GPIO_18 = 18;
-    public static final int GPIO_19 = 19;
-    public static final int GPIO_20 = 20;
-
-    // the following GPIO Strings are only available on the Raspberry Pi Model A+, B+, Model 2B, Model 3B, Zero
-    public static final int GPIO_21 = 21;
-    public static final int GPIO_22 = 22;
-    public static final int GPIO_23 = 23;
-    public static final int GPIO_24 = 24;
-    public static final int GPIO_25 = 25;
-    public static final int GPIO_26 = 26;
-    public static final int GPIO_27 = 27;
-    public static final int GPIO_28 = 28;
-    public static final int GPIO_29 = 29;
-    public static final int GPIO_30 = 30;
-    public static final int GPIO_31 = 31;
-
-	protected Place place;
 	protected Set<Part> leds = new LinkedHashSet<Part>();
-	protected String thingId;
 
 	public Semaphore(String id) {
-		this.thingId = id;
+		this.itemId = id;
 	}
 
-	public Place getPlace() {
-		return place;
+	public Semaphore() {
+	}
+
+	public Semaphore(PlantItemNode node) {
+		loadConfiguration(node);
 	}
 
 	public String getThingID() {
-		return thingId;
+		return itemId;
 	}
 
 	public ThingStatus getStatus() {
@@ -85,6 +54,9 @@ public class Semaphore implements Thing {
 		if (!(part instanceof LedSemaphore)) {
 			throw new ThingException("Tipo de parte inválida para uso com Semaphore.");
 		}
+		if (part instanceof PlantItem) {
+			((PlantItem) part).setItemOwner(this);
+		}
 		leds.add(part);
 		return this;
 	}
@@ -101,6 +73,40 @@ public class Semaphore implements Thing {
 			}
 		}
 		return null;
+	}
+
+	public static Semaphore of(PlantItemNode node) {
+		return new Semaphore(node);
+	}
+
+	@Override
+	public Thing loadConfiguration(PlantItemNode node) {
+		this.itemId = node.getItemName();
+		this.description = node.getDescription();
+		for (PlantItemNode child : node.getItems()) {
+			if (child instanceof ThingNode) {
+				Thing part = child.getInstanceOfThing();
+				((PlantItem)part).setItemOwner(this);
+				if (part instanceof Part) {
+					this.addPart((Part) part);
+				}
+			}
+		}
+		return this;
+	}
+
+	@Override
+	protected boolean acceptThisTypeOfPlantItem(Class<?> child) {
+		return child.equals(RedLEDSemaphorePart.class) || child.equals(GreenLEDSemaphorePart.class)
+				|| child.equals(YellowLEDSemaphorePart.class);
+	}
+
+	public DeviceController getDeviceController() {
+		return deviceController;
+	}
+
+	public void setDeviceController(DeviceController deviceController) {
+		this.deviceController = deviceController;
 	}
 
 }

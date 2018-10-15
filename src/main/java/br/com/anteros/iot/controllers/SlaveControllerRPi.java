@@ -1,6 +1,5 @@
 package br.com.anteros.iot.controllers;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
@@ -10,151 +9,52 @@ import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import br.com.anteros.core.utils.Assert;
 import br.com.anteros.iot.Actuator;
+import br.com.anteros.iot.Actuators;
 import br.com.anteros.iot.Device;
 import br.com.anteros.iot.DeviceController;
-import br.com.anteros.iot.DeviceStatus;
 import br.com.anteros.iot.MasterDeviceController;
 import br.com.anteros.iot.Part;
 import br.com.anteros.iot.RemoteMasterDeviceController;
 import br.com.anteros.iot.SlaveDeviceController;
 import br.com.anteros.iot.Thing;
-import br.com.anteros.iot.controllers.MasterControllerRPi.Builder;
+import br.com.anteros.iot.domain.DeviceNode;
+import br.com.anteros.iot.plant.Plant;
 import br.com.anteros.iot.protocol.IOTMessage;
+import br.com.anteros.iot.things.devices.IpAddress;
+import br.com.anteros.iot.things.devices.RaspberryPI;
 
-public class SlaveControllerRPi implements SlaveDeviceController {
+public class SlaveControllerRPi extends AbstractDeviceController implements SlaveDeviceController {
 
 	protected MasterDeviceController master;
-	protected Set<Actuator> actuators = new HashSet<Actuator>();
-	protected Device device;
-	protected Set<Thing> things = new HashSet<Thing>();
-	protected MqttClient clientMqtt;
-	protected Boolean running = false;
-	protected Thread thread;
-	protected ObjectMapper mapper = new ObjectMapper();
 
-	public SlaveControllerRPi(MasterDeviceController master, Device device) {
+	public SlaveControllerRPi(Device device, Actuators actuators) {
+		super(device,actuators);
+	}
+
+	public SlaveControllerRPi(MqttClient clientMqtt, DeviceNode node, MasterDeviceController master, Plant plant, Actuators actuators) {
+		super(clientMqtt, node, actuators);
 		this.master = master;
-		this.device = device;
-		this.thread = new Thread(this);
+		loadConfiguration(node, plant);
 	}
 
-	public SlaveControllerRPi(MqttClient clientMqtt, MasterDeviceController master, Device device) {
-		this(master, device);
-		this.clientMqtt = clientMqtt;
-		this.clientMqtt.setCallback(this);
+	public SlaveControllerRPi(MasterDeviceController master, Device device,Actuators actuators) {
+		super(device,actuators);
+		this.master = master;
 	}
 
-	public SlaveControllerRPi(MqttClient clientMqtt, MasterDeviceController master, Device device,
-			Set<Actuator> actuators) {
-		this(clientMqtt, master, device);
-		this.actuators.addAll(actuators);
-	}
-
-	public void registerActuator(Actuator actuator) {
-		actuators.add(actuator);
-	}
-
-	public void unregisterActuator(Actuator actuator) {
-		actuators.remove(actuator);
-	}
-
-	public void beforeStart() {
-		// TODO Auto-generated method stub
-
-	}
-
-	public void beforeStop() {
-		// TODO Auto-generated method stub
-
-	}
-
-	public void beforeRestart() {
-		// TODO Auto-generated method stub
-
-	}
-
-	public void afterStart() {
-		// TODO Auto-generated method stub
-
-	}
-
-	public void afterRestart() {
-		// TODO Auto-generated method stub
-
-	}
-
-	public String getDeviceID() {
-		return device.getThingID();
-	}
-
-	public void start() {
-		this.thread.start();
-	}
-
-	public void pause() {
-		this.thread.suspend();
-	}
-
-	public void resume() {
-		this.thread.resume();
-
-	}
-
-	public void stop() {
-		this.thread.stop();
-	}
-
-	public boolean isAvailable() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	public DeviceStatus getStatus() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public Device getDevice() {
-		return device;
+	public SlaveControllerRPi(MqttClient clientMqtt, MasterDeviceController master, Device device, Actuators actuators) {
+		super(clientMqtt, device, actuators);
+		this.master = master;
 	}
 
 	public MasterDeviceController getMaster() {
 		return master;
 	}
 
-	public Actuator discoverActuatorToThing(Thing thing) {
-		for (Actuator actuator : actuators) {
-			if (actuator.isSupportedThing(thing)) {
-				return actuator;
-			}
-		}
-		return null;
-	}
-
-	public Thing getThing() {
-		return device;
-	}
-
 	public Set<DeviceController> controllers() {
 		return Collections.unmodifiableSet(new HashSet<DeviceController>());
-	}
-
-	public String getThingID() {
-		return device.getThingID();
-	}
-
-	public DeviceController addThings(Thing... things) {
-		this.things.addAll(Arrays.asList(things));
-		return this;
-	}
-
-	public DeviceController removeThing(Thing thing) {
-		this.things.remove(thing);
-		return this;
 	}
 
 	public void connectionLost(Throwable cause) {
@@ -162,15 +62,6 @@ public class SlaveControllerRPi implements SlaveDeviceController {
 				+ "\" Reason code " + ((MqttException) cause).getReasonCode() + "\" Cause \""
 				+ ((MqttException) cause).getCause() + "\"");
 		cause.printStackTrace();
-	}
-
-	public Thing getThingById(String thingId) {
-		for (Thing thing : things) {
-			if (thing.getThingID().equals(thingId)) {
-				return thing;
-			}
-		}
-		return null;
 	}
 
 	public void messageArrived(String topic, MqttMessage message) throws Exception {
@@ -181,22 +72,20 @@ public class SlaveControllerRPi implements SlaveDeviceController {
 			e.printStackTrace();
 		}
 
-		if (topic.equals("LED")) {
-			byte[] payload = message.getPayload();
-			IOTMessage iotMessage = mapper.readValue(payload, IOTMessage.class);
-			if (iotMessage.getDeviceController().equals(this.getThingID())) {
-				Thing thing = this.getThingById(iotMessage.getThing());
-				if (thing != null) {
-					Actuator actuator = this.discoverActuatorToThing(thing);
-					if (actuator != null) {
-						Part part = thing.getPartById(iotMessage.getPart());
-						System.out.println("    Executando acão " + iotMessage.getAction() + " em " + thing.getThingID()
-								+ part != null ? " parte " + part.getThingID() : "");
-						if (actuator.executeAction(iotMessage.getAction(), (part != null ? part : thing))) {
-							System.out.println("    Ação executada " + iotMessage.getAction() + " em " + thing.getThingID()
-							+ part != null ? " parte " + part.getThingID() : "");
-						}
-					}
+		byte[] payload = message.getPayload();
+		IOTMessage iotMessage = mapper.readValue(payload, IOTMessage.class);
+		System.out.println(iotMessage);
+		Thing thing = this.getThingById(iotMessage.getThing());
+		System.out.println(thing);
+		if (thing != null) {
+			Actuator<?> actuator = actuators.discoverActuatorToThing(thing);
+			System.out.println(actuator);
+			if (actuator != null) {
+				Part part = thing.getPartById(iotMessage.getPart());
+				if (part != null) {
+					actuator.executeAction(iotMessage.getAction(), (part != null ? part : thing));
+				} else {
+					actuator.executeAction(iotMessage.getAction(), thing);
 				}
 			}
 		}
@@ -214,7 +103,7 @@ public class SlaveControllerRPi implements SlaveDeviceController {
 	public static class Builder {
 
 		private Device device;
-		private Set<Actuator> actuators = new HashSet<Actuator>();
+		private Actuators actuators;
 		private MqttClient clientMqtt;
 		private RemoteMasterDeviceController master;
 
@@ -226,16 +115,14 @@ public class SlaveControllerRPi implements SlaveDeviceController {
 			this.device = device;
 			return this;
 		}
-
-		public Builder master(RemoteMasterDeviceController master) {
-			this.master = master;
+		
+		public Builder actuators(Actuators actuators) {
+			this.actuators = actuators;
 			return this;
 		}
 
-		public Builder atuactors(Actuator... actuators) {
-			for (Actuator a : actuators) {
-				this.actuators.add(a);
-			}
+		public Builder master(RemoteMasterDeviceController master) {
+			this.master = master;
 			return this;
 		}
 
@@ -253,28 +140,29 @@ public class SlaveControllerRPi implements SlaveDeviceController {
 
 	}
 
-	public static SlaveDeviceController of(MqttClient clientMqtt, MasterDeviceController master, Device device,
-			Set<Actuator> actuators) {
+	public static SlaveControllerRPi of(MqttClient clientMqtt, DeviceNode itemNode, MasterDeviceController master,
+			Plant plant, Actuators actuators) {
+		return new SlaveControllerRPi(clientMqtt, itemNode, master, plant, actuators);
+	}
+
+	public static SlaveControllerRPi of(MqttClient clientMqtt, MasterDeviceController master, Device device,
+			Actuators actuators) {
 		return new SlaveControllerRPi(clientMqtt, master, device, actuators);
 	}
 
-	public void run() {
-		this.running = true;
-		System.out.println("Iniciando controlador slave "+this.getThingID());
-		boolean first = true;
-		while (running) {
-			if (first) {
-				System.out.println("Servidor slave "+this.getThingID()+" rodando.");
-				first = false;
-			}
-			try {
-				Thread.sleep(500);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-		}
-		System.out.println("Parando controlador slave "+this.getThingID());
-		this.thread.interrupt();		
+	@Override
+	protected Device doCreateDevice(String deviceName, IpAddress ipAddress, String description) {
+		return RaspberryPI.of(deviceName, ipAddress, description);
+	}
+
+	@Override
+	public void setMaster(MasterDeviceController master) {
+		this.master = master;
+	}
+
+	@Override
+	public String toString() {
+		return "SlaveControllerRPi [ device=" + device + "]";
 	}
 
 }

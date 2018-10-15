@@ -4,28 +4,26 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
+import br.com.anteros.iot.DeviceController;
 import br.com.anteros.iot.Part;
 import br.com.anteros.iot.Thing;
 import br.com.anteros.iot.ThingStatus;
+import br.com.anteros.iot.domain.PlantItemNode;
 import br.com.anteros.iot.parts.exception.IllegalPartException;
 import br.com.anteros.iot.plant.Place;
+import br.com.anteros.iot.plant.PlantItem;
 import br.com.anteros.iot.things.Semaphore;
 
-public class YellowLEDSemaphorePart implements Part, LedSemaphore {
+public class YellowLEDSemaphorePart extends PlantItem implements Part, LedSemaphore {
 	
-	private Semaphore owner;
-	private String thingId;
-	private int pin;
+	protected String thingId;
+	protected int pin;
+	protected DeviceController deviceController;
 
 	private YellowLEDSemaphorePart(String id, Semaphore owner, int pin) {
-		this.owner = owner;
+		this.itemOwner = owner;
 		this.thingId = id;
 		this.pin = pin;
-	}
-
-	public Place getPlace() {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 	public String getThingID() {
@@ -53,8 +51,9 @@ public class YellowLEDSemaphorePart implements Part, LedSemaphore {
 		throw new IllegalPartException("Esta parte não permite a composição com mais partes.");
 	}
 
+	@Override
 	public Thing getOwner() {
-		return owner;
+		return (Thing) itemOwner;
 	}
 	
 	public static YellowLEDSemaphorePart of(String id, Semaphore semaphore, int pin) {
@@ -68,5 +67,26 @@ public class YellowLEDSemaphorePart implements Part, LedSemaphore {
 	public Part getPartById(String part) {
 		return null;
 	}
+
+	@Override
+	public Thing loadConfiguration(PlantItemNode node) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	protected boolean acceptThisTypeOfPlantItem(Class<?> child) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public DeviceController getDeviceController() {
+		return deviceController;
+	}
+
+	public void setDeviceController(DeviceController deviceController) {
+		this.deviceController = deviceController;
+	}
+
 
 }

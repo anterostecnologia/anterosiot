@@ -2,26 +2,23 @@ package br.com.anteros.iot.things;
 
 import java.util.Set;
 
+import br.com.anteros.iot.DeviceController;
 import br.com.anteros.iot.Part;
 import br.com.anteros.iot.Thing;
 import br.com.anteros.iot.ThingStatus;
+import br.com.anteros.iot.domain.PlantItemNode;
 import br.com.anteros.iot.plant.Place;
+import br.com.anteros.iot.plant.PlantItem;
 
-public class Gate implements Thing {
+public class Gate extends PlantItem implements Thing {
 	
-	protected Place place;
+	protected DeviceController deviceController;
 
 	public Gate() {
-		// TODO Auto-generated constructor stub
-	}
-
-	public Place getPlace() {
-		return place;
 	}
 
 	public String getThingID() {
-		// TODO Auto-generated method stub
-		return null;
+		return itemId;
 	}
 
 	public ThingStatus getStatus() {
@@ -53,5 +50,26 @@ public class Gate implements Thing {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	@Override
+	public Thing loadConfiguration(PlantItemNode node) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	protected boolean acceptThisTypeOfPlantItem(Class<?> child) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public DeviceController getDeviceController() {
+		return deviceController;
+	}
+
+	public void setDeviceController(DeviceController deviceController) {
+		this.deviceController = deviceController;
+	}
+
 	
 }
