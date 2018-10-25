@@ -17,23 +17,22 @@ import br.com.anteros.iot.things.Semaphore;
 public class GreenLEDSemaphorePart extends PlantItem implements Part, LedSemaphore {
 
 	protected int pin;
-	protected String thingId;
 	protected DeviceController deviceController;
 
 	private GreenLEDSemaphorePart(String id, Semaphore owner, int pin) {
 		this.itemOwner = owner;
 		this.pin = pin;
-		this.thingId = id;
+		this.itemId = id;
 	}
 
 	public GreenLEDSemaphorePart(GreenLEDSemaphorePartNode node) {
-		this.thingId = node.getItemName();
+		this.itemId = node.getItemName();
 		this.pin = node.getPin();
 
 	}
 
 	public String getThingID() {
-		return thingId;
+		return itemId;
 	}
 
 	public ThingStatus getStatus() {
@@ -73,12 +72,8 @@ public class GreenLEDSemaphorePart extends PlantItem implements Part, LedSemapho
 		return null;
 	}
 
-	public String getThingId() {
-		return thingId;
-	}
-
 	public void setThingId(String thingId) {
-		this.thingId = thingId;
+		this.itemId = thingId;
 	}
 
 	public void setPin(int pin) {

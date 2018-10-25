@@ -11,29 +11,27 @@ import br.com.anteros.iot.ThingStatus;
 import br.com.anteros.iot.domain.PlantItemNode;
 import br.com.anteros.iot.domain.things.parts.RedLEDSemaphorePartNode;
 import br.com.anteros.iot.parts.exception.IllegalPartException;
-import br.com.anteros.iot.plant.Place;
 import br.com.anteros.iot.plant.PlantItem;
 import br.com.anteros.iot.things.Semaphore;
 
 public class RedLEDSemaphorePart extends PlantItem implements Part, LedSemaphore {
 
 	protected int pin;
-	protected String thingId;
 	protected DeviceController deviceController;
 
 	private RedLEDSemaphorePart(String id, Semaphore owner, int pin) {
 		this.itemOwner = owner;
 		this.pin = pin;
-		this.thingId = id;
+		this.itemId = id;
 	}
 
 	public RedLEDSemaphorePart(RedLEDSemaphorePartNode node) {
 		this.pin = node.getPin();
-		this.thingId = node.getItemName();
+		this.itemId = node.getItemName();
 	}
 
 	public String getThingID() {
-		return thingId;
+		return itemId;
 	}
 
 	public ThingStatus getStatus() {
