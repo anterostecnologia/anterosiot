@@ -11,11 +11,13 @@ import br.com.anteros.iot.ThingStatus;
 import br.com.anteros.iot.domain.PlantItemNode;
 import br.com.anteros.iot.domain.things.LampOrBulbNode;
 import br.com.anteros.iot.plant.PlantItem;
+import br.com.anteros.iot.triggers.Trigger;
 
 public class LampOrBulb extends PlantItem implements Thing {
 	
 	protected DeviceController deviceController;
 	protected int pin;
+	protected Set<Trigger> triggers = new HashSet<>();
 
 	protected LampOrBulb(String id, int pin) {
 		this.itemId = id;
@@ -83,6 +85,30 @@ public class LampOrBulb extends PlantItem implements Thing {
 
 	public void setDeviceController(DeviceController deviceController) {
 		this.deviceController = deviceController;
+	}
+	
+	@Override
+	public Trigger[] getTriggers() {
+		return triggers.toArray(new Trigger[] {});
+	}
+
+
+	@Override
+	public Thing addTrigger(Trigger trigger) {
+		triggers.add(trigger);
+		return this;
+	}
+
+	@Override
+	public Thing removeTrigger(Trigger trigger) {
+		triggers.remove(trigger);
+		return this;
+	}
+
+	@Override
+	public String[] getActions() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 

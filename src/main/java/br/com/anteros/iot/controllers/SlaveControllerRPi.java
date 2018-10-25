@@ -19,6 +19,7 @@ import br.com.anteros.iot.Part;
 import br.com.anteros.iot.RemoteMasterDeviceController;
 import br.com.anteros.iot.SlaveDeviceController;
 import br.com.anteros.iot.Thing;
+import br.com.anteros.iot.app.listeners.AnterosIOTServiceListener;
 import br.com.anteros.iot.domain.DeviceNode;
 import br.com.anteros.iot.plant.Plant;
 import br.com.anteros.iot.protocol.IOTMessage;
@@ -33,8 +34,8 @@ public class SlaveControllerRPi extends AbstractDeviceController implements Slav
 		super(device,actuators);
 	}
 
-	public SlaveControllerRPi(MqttClient clientMqtt, DeviceNode node, MasterDeviceController master, Plant plant, Actuators actuators) {
-		super(clientMqtt, node, actuators);
+	public SlaveControllerRPi(MqttClient clientMqtt, DeviceNode node, MasterDeviceController master, Plant plant, Actuators actuators, AnterosIOTServiceListener serviceListener) {
+		super(clientMqtt, node, actuators, serviceListener);
 		this.master = master;
 		loadConfiguration(node, plant);
 	}
@@ -75,18 +76,18 @@ public class SlaveControllerRPi extends AbstractDeviceController implements Slav
 		byte[] payload = message.getPayload();
 		IOTMessage iotMessage = mapper.readValue(payload, IOTMessage.class);
 		System.out.println(iotMessage);
-		Thing thing = this.getThingById(iotMessage.getThing());
+		Thing thing = this.getThingByTopic(topic);
 		System.out.println(thing);
 		if (thing != null) {
 			Actuator<?> actuator = actuators.discoverActuatorToThing(thing);
 			System.out.println(actuator);
 			if (actuator != null) {
-				Part part = thing.getPartById(iotMessage.getPart());
-				if (part != null) {
-					actuator.executeAction(iotMessage.getAction(), (part != null ? part : thing));
-				} else {
+//				Part part = thing.getPartById(iotMessage.getPart());
+//				if (part != null) {
+//					actuator.executeAction(iotMessage.getAction(), (part != null ? part : thing));
+//				} else {
 					actuator.executeAction(iotMessage.getAction(), thing);
-				}
+				//}
 			}
 		}
 	}
@@ -141,8 +142,8 @@ public class SlaveControllerRPi extends AbstractDeviceController implements Slav
 	}
 
 	public static SlaveControllerRPi of(MqttClient clientMqtt, DeviceNode itemNode, MasterDeviceController master,
-			Plant plant, Actuators actuators) {
-		return new SlaveControllerRPi(clientMqtt, itemNode, master, plant, actuators);
+			Plant plant, Actuators actuators, AnterosIOTServiceListener serviceListener) {
+		return new SlaveControllerRPi(clientMqtt, itemNode, master, plant, actuators, serviceListener);
 	}
 
 	public static SlaveControllerRPi of(MqttClient clientMqtt, MasterDeviceController master, Device device,

@@ -22,7 +22,7 @@ public class RemoteSlaveControllerRpi extends SlaveControllerRPi implements Remo
 
 	public RemoteSlaveControllerRpi(MqttClient clientMqtt, DeviceNode node, MasterDeviceController master,
 			Plant plant) {
-		super(clientMqtt, node, master, plant,null);
+		super(clientMqtt, node, master, plant,null, null);
 	}
 
 	@Override

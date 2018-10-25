@@ -10,22 +10,26 @@ import br.com.anteros.iot.Thing;
 import br.com.anteros.iot.ThingStatus;
 import br.com.anteros.iot.domain.PlantItemNode;
 import br.com.anteros.iot.parts.exception.IllegalPartException;
+import br.com.anteros.iot.plant.Place;
 import br.com.anteros.iot.plant.PlantItem;
 import br.com.anteros.iot.things.Semaphore;
+import br.com.anteros.iot.triggers.Trigger;
 
 public class YellowLEDSemaphorePart extends PlantItem implements Part, LedSemaphore {
 	
+	protected String thingId;
 	protected int pin;
 	protected DeviceController deviceController;
+	protected Set<Trigger> triggers = new HashSet<>();
 
 	private YellowLEDSemaphorePart(String id, Semaphore owner, int pin) {
 		this.itemOwner = owner;
-		this.itemId = id;
+		this.thingId = id;
 		this.pin = pin;
 	}
 
 	public String getThingID() {
-		return itemId;
+		return thingId;
 	}
 
 	public ThingStatus getStatus() {
@@ -86,5 +90,27 @@ public class YellowLEDSemaphorePart extends PlantItem implements Part, LedSemaph
 		this.deviceController = deviceController;
 	}
 
+	@Override
+	public Trigger[] getTriggers() {
+		return triggers.toArray(new Trigger[] {});
+	}
 
+
+	@Override
+	public Thing addTrigger(Trigger trigger) {
+		triggers.add(trigger);
+		return this;
+	}
+
+	@Override
+	public Thing removeTrigger(Trigger trigger) {
+		triggers.remove(trigger);
+		return this;
+	}
+
+	@Override
+	public String[] getActions() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

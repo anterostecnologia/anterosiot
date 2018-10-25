@@ -3,6 +3,9 @@ package br.com.anteros.iot.collectors;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.json.Json;
+import javax.json.JsonObjectBuilder;
+
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttException;
@@ -112,7 +115,6 @@ public class SimpleCollectorManager implements CollectorManager, CollectorListen
 
 	@Override
 	public void onCollect(CollectResult result, Thing thing) {
-		System.out.println(result.toJson());
 		if (!paused) {
 			if (thing instanceof Publishable) {
 				String[] topics = ((Publishable) thing).getTopicsToPublishValue();
@@ -120,7 +122,7 @@ public class SimpleCollectorManager implements CollectorManager, CollectorListen
 				for (String topic : topics) {
 					try {
 						System.out.println(topic);
-						MqttMessage message = new MqttMessage(result.toJson().getBytes());
+						MqttMessage message = new MqttMessage(result.toJson(Json.createObjectBuilder()).build().toString().getBytes());
 						message.setQos(1);
 						mqttClient.publish(topic, message);
 					} catch (MqttPersistenceException e) {

@@ -1,6 +1,8 @@
 package br.com.anteros.iot;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import br.com.anteros.iot.actuators.LampOrBulbActuator;
@@ -14,6 +16,7 @@ import br.com.anteros.iot.collectors.TemperatureOneWireCollector;
 public class DefaultActuators implements Actuators {
 
 	private Set<Class<? extends Actuable>> actuators = new HashSet<>();
+	private Map<Class<? extends Actuable>, Actuable> cacheActuators = new HashMap<>();
 
 	public DefaultActuators() {
 		registerActuator(LedActuator.class);
@@ -40,7 +43,7 @@ public class DefaultActuators implements Actuators {
 		try {
 			for (Class<? extends Actuable> actuable : actuators) {
 				Actuable collector = actuable.newInstance();
-
+				
 				if (collector.isSupportedThing(thing)) {
 					if (collector instanceof Collector) {
 						return (Collector) collector;
@@ -57,7 +60,14 @@ public class DefaultActuators implements Actuators {
 	public Actuator<?> discoverActuatorToThing(Thing thing) {
 		try {
 			for (Class<? extends Actuable> actuable : actuators) {
-				Actuable actuator = actuable.newInstance();
+				Actuable actuator = null;
+				if (cacheActuators.containsKey(actuable)) {
+					actuator = cacheActuators.get(actuable);
+				} else {
+					actuator = actuable.newInstance();
+					cacheActuators.put(actuable, actuator);
+				}
+
 				if (actuator.isSupportedThing(thing)) {
 					if (actuator instanceof Actuator) {
 						return (Actuator<?>) actuator;

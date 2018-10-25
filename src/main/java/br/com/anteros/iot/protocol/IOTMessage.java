@@ -2,34 +2,14 @@ package br.com.anteros.iot.protocol;
 
 public class IOTMessage {
 	
-	private String thing;
-	private String part;
 	private String action;
+	private String part;
+	private String value;
 	
 	public IOTMessage() {
 		
 	}
 	
-	public String getThing() {
-		return thing;
-	}
-
-
-	public void setThing(String thing) {
-		this.thing = thing;
-	}
-
-
-	public String getPart() {
-		return part;
-	}
-
-
-	public void setPart(String part) {
-		this.part = part;
-	}
-
-
 	public String getAction() {
 		return action;
 	}
@@ -39,10 +19,21 @@ public class IOTMessage {
 		this.action = action;
 	}
 
-	@Override
-	public String toString() {
-		return "IOTMessage [thing=" + thing + ", part=" + part + ", action="
-				+ action + "]";
-	}	
+	public String getValue() {
+		return value;
+	}
+
+	public void setValue(String value) {
+		this.value = value;
+	}
+
+	public String getPart() {
+		return part;
+	}
+
+	public void setPart(String part) {
+		this.part = part;
+	}
+
 
 }

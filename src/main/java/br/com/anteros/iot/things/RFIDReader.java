@@ -14,6 +14,7 @@ import br.com.anteros.iot.domain.things.CameraQRCodeReaderNode;
 import br.com.anteros.iot.domain.things.RFIDModel;
 import br.com.anteros.iot.domain.things.RFIDReaderNode;
 import br.com.anteros.iot.plant.PlantItem;
+import br.com.anteros.iot.triggers.Trigger;
 
 public class RFIDReader extends PlantItem implements Thing, Publishable {
 
@@ -21,6 +22,7 @@ public class RFIDReader extends PlantItem implements Thing, Publishable {
 
 	protected String[] topics;
 	protected RFIDModel model;
+	protected Set<Trigger> triggers = new HashSet<>();
 	
 
 	public RFIDReader(PlantItemNode node) {
@@ -92,6 +94,30 @@ public class RFIDReader extends PlantItem implements Thing, Publishable {
 			return new String[] {this.getPath()};
 		}
 		return topics;
+	}
+	
+	@Override
+	public Trigger[] getTriggers() {
+		return triggers.toArray(new Trigger[] {});
+	}
+
+
+	@Override
+	public Thing addTrigger(Trigger trigger) {
+		triggers.add(trigger);
+		return this;
+	}
+
+	@Override
+	public Thing removeTrigger(Trigger trigger) {
+		triggers.remove(trigger);
+		return this;
+	}
+
+	@Override
+	public String[] getActions() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

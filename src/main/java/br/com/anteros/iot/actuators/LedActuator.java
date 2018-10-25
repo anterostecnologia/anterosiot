@@ -11,6 +11,7 @@ import br.com.anteros.iot.Thing;
 import br.com.anteros.iot.support.Pi4JHelper;
 import br.com.anteros.iot.things.Semaphore;
 import br.com.anteros.iot.things.parts.LedSemaphore;
+import br.com.anteros.iot.triggers.TriggerType;
 
 public class LedActuator implements Actuator<Boolean> {
 
@@ -64,6 +65,12 @@ public class LedActuator implements Actuator<Boolean> {
 	@Override
 	public String toString() {
 		return "LedActuator []";
+	}
+
+	@Override
+	public void fireTriggers(TriggerType type, String action, Thing thing) {
+		
+		
 	}
 	
 	

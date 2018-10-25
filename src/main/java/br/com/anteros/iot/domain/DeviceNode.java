@@ -9,6 +9,7 @@ import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import br.com.anteros.iot.Actuators;
+import br.com.anteros.iot.app.listeners.AnterosIOTServiceListener;
 import br.com.anteros.iot.controllers.AbstractDeviceController;
 import br.com.anteros.iot.plant.Plant;
 import br.com.anteros.iot.things.devices.IpAddress;
@@ -45,7 +46,7 @@ public abstract class DeviceNode extends PlantItemNode {
 		}
 	}
 	
-	public abstract AbstractDeviceController getInstanceOfDeviceController(MqttClient clientMqtt, Plant currentPlant, Actuators actuators);
+	public abstract AbstractDeviceController getInstanceOfDeviceController(MqttClient clientMqtt, Plant currentPlant, Actuators actuators, AnterosIOTServiceListener serviceListener);
 
 	public Set<ThingNode> getThings() {
 		return things;

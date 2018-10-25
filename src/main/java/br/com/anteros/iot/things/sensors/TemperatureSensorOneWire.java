@@ -16,6 +16,7 @@ import br.com.anteros.iot.ThingStatus;
 import br.com.anteros.iot.domain.PlantItemNode;
 import br.com.anteros.iot.domain.things.TemperatureOneWireNode;
 import br.com.anteros.iot.plant.PlantItem;
+import br.com.anteros.iot.triggers.Trigger;
 
 public class TemperatureSensorOneWire extends PlantItem implements Sensor {
 
@@ -23,6 +24,7 @@ public class TemperatureSensorOneWire extends PlantItem implements Sensor {
 	protected String[] topics;
 	protected TemperatureScale scale;
 	protected DeviceController deviceController;
+	protected Set<Trigger> triggers = new HashSet<>();
 
 	protected TemperatureSensorOneWire(String id, String sensorId, String[] topics,
 			TemperatureScale scale) {
@@ -114,5 +116,28 @@ public class TemperatureSensorOneWire extends PlantItem implements Sensor {
 	public void setDeviceController(DeviceController deviceController) {
 		this.deviceController = deviceController;
 	}
+	
+	@Override
+	public Trigger[] getTriggers() {
+		return triggers.toArray(new Trigger[] {});
+	}
 
+
+	@Override
+	public Thing addTrigger(Trigger trigger) {
+		triggers.add(trigger);
+		return this;
+	}
+
+	@Override
+	public Thing removeTrigger(Trigger trigger) {
+		triggers.remove(trigger);
+		return this;
+	}
+
+	@Override
+	public String[] getActions() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

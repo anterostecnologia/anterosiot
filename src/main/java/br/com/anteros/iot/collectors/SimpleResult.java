@@ -1,5 +1,7 @@
 package br.com.anteros.iot.collectors;
 
+import javax.json.JsonObjectBuilder;
+
 public class SimpleResult implements CollectResult {
 	
 	protected Object value;
@@ -15,8 +17,9 @@ public class SimpleResult implements CollectResult {
 	}
 
 	@Override
-	public String toJson() {
-		return "{ 'value' : "+value+" }";
+	public JsonObjectBuilder toJson(JsonObjectBuilder builder) {
+		builder.add("value",value+"");
+		return builder;
 	}
 
 }

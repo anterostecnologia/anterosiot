@@ -17,7 +17,7 @@ public class RemoteMasterControllerRPi extends MasterControllerRPi implements Re
 	}
 	
 	public RemoteMasterControllerRPi(MqttClient clientMqtt,DeviceNode node, Plant plant) {
-		super(clientMqtt,node, plant,null);
+		super(clientMqtt,node, plant,null, null);
 	}
 	
 	

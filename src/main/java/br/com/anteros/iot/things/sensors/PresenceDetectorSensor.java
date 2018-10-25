@@ -13,13 +13,14 @@ import br.com.anteros.iot.ThingStatus;
 import br.com.anteros.iot.domain.PlantItemNode;
 import br.com.anteros.iot.domain.things.PresenceDetectorNode;
 import br.com.anteros.iot.plant.PlantItem;
+import br.com.anteros.iot.triggers.Trigger;
 
 public class PresenceDetectorSensor extends PlantItem implements Sensor {
 	
 	protected int pin;
 	protected String[] topics;
 	protected DeviceController deviceController;
-	
+	protected Set<Trigger> triggers = new HashSet<>();
 
 	public PresenceDetectorSensor(String itemId, int pin, String[] topics) {
 		super();
@@ -107,7 +108,6 @@ public class PresenceDetectorSensor extends PlantItem implements Sensor {
 		return topics;
 	}
 
-
 	@Override
 	protected boolean acceptThisTypeOfPlantItem(Class<?> child) {
 		// TODO Auto-generated method stub
@@ -122,6 +122,29 @@ public class PresenceDetectorSensor extends PlantItem implements Sensor {
 
 	public void setDeviceController(DeviceController deviceController) {
 		this.deviceController = deviceController;
+	}
+
+	@Override
+	public Trigger[] getTriggers() {
+		return triggers.toArray(new Trigger[] {});
+	}
+
+	@Override
+	public Thing addTrigger(Trigger trigger) {
+		triggers.add(trigger);
+		return this;
+	}
+
+	@Override
+	public Thing removeTrigger(Trigger trigger) {
+		triggers.remove(trigger);
+		return this;
+	}
+
+	@Override
+	public String[] getActions() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

@@ -1,5 +1,6 @@
 package br.com.anteros.iot.things;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import br.com.anteros.iot.DeviceController;
@@ -8,10 +9,12 @@ import br.com.anteros.iot.Thing;
 import br.com.anteros.iot.ThingStatus;
 import br.com.anteros.iot.domain.PlantItemNode;
 import br.com.anteros.iot.plant.PlantItem;
+import br.com.anteros.iot.triggers.Trigger;
 
 public class CameraALPR extends PlantItem implements Thing {
 	
 	protected DeviceController deviceController;
+	protected Set<Trigger> triggers = new HashSet<>();
 
 	public CameraALPR() {
 	}
@@ -69,7 +72,29 @@ public class CameraALPR extends PlantItem implements Thing {
 	public void setDeviceController(DeviceController deviceController) {
 		this.deviceController = deviceController;
 	}
-
 	
+	@Override
+	public Trigger[] getTriggers() {
+		return triggers.toArray(new Trigger[] {});
+	}
+
+
+	@Override
+	public Thing addTrigger(Trigger trigger) {
+		triggers.add(trigger);
+		return this;
+	}
+
+	@Override
+	public Thing removeTrigger(Trigger trigger) {
+		triggers.remove(trigger);
+		return this;
+	}
+
+	@Override
+	public String[] getActions() {
+		// TODO Auto-generated method stub
+		return null;
+	}	
 
 }

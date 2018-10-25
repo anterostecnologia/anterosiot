@@ -17,7 +17,7 @@ public class BarrierGateNode extends ThingNode {
 
 	@Override
 	public Thing getInstanceOfThing() {
-		return new BarrierGate(this);
+		return new BarrierGate(this);		
 	}
 
 }

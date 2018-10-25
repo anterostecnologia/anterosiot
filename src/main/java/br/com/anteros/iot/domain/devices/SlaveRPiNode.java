@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
 
 import br.com.anteros.iot.Actuators;
 import br.com.anteros.iot.Thing;
+import br.com.anteros.iot.app.listeners.AnterosIOTServiceListener;
 import br.com.anteros.iot.controllers.AbstractDeviceController;
 import br.com.anteros.iot.controllers.SlaveControllerRPi;
 import br.com.anteros.iot.domain.DeviceSlaveNode;
@@ -29,8 +30,8 @@ public class SlaveRPiNode extends DeviceSlaveNode {
 	}
 
 	@Override
-	public AbstractDeviceController getInstanceOfDeviceController(MqttClient clientMqtt, Plant plant, Actuators actuators) {
-		return SlaveControllerRPi.of(clientMqtt, this, null, plant, actuators);
+	public AbstractDeviceController getInstanceOfDeviceController(MqttClient clientMqtt, Plant plant, Actuators actuators,AnterosIOTServiceListener serviceListener) {
+		return SlaveControllerRPi.of(clientMqtt, this, null, plant, actuators, serviceListener);
 	}
 
 

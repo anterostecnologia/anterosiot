@@ -4,25 +4,19 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import com.pi4j.temperature.TemperatureScale;
 
 import br.com.anteros.iot.domain.PartNode;
 import br.com.anteros.iot.domain.devices.MasterDeviceRPiNode;
 import br.com.anteros.iot.domain.devices.SlaveRPiNode;
 import br.com.anteros.iot.domain.plant.PlaceNode;
 import br.com.anteros.iot.domain.plant.PlantNode;
-import br.com.anteros.iot.domain.things.CameraQRCodeReaderNode;
-import br.com.anteros.iot.domain.things.LampOrBulbNode;
-import br.com.anteros.iot.domain.things.MagneticLockNode;
-import br.com.anteros.iot.domain.things.PresenceDetectorNode;
+import br.com.anteros.iot.domain.things.LampSonoffNode;
 import br.com.anteros.iot.domain.things.RFIDModel;
 import br.com.anteros.iot.domain.things.RFIDReaderNode;
 import br.com.anteros.iot.domain.things.SemaphoreNode;
-import br.com.anteros.iot.domain.things.TemperatureOneWireNode;
 import br.com.anteros.iot.domain.things.parts.GreenLEDSemaphorePartNode;
 import br.com.anteros.iot.domain.things.parts.RedLEDSemaphorePartNode;
 import br.com.anteros.iot.support.Pi4JHelper;
-import br.com.anteros.iot.things.LampOrBulb;
 import br.com.anteros.iot.things.devices.IpAddress;
 
 public class MasterApp {
@@ -47,22 +41,23 @@ public class MasterApp {
 		 */
 
 		MasterDeviceRPiNode masterNode = new MasterDeviceRPiNode("master", "Central");
-		masterNode.setIpAddress(IpAddress.of("192.168.1.152"));
+		masterNode.setIpAddress(IpAddress.of("10.0.0.152"));
 
-		TemperatureOneWireNode temperatureNode = new TemperatureOneWireNode("sensorTemperatura",
-				"Sensor de temperatura", "28-031671d27bff", null,
-				TemperatureScale.CELSIUS);
+//		TemperatureOneWireNode temperatureNode = new TemperatureOneWireNode("sensorTemperatura",
+//				"Sensor de temperatura", "28-031671d27bff", null,
+//				TemperatureScale.CELSIUS);
 		
 		
 
-		PresenceDetectorNode presenceNode = new PresenceDetectorNode("detectorPresenca", "Sensor de presença",
-				Pi4JHelper.GPIO_04, null);
+//		PresenceDetectorNode presenceNode = new PresenceDetectorNode("detectorPresenca", "Sensor de presença",
+//				Pi4JHelper.GPIO_04, null);
 		
-		RFIDReaderNode rfidReaderNode = new RFIDReaderNode("rfidCard", "Leitor de cartão", null, RFIDModel.PN532);
+		
+		LampSonoffNode lampSonoffNode = new LampSonoffNode("Lampada","Lampada","portaria/lampada_sonoff");
 
-		portariaNode.addChildren(masterNode, temperatureNode, presenceNode,rfidReaderNode);
-		
-		masterNode.addThingsToController(temperatureNode, presenceNode,rfidReaderNode);
+//		portariaNode.addChildren(masterNode, lampSonoffNode);
+//		
+//		masterNode.addThingsToController(lampSonoffNode);
 		
 		
 		/**
@@ -71,50 +66,56 @@ public class MasterApp {
 		
 
 		SlaveRPiNode slave1Node = new SlaveRPiNode("slave1", "Slave 1");
-		slave1Node.setIpAddress(IpAddress.of("192.168.1.155"));
+		slave1Node.setIpAddress(IpAddress.of("10.0.0.155"));
 		
 		blocoANode.addChild(slave1Node);
 		
-		// TRANSMISSOR
+		// RFID
+		
+		RFIDReaderNode rfidReaderNode = new RFIDReaderNode("rfidCard", "Leitor de cartão", null, RFIDModel.PN532);
+		
+		
+		// Semaforo
+		
+		SemaphoreNode semaphoreNode = new SemaphoreNode("Semaforo","Semaforo");
+		PartNode redLed = new RedLEDSemaphorePartNode("LedRed","Led Vermelho", Pi4JHelper.GPIO_06);
+		PartNode greenLed = new GreenLEDSemaphorePartNode("LedGreen","Led Verde",Pi4JHelper.GPIO_05);
+		semaphoreNode.addChild(redLed);
+		semaphoreNode.addChild(greenLed);
 
-
-		// FALTA WIEGAND
+		slave1Node.addThingsToController(rfidReaderNode, semaphoreNode);
+//				
+//		/**
+//		 * SLAVE 2
+//		 */
+//		
+//		SlaveRPiNode slave2Node = new SlaveRPiNode("slave2", "Slave 2");
+//		slave2Node.setIpAddress(IpAddress.of("192.168.1.153"));
 		
-		/**
-		 * SLAVE 2
-		 */
 		
-		SlaveRPiNode slave2Node = new SlaveRPiNode("slave2", "Slave 2");
-		slave2Node.setIpAddress(IpAddress.of("192.168.1.153"));
-		
-		
-//		SemaphoreNode semaphoreNode = new SemaphoreNode("Semaforo","Semaforo");
-//		PartNode redLed = new RedLEDSemaphorePartNode("LedRed","Led Vermelho", Pi4JHelper.GPIO_06);
-//		PartNode greenLed = new GreenLEDSemaphorePartNode("LedGreen","Led Verde",Pi4JHelper.GPIO_05);
-//		semaphoreNode.addChild(redLed);
-//		semaphoreNode.addChild(greenLed);
+//		
 		
 //		MagneticLockNode magneticLockNode = new MagneticLockNode("FechaduraMagnetica", "Fechadura magnética", Pi4JHelper.GPIO_01, 1000);
 		
-		LampOrBulbNode lampOrBulbNode = new LampOrBulbNode("Lampada","Lampada",Pi4JHelper.GPIO_04);
 		
-		blocoBNode.addChildren(slave2Node,lampOrBulbNode);
-		slave2Node.addThingsToController(lampOrBulbNode);
+		
+//		blocoBNode.addChildren(slave2Node,lampOrBulbNode);
+//		slave2Node.addThingsToController(lampOrBulbNode);
 		
 		// RECEPTOR
 		
-		/**
-		 * SLAVE 3
-		 */
-		SlaveRPiNode slave3Node = new SlaveRPiNode("slave3", "Slave 3");
-		slave3Node.setIpAddress(IpAddress.of("192.168.1.154"));
-		
-		blocoBNode.addChild(slave3Node);
-		
-		CameraQRCodeReaderNode cameraNode = new CameraQRCodeReaderNode();
-		blocoBNode.addChild(cameraNode);
-		
-		slave3Node.addThingsToController(cameraNode);
+//		/**
+//		 * SLAVE 3
+//		 */
+//		SlaveRPiNode slave3Node = new SlaveRPiNode("slave3", "Slave 3");
+//		slave3Node.setIpAddress(IpAddress.of("192.168.1.154"));
+//		
+//		blocoBNode.addChild(slave3Node);
+//		
+//		CameraQRCodeReaderNode cameraNode = new CameraQRCodeReaderNode();
+//		blocoBNode.addChild(cameraNode);
+//		
+//		slave3Node.addThingsToController(cameraNode);
 
 		
 

@@ -1,5 +1,6 @@
 package br.com.anteros.iot.things;
 
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -15,12 +16,15 @@ import br.com.anteros.iot.things.parts.GreenLEDSemaphorePart;
 import br.com.anteros.iot.things.parts.LedSemaphore;
 import br.com.anteros.iot.things.parts.RedLEDSemaphorePart;
 import br.com.anteros.iot.things.parts.YellowLEDSemaphorePart;
+import br.com.anteros.iot.triggers.Trigger;
 
 public class Semaphore extends PlantItem implements Thing {
 	
 	protected DeviceController deviceController;
 
 	protected Set<Part> leds = new LinkedHashSet<Part>();
+	
+	protected Set<Trigger> triggers = new HashSet<>();
 
 	public Semaphore(String id) {
 		this.itemId = id;
@@ -107,6 +111,30 @@ public class Semaphore extends PlantItem implements Thing {
 
 	public void setDeviceController(DeviceController deviceController) {
 		this.deviceController = deviceController;
+	}
+	
+	@Override
+	public Trigger[] getTriggers() {
+		return triggers.toArray(new Trigger[] {});
+	}
+
+
+	@Override
+	public Thing addTrigger(Trigger trigger) {
+		triggers.add(trigger);
+		return this;
+	}
+
+	@Override
+	public Thing removeTrigger(Trigger trigger) {
+		triggers.remove(trigger);
+		return this;
+	}
+
+	@Override
+	public String[] getActions() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

@@ -13,6 +13,7 @@ import br.com.anteros.iot.ThingStatus;
 import br.com.anteros.iot.domain.PlantItemNode;
 import br.com.anteros.iot.plant.Place;
 import br.com.anteros.iot.plant.PlantItem;
+import br.com.anteros.iot.triggers.Trigger;
 
 public class RaspberryPIZero extends PlantItem implements Device  {
 	
@@ -82,5 +83,28 @@ public class RaspberryPIZero extends PlantItem implements Device  {
 	public void setDeviceController(DeviceController deviceController) {
 		this.deviceController = deviceController;
 	}
+	
+	@Override
+	public String[] getActions() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
+	@Override
+	public Thing addTrigger(Trigger trigger) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Thing removeTrigger(Trigger trigger) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Trigger[] getTriggers() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

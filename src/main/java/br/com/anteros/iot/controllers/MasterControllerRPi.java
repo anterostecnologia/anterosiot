@@ -3,12 +3,17 @@ package br.com.anteros.iot.controllers;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.json.Json;
+
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
+import org.eclipse.paho.client.mqttv3.MqttPersistenceException;
 
 import br.com.anteros.core.utils.Assert;
+import br.com.anteros.core.utils.StringUtils;
+import br.com.anteros.iot.Action;
 import br.com.anteros.iot.Actuator;
 import br.com.anteros.iot.Actuators;
 import br.com.anteros.iot.Device;
@@ -17,7 +22,7 @@ import br.com.anteros.iot.MasterDeviceController;
 import br.com.anteros.iot.Part;
 import br.com.anteros.iot.SlaveDeviceController;
 import br.com.anteros.iot.Thing;
-import br.com.anteros.iot.controllers.SlaveControllerRPi.Builder;
+import br.com.anteros.iot.app.listeners.AnterosIOTServiceListener;
 import br.com.anteros.iot.domain.DeviceNode;
 import br.com.anteros.iot.plant.Plant;
 import br.com.anteros.iot.protocol.IOTMessage;
@@ -42,8 +47,9 @@ public class MasterControllerRPi extends AbstractDeviceController implements Mas
 		this.devices.addAll(slaves);
 	}
 
-	public MasterControllerRPi(MqttClient clientMqtt, DeviceNode node, Plant plant, Actuators actuators) {
-		super(clientMqtt, node,actuators);
+	public MasterControllerRPi(MqttClient clientMqtt, DeviceNode node, Plant plant, Actuators actuators,
+			AnterosIOTServiceListener serviceListener) {
+		super(clientMqtt, node, actuators, serviceListener);
 		loadConfiguration(node, plant);
 	}
 
@@ -71,7 +77,7 @@ public class MasterControllerRPi extends AbstractDeviceController implements Mas
 			this.device = device;
 			return this;
 		}
-		
+
 		public Builder actuators(Actuators actuators) {
 			this.actuators = actuators;
 			return this;
@@ -133,20 +139,15 @@ public class MasterControllerRPi extends AbstractDeviceController implements Mas
 		if (!paused) {
 			byte[] payload = message.getPayload();
 			IOTMessage iotMessage = mapper.readValue(payload, IOTMessage.class);
-			Thing thing = this.getThingById(iotMessage.getThing());
+			Thing thing = this.getThingByTopic(topic);
 			if (thing != null) {
-				Actuator<?> actuator = actuators.discoverActuatorToThing(thing);
-				if (actuator != null) {
-					Part part = thing.getPartById(iotMessage.getPart());
-					if (part != null) {
-						actuator.executeAction(iotMessage.getAction(), (part != null ? part : thing));
-					} else {
-						actuator.executeAction(iotMessage.getAction(), thing);
-					}
-				}
+				Part part = thing.getPartById(iotMessage.getPart());
+				this.dispatchAction(Action.of(thing, part, iotMessage.getAction(), null, null), null);
 			}
 		}
 	}
+
+	
 
 	public void deliveryComplete(IMqttDeliveryToken token) {
 		try {
@@ -162,8 +163,9 @@ public class MasterControllerRPi extends AbstractDeviceController implements Mas
 		super.loadConfiguration(itemNode, plant);
 	}
 
-	public static MasterControllerRPi of(MqttClient clientMqtt, DeviceNode node, Plant plant, Actuators actuators) {
-		return new MasterControllerRPi(clientMqtt, node, plant,actuators);
+	public static MasterControllerRPi of(MqttClient clientMqtt, DeviceNode node, Plant plant, Actuators actuators,
+			AnterosIOTServiceListener serviceListener) {
+		return new MasterControllerRPi(clientMqtt, node, plant, actuators, serviceListener);
 	}
 
 	@Override

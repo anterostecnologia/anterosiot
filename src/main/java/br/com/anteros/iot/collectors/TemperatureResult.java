@@ -1,5 +1,7 @@
 package br.com.anteros.iot.collectors;
 
+import javax.json.JsonObjectBuilder;
+
 public class TemperatureResult implements CollectResult {
 
 	protected Double oldTemperature;
@@ -36,10 +38,10 @@ public class TemperatureResult implements CollectResult {
 	}
 
 	@Override
-	public String toJson() {
-		StringBuilder sb = new StringBuilder();
-		return sb.append("{").append("'oldTemperature' : ").append(oldTemperature).append(", 'newTemperature': ")
-				.append(newTemperature).append("}").toString();
+	public JsonObjectBuilder toJson(JsonObjectBuilder builder) {
+		builder.add("oldTemperature",oldTemperature).add("newTemperature",newTemperature);
+		return builder;
+		
 	}
 
 }

@@ -3,19 +3,23 @@ package br.com.anteros.iot.controllers;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.MqttCallback;
 import org.eclipse.paho.client.mqttv3.MqttClient;
-import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
+import org.eclipse.paho.client.mqttv3.MqttPersistenceException;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import br.com.anteros.core.utils.StringUtils;
+import br.com.anteros.iot.Action;
 import br.com.anteros.iot.Actuator;
 import br.com.anteros.iot.Actuators;
 import br.com.anteros.iot.DefaultActuators;
@@ -23,12 +27,9 @@ import br.com.anteros.iot.Device;
 import br.com.anteros.iot.DeviceController;
 import br.com.anteros.iot.DeviceStatus;
 import br.com.anteros.iot.Thing;
-import br.com.anteros.iot.collectors.CameraQRCodeCollector;
+import br.com.anteros.iot.app.listeners.AnterosIOTServiceListener;
 import br.com.anteros.iot.collectors.CollectorManager;
-import br.com.anteros.iot.collectors.PresenceDetectorCollector;
-import br.com.anteros.iot.collectors.RFIDReaderCollector;
 import br.com.anteros.iot.collectors.SimpleCollectorManager;
-import br.com.anteros.iot.collectors.TemperatureOneWireCollector;
 import br.com.anteros.iot.domain.DeviceNode;
 import br.com.anteros.iot.plant.Place;
 import br.com.anteros.iot.plant.Plant;
@@ -47,16 +48,20 @@ public abstract class AbstractDeviceController implements DeviceController, Mqtt
 	protected Thread thread;
 	protected ObjectMapper mapper = new ObjectMapper();
 	protected Actuators actuators;
+	protected AnterosIOTServiceListener serviceListener;
+	protected Map<String, Thing> subscribedTopics = new HashMap<>();
 
 	public AbstractDeviceController() {
 
 	}
 
-	public AbstractDeviceController(MqttClient clientMqtt, DeviceNode node, Actuators actuators) {
+	public AbstractDeviceController(MqttClient clientMqtt, DeviceNode node, Actuators actuators,
+			AnterosIOTServiceListener serviceListener) {
 		this.clientMqtt = clientMqtt;
 		this.clientMqtt.setCallback(this);
 		this.thread = new Thread(this);
 		this.actuators = actuators;
+		this.serviceListener = serviceListener;
 	}
 
 	protected AbstractDeviceController(Device device, Actuators actuators) {
@@ -169,18 +174,29 @@ public abstract class AbstractDeviceController implements DeviceController, Mqtt
 		return null;
 	}
 
+	public Thing getThingByTopic(String topic) {
+		for (String tpc : subscribedTopics.keySet()) {
+			if (tpc.equals(topic)) {
+				return subscribedTopics.get(tpc);
+			}
+		}
+		return null;
+	}
+
 	public void run() {
 		this.running = true;
 		System.out.println("Iniciando controlador " + this.getThingID());
 
 		MqttClient clientCollector = null;
 		try {
-			clientCollector = MqttHelper.createAndConnectMqttClient(clientMqtt.getServerURI(), this.device.getThingID() + "_collector", "", "", true, true);
+			clientCollector = MqttHelper.createAndConnectMqttClient(clientMqtt.getServerURI(),
+					this.device.getThingID() + "_collector", "", "", true, true);
 		} catch (MqttException e1) {
 			e1.printStackTrace();
 		}
 
-		CollectorManager collectorManager = SimpleCollectorManager.of(clientCollector, things.toArray(new Thing[] {}), new DefaultActuators());
+		CollectorManager collectorManager = SimpleCollectorManager.of(clientCollector, things.toArray(new Thing[] {}),
+				new DefaultActuators());
 		collectorManager.start();
 
 		boolean first = true;
@@ -212,14 +228,48 @@ public abstract class AbstractDeviceController implements DeviceController, Mqtt
 			e.printStackTrace();
 		}
 	}
-	
-	public abstract void connectionLost(Throwable cause);	
+
+	public abstract void connectionLost(Throwable cause);
 
 	public abstract void messageArrived(String topic, MqttMessage message) throws Exception;
 
 	public abstract void deliveryComplete(IMqttDeliveryToken token);
 
 	protected abstract Device doCreateDevice(String deviceName, IpAddress ipAddress, String description);
+
+	public void dispatchMessage(String topic, String message) {
+		if ((StringUtils.isNotEmpty(topic) || StringUtils.isNotEmpty(message))) {
+			try {
+				MqttMessage msg = new MqttMessage(message.getBytes());
+				msg.setQos(1);
+				this.clientMqtt.publish(topic, msg);
+			} catch (MqttPersistenceException e) {
+				e.printStackTrace();
+			} catch (MqttException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
+	public void dispatchAction(Action action, String value) {
+		if (action.getThing() != null) {
+			Actuator<?> actuator = actuators.discoverActuatorToThing(action.getThing());
+			if (actuator != null) {
+				if (action.getPart() != null) {
+					actuator.executeAction(action.getAction(), action.getPart());
+				} else {
+					actuator.executeAction(action.getAction(), action.getThing());
+				}
+			}
+		}
+
+		if ((StringUtils.isNotEmpty(action.getMessage()) || StringUtils.isNotEmpty(value))
+				&& (action.getTopics() != null)) {
+			for (String topic : action.getTopics()) {
+				this.dispatchMessage(topic, StringUtils.isNotEmpty(value) ? value : action.getMessage());
+			}
+		}
+	}
 
 	public void loadConfiguration(DeviceNode itemNode, Plant plant) {
 		Place place = (Place) plant.getItemByName(itemNode.getItemNodeOwner().getItemName());
@@ -239,28 +289,38 @@ public abstract class AbstractDeviceController implements DeviceController, Mqtt
 
 		for (Thing thing : things) {
 			if (thing instanceof PlantItem && !(thing instanceof Publishable)) {
-				filter.add(((PlantItem) thing).getPath());
+				String topic = ((PlantItem) thing).getPath();
+				filter.add(topic);
+				subscribedTopics.put(topic, thing);
 			}
 		}
 
 		if (this.getThing() instanceof PlantItem) {
-			filter.add(((PlantItem) this.getThing()).getPath());
+			String topic = ((PlantItem) this.getThing()).getPath();
+			filter.add(topic);
+			subscribedTopics.put(topic, this.getThing());
 		}
-		
+
 		try {
 			System.out.println(Arrays.toString(filter.toArray(new String[] {})));
 			this.clientMqtt.subscribe(filter.toArray(new String[] {}));
 		} catch (MqttException e) {
 			e.printStackTrace();
 		}
-		
-		try {
-			this.clientMqtt.subscribe("empresa/#");
-		} catch (MqttException e) {
-			e.printStackTrace();
-		}
-		
+	}
 
+	public MqttClient getClientMqtt() {
+		return clientMqtt;
+	}
+
+	@Override
+	public void setServiceListener(AnterosIOTServiceListener listener) {
+		this.serviceListener = listener;
+	}
+
+	@Override
+	public AnterosIOTServiceListener getServiceListener() {
+		return serviceListener;
 	}
 
 }

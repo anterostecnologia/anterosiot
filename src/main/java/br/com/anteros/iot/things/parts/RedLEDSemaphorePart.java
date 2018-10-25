@@ -11,27 +11,31 @@ import br.com.anteros.iot.ThingStatus;
 import br.com.anteros.iot.domain.PlantItemNode;
 import br.com.anteros.iot.domain.things.parts.RedLEDSemaphorePartNode;
 import br.com.anteros.iot.parts.exception.IllegalPartException;
+import br.com.anteros.iot.plant.Place;
 import br.com.anteros.iot.plant.PlantItem;
 import br.com.anteros.iot.things.Semaphore;
+import br.com.anteros.iot.triggers.Trigger;
 
 public class RedLEDSemaphorePart extends PlantItem implements Part, LedSemaphore {
 
 	protected int pin;
+	protected String thingId;
 	protected DeviceController deviceController;
+	protected Set<Trigger> triggers = new HashSet<>();
 
 	private RedLEDSemaphorePart(String id, Semaphore owner, int pin) {
 		this.itemOwner = owner;
 		this.pin = pin;
-		this.itemId = id;
+		this.thingId = id;
 	}
 
 	public RedLEDSemaphorePart(RedLEDSemaphorePartNode node) {
 		this.pin = node.getPin();
-		this.itemId = node.getItemName();
+		this.thingId = node.getItemName();
 	}
 
 	public String getThingID() {
-		return itemId;
+		return thingId;
 	}
 
 	public ThingStatus getStatus() {
@@ -87,9 +91,35 @@ public class RedLEDSemaphorePart extends PlantItem implements Part, LedSemaphore
 	public DeviceController getDeviceController() {
 		return deviceController;
 	}
+	
+	@Override
+	public Trigger[] getTriggers() {
+		return triggers.toArray(new Trigger[] {});
+	}
 
+
+	@Override
+	public Thing addTrigger(Trigger trigger) {
+		triggers.add(trigger);
+		return this;
+	}
+
+	@Override
+	public Thing removeTrigger(Trigger trigger) {
+		triggers.remove(trigger);
+		return this;
+	}
+
+	@Override
 	public void setDeviceController(DeviceController deviceController) {
 		this.deviceController = deviceController;
+		
+	}
+
+	@Override
+	public String[] getActions() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

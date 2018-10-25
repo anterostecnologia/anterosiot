@@ -2,6 +2,7 @@ package br.com.anteros.iot.app;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.MqttCallback;
@@ -18,8 +19,10 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import br.com.anteros.core.utils.Assert;
 import br.com.anteros.core.utils.StringUtils;
 import br.com.anteros.iot.actuators.LampOrBulbActuator;
+import br.com.anteros.iot.app.listeners.AnterosIOTServiceListener;
 import br.com.anteros.iot.controllers.AbstractDeviceController;
 import br.com.anteros.iot.things.LampOrBulb;
+import br.com.anteros.iot.triggers.Trigger;
 
 public class AnterosIOTService implements Runnable, MqttCallback {
 
@@ -31,15 +34,19 @@ public class AnterosIOTService implements Runnable, MqttCallback {
 	private String username;
 	private String password;
 	private MqttClient client;
+	private AnterosIOTServiceListener serviceListener;
+	private InputStream streamConfig;
 
 	public AnterosIOTService(String deviceName, String hostMqtt, String port, String username, String password,
-			File config) {
+			File config, InputStream streamConfig, AnterosIOTServiceListener serviceListener) {
 		this.deviceName = deviceName;
 		this.fileConfig = config;
 		this.hostMqtt = hostMqtt;
 		this.port = port;
 		this.username = username;
 		this.password = password;
+		this.serviceListener = serviceListener;
+		this.streamConfig = streamConfig;
 	}
 
 	/**
@@ -65,7 +72,7 @@ public class AnterosIOTService implements Runnable, MqttCallback {
 			configFile = new File(config);
 		}
 
-		new Thread(new AnterosIOTService(deviceName, hostMqtt, port, username, password, configFile)).start();
+		new Thread(new AnterosIOTService(deviceName, hostMqtt, port, username, password, configFile,null, null)).start();
 	}
 
 	public static String getArgumentByName(String[] args, String name) {
@@ -106,10 +113,10 @@ public class AnterosIOTService implements Runnable, MqttCallback {
 			e1.printStackTrace();
 		}
 
-		if (fileConfig != null) {
+		if (fileConfig != null || streamConfig != null) {
 			try {
 				deviceController = AnterosIOTConfiguration.newConfiguration().deviceName(deviceName).hostMqtt(hostMqtt).port(port)
-						.username(username).password(password).configure(fileConfig).buildDevice();
+						.username(username).password(password).serviceListener(serviceListener).configure(streamConfig).configure(fileConfig).buildDevice();
 			} catch (JsonParseException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
