@@ -88,6 +88,7 @@ public class SimpleCollectorManager implements CollectorManager, CollectorListen
 		for (Thing thing : things) {
 			Collector collector = actuators.discoverCollectorToThing(thing);
 			if (collector != null) {
+				collector.setListener(this);
 				collector.startCollect();
 				collectorsRunning.add(collector);
 			}

@@ -23,6 +23,7 @@ import br.com.anteros.iot.domain.devices.SlaveRPiNode;
 import br.com.anteros.iot.domain.plant.PlaceNode;
 import br.com.anteros.iot.domain.plant.PlantNode;
 import br.com.anteros.iot.domain.things.BarrierGateNode;
+import br.com.anteros.iot.domain.things.CameraMotionDetectorNode;
 import br.com.anteros.iot.domain.things.CameraQRCodeReaderNode;
 import br.com.anteros.iot.domain.things.LampOrBulbNode;
 import br.com.anteros.iot.domain.things.MagneticLockNode;
@@ -56,7 +57,8 @@ import br.com.anteros.iot.plant.Place;
 		@Type (value = MagneticLockNode.class, name = "magneticLock"),
 		@Type (value = TemperatureOneWireNode.class, name = "temperatureOneWire"),
 		@Type (value = PresenceDetectorNode.class, name = "presenceDetector"),
-		@Type (value = SlaveRPiNode.class, name = "slaveRPi")})
+		@Type (value = SlaveRPiNode.class, name = "slaveRPi"),
+		@Type (value = CameraMotionDetectorNode.class, name = "cameraMotionDetector")})
 public abstract class PlantItemNode {
 	
 	protected String itemName;

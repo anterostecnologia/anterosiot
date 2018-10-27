@@ -22,5 +22,6 @@ public class DomainConstants {
 	public static final String MAGNETIC_LOCK = "magneticLock";
 	public static final String TEMPERATURE_ONE_WIRE = "temperatureOneWire";
 	public static final String PRESENCE_DETECTOR = "presenceDetector";
+	public static final String CAMERA_MOTION_DETECTOR = "cameraMotionDetector";
 
 }

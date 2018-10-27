@@ -8,6 +8,7 @@ import java.util.Set;
 import br.com.anteros.iot.actuators.LampOrBulbActuator;
 import br.com.anteros.iot.actuators.LedActuator;
 import br.com.anteros.iot.actuators.MagneticLockActuator;
+import br.com.anteros.iot.collectors.CameraMotionDetectorCollector;
 import br.com.anteros.iot.collectors.CameraQRCodeCollector;
 import br.com.anteros.iot.collectors.PresenceDetectorCollector;
 import br.com.anteros.iot.collectors.RFIDReaderCollector;
@@ -26,6 +27,7 @@ public class DefaultActuators implements Actuators {
 		registerActuator(RFIDReaderCollector.class);
 		registerActuator(CameraQRCodeCollector.class);
 		registerActuator(TemperatureOneWireCollector.class);
+		registerActuator(CameraMotionDetectorCollector.class);
 	}
 
 	public DefaultActuators registerActuator(Class<? extends Actuable> actuable) {
@@ -46,6 +48,7 @@ public class DefaultActuators implements Actuators {
 				
 				if (collector.isSupportedThing(thing)) {
 					if (collector instanceof Collector) {
+						((Collector) collector).setThing(thing);						
 						return (Collector) collector;
 					}
 				}
