@@ -11,7 +11,6 @@ import br.com.anteros.iot.Part;
 import br.com.anteros.iot.Thing;
 import br.com.anteros.iot.ThingStatus;
 import br.com.anteros.iot.domain.PlantItemNode;
-import br.com.anteros.iot.plant.Place;
 import br.com.anteros.iot.plant.PlantItem;
 import br.com.anteros.iot.triggers.Trigger;
 
@@ -20,9 +19,10 @@ public class Computer extends PlantItem implements Device {
 	private IpAddress ipAddress;
 	protected DeviceController deviceController;
 
-	public Computer(String id, IpAddress ipAddress) {
+	public Computer(String id, IpAddress ipAddress, String description) {
 		this.itemId = id;
 		this.ipAddress = ipAddress;
+		this.description = description;
 	}
 
 	public String getThingID() {

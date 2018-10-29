@@ -1,0 +1,15 @@
+package br.com.anteros.iot.protocol.modbus.type;
+
+public enum ModbusProtocolErrorCode {
+	
+	INVALID_CONFIGURATION,
+    INVALID_DATA_ADDRESS,
+    INVALID_DATA_TYPE,
+    INVALID_DATA_LENGTH,
+    METHOD_NOT_SUPPORTED,
+    NOT_AVAILABLE,
+    NOT_CONNECTED,
+    CONNECTION_FAILURE,
+    TRANSACTION_FAILURE,
+    RESPONSE_TIMEOUT;
+}

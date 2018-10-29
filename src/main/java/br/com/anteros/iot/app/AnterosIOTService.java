@@ -7,10 +7,8 @@ import java.io.InputStream;
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.MqttCallback;
 import org.eclipse.paho.client.mqttv3.MqttClient;
-import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
-import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 
 import com.diozero.util.SleepUtil;
 import com.fasterxml.jackson.core.JsonParseException;
@@ -18,11 +16,9 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 
 import br.com.anteros.core.utils.Assert;
 import br.com.anteros.core.utils.StringUtils;
-import br.com.anteros.iot.actuators.LampOrBulbActuator;
 import br.com.anteros.iot.app.listeners.AnterosIOTServiceListener;
 import br.com.anteros.iot.controllers.AbstractDeviceController;
-import br.com.anteros.iot.things.LampOrBulb;
-import br.com.anteros.iot.triggers.Trigger;
+import br.com.anteros.iot.support.MqttHelper;
 
 public class AnterosIOTService implements Runnable, MqttCallback {
 
@@ -98,16 +94,11 @@ public class AnterosIOTService implements Runnable, MqttCallback {
 
 		String broker = "tcp://" + hostMqtt + ":" + (port == null ? 1883 : port);
 		String clientId = deviceName + "_guardian";
-		MemoryPersistence persistence = new MemoryPersistence();
 
 		System.out.println("Conectando servidor broker MQTT...");
 
 		try {
-			client = new MqttClient(broker, clientId, persistence);
-			MqttConnectOptions connOpts = new MqttConnectOptions();
-			connOpts.setAutomaticReconnect(true);
-			connOpts.setCleanSession(true);
-			client.connect(connOpts);
+			client = MqttHelper.createAndConnectMqttClient(broker, clientId, "", "", true, true);
 		} catch (MqttException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();

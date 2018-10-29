@@ -51,7 +51,7 @@ public class CameraMotionDetectorCollector extends Collector implements Runnable
 			
 			VideoCapture camera = new VideoCapture(0);
 //			VideoCapture ip_camera = new VideoCapture("http://10.0.8.99/video.cgi?x.mjpeg");
-	          BackgroundSubtractorMOG2 backgroundSubtractorMOG = new BackgroundSubtractorMOG2();
+//	          BackgroundSubtractorMOG2 backgroundSubtractorMOG = new BackgroundSubtractorMOG2();
 
 			if (!camera.isOpened()) {
 				System.out.println("ERRO! Falha ao estabelecer uma conexão com a câmera. Verifique se o dispositivo já está em uso!");
@@ -66,7 +66,7 @@ public class CameraMotionDetectorCollector extends Collector implements Runnable
 				if (!frame.empty()) {
 
                     Mat fgMask=new Mat();
-                    backgroundSubtractorMOG.apply(frame, fgMask, 0.1);
+//                    backgroundSubtractorMOG.apply(frame, fgMask, 0.1);
 				
 				}
 				

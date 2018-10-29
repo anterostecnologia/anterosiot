@@ -10,6 +10,7 @@ import br.com.anteros.iot.actuators.LedActuator;
 import br.com.anteros.iot.actuators.MagneticLockActuator;
 import br.com.anteros.iot.collectors.CameraMotionDetectorCollector;
 import br.com.anteros.iot.collectors.CameraQRCodeCollector;
+import br.com.anteros.iot.collectors.ControladorColletor;
 import br.com.anteros.iot.collectors.PresenceDetectorCollector;
 import br.com.anteros.iot.collectors.RFIDReaderCollector;
 import br.com.anteros.iot.collectors.TemperatureOneWireCollector;
@@ -28,6 +29,7 @@ public class DefaultActuators implements Actuators {
 		registerActuator(CameraQRCodeCollector.class);
 		registerActuator(TemperatureOneWireCollector.class);
 		registerActuator(CameraMotionDetectorCollector.class);
+		registerActuator(ControladorColletor.class);
 	}
 
 	public DefaultActuators registerActuator(Class<? extends Actuable> actuable) {
