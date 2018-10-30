@@ -1,11 +1,15 @@
 package br.com.anteros.iot.domain.things.parts;
 
+import com.fasterxml.jackson.annotation.JsonTypeName;
+
 import br.com.anteros.iot.Thing;
+import br.com.anteros.iot.domain.DomainConstants;
 import br.com.anteros.iot.domain.PartNode;
 import br.com.anteros.iot.protocol.modbus.type.CollectType;
 import br.com.anteros.iot.protocol.modbus.type.ModifyType;
 import br.com.anteros.iot.things.parts.MemoryPlc;
 
+@JsonTypeName(DomainConstants.MEMORY_PLC)
 public class MemoryPlcNode extends PartNode {
 
 	private int registerAddress;

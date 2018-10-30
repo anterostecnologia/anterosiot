@@ -63,7 +63,7 @@ public class Plc extends PlantItem implements Thing, Publishable {
 	@Override
 	public Thing addPart(Part part) {
 		if (!(part instanceof MemoryPlc)) {
-			throw new ThingException("Tipo de parte inválida para uso com Controlador.");
+			throw new ThingException("Tipo de parte inválida para uso com PLC.");
 		}
 		if (part instanceof PlantItem) {
 			((PlantItem) part).setItemOwner(this);

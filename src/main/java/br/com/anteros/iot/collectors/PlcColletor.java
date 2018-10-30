@@ -21,7 +21,7 @@ public class PlcColletor extends Collector implements Runnable {
 
 	protected Boolean running = false;
 	protected Thread thread;
-	
+
 	Map<String, ResultValue> valueCache = new HashMap<>();
 
 	private ModbusProtocolDeviceService protocolDevice;
@@ -56,12 +56,13 @@ public class PlcColletor extends Collector implements Runnable {
 
 	@Override
 	public void run() {
-		System.out.println("Iniciando coletor da memória");
-
 		Plc controlador = (Plc) thing;
 
-		this.setModbusProtocolDeviceService(new ModbusProtocolDevice());
-		
+		System.out
+				.println("Iniciando coletor do PLC " + controlador.getItemId() + " - " + controlador.getDescription());
+
+		this.protocolDevice = new ModbusProtocolDevice();
+
 		if (this.protocolDevice != null) {
 			try {
 				this.protocolDevice.disconnect();
@@ -71,7 +72,7 @@ public class PlcColletor extends Collector implements Runnable {
 		}
 
 		this.modbusProperties = getModbusProperties(controlador);
-		
+
 		try {
 
 			configureDevice();
@@ -83,16 +84,16 @@ public class PlcColletor extends Collector implements Runnable {
 		while (running) {
 
 			for (Part part : controlador.getMemorias()) {
-				
+
 				MemoryPlc memoria = (MemoryPlc) part;
-				
+
 				Object valorResult = doModbusLoop(memoria);
-				
+
 				ResultValue resultValue = valueCache.get(memoria.getItemId());
 				if (resultValue == null) {
 					resultValue = new ResultValue();
 				}
-				
+
 				if (resultValue.newValue == null || valorResult != resultValue.newValue) {
 					resultValue.oldValue = resultValue.newValue;
 					resultValue.newValue = valorResult;
@@ -111,8 +112,8 @@ public class PlcColletor extends Collector implements Runnable {
 		try {
 
 			if (memoria.getType() == CollectType.COIL) {
-				boolean[] readCoils = this.protocolDevice.readCoils(
-						((Plc) memoria.getOwner()).getSlaveAddress(), memoria.getRegisterAddress(), 1);
+				boolean[] readCoils = this.protocolDevice.readCoils(((Plc) memoria.getOwner()).getSlaveAddress(),
+						memoria.getRegisterAddress(), 1);
 				return readCoils[0];
 			} else {
 				int[] analogInputs = this.protocolDevice.readInputRegisters(
@@ -131,15 +132,7 @@ public class PlcColletor extends Collector implements Runnable {
 			this.protocolDevice.configureConnection(this.modbusProperties);
 		}
 	}
-
-	public void setModbusProtocolDeviceService(ModbusProtocolDeviceService modbusService) {
-		this.protocolDevice = modbusService;
-	}
-
-	public void unsetModbusProtocolDeviceService() {
-		this.protocolDevice = null;
-	}
-
+		
 	private Properties getModbusProperties(Plc controlador) {
 
 		Properties prop = new Properties();
@@ -151,10 +144,10 @@ public class PlcColletor extends Collector implements Runnable {
 		prop.setProperty("respTimeout", String.valueOf(controlador.getTimeOut()));
 		prop.setProperty("mode", "0");
 		prop.setProperty("transmissionMode", "RTU");
-		
+
 		return prop;
 	}
-	
+
 	class ResultValue {
 		protected Object oldValue;
 		protected Object newValue;

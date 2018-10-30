@@ -9,7 +9,7 @@ import br.com.anteros.iot.domain.PartNode;
 import br.com.anteros.iot.domain.ThingNode;
 import br.com.anteros.iot.things.Plc;
 
-@JsonTypeName(DomainConstants.CONTROLADOR)
+@JsonTypeName(DomainConstants.PLC)
 public class PlcNode extends ThingNode {
 
 	private String modbusProtocol;
