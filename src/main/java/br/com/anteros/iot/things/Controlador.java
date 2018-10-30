@@ -16,7 +16,7 @@ import br.com.anteros.iot.things.exception.ThingException;
 import br.com.anteros.iot.things.parts.MemoriaControlador;
 import br.com.anteros.iot.triggers.Trigger;
 
-public class Controlador extends PlantItem implements Thing {
+public class Controlador extends PlantItem implements Thing, Publishable {
 
 	protected String modbusProtocol;
 	protected String ip;
@@ -24,11 +24,11 @@ public class Controlador extends PlantItem implements Thing {
 	protected long interval;
 	protected long timeOut;
 	protected int slaveAddress;
-	
+
 	public Controlador() {
 		super();
 	}
-	
+
 	protected DeviceController deviceController;
 
 	protected Set<Trigger> triggers = new HashSet<>();
@@ -90,8 +90,16 @@ public class Controlador extends PlantItem implements Thing {
 
 	@Override
 	public Thing loadConfiguration(PlantItemNode node) {
+		ControladorNode controladorNode = (ControladorNode) node;
 		this.itemId = node.getItemName();
 		this.description = node.getDescription();
+		this.modbusProtocol = controladorNode.getModbusProtocol();
+		this.ip = controladorNode.getIp();
+		this.port = controladorNode.getPort();
+		this.interval = controladorNode.getInterval();
+		this.timeOut = controladorNode.getTimeOut();
+		this.slaveAddress = controladorNode.getSlaveAddress();
+
 		for (PlantItemNode child : node.getItems()) {
 			if (child instanceof ThingNode) {
 				Thing part = child.getInstanceOfThing();
@@ -200,6 +208,11 @@ public class Controlador extends PlantItem implements Thing {
 
 	public void setTriggers(Set<Trigger> triggers) {
 		this.triggers = triggers;
+	}
+
+	@Override
+	public String[] getTopicsToPublishValue() {
+		return new String[] { getPath() };
 	}
 
 }

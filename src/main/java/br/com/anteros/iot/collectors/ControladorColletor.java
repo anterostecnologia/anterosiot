@@ -1,5 +1,7 @@
 package br.com.anteros.iot.collectors;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
 import com.diozero.util.SleepUtil;
@@ -8,6 +10,7 @@ import br.com.anteros.core.utils.Assert;
 import br.com.anteros.iot.Collector;
 import br.com.anteros.iot.Part;
 import br.com.anteros.iot.Thing;
+import br.com.anteros.iot.protocol.modbus.ModbusProtocolDevice;
 import br.com.anteros.iot.protocol.modbus.ModbusProtocolDeviceService;
 import br.com.anteros.iot.protocol.modbus.ModbusProtocolException;
 import br.com.anteros.iot.protocol.modbus.type.CollectType;
@@ -18,8 +21,8 @@ public class ControladorColletor extends Collector implements Runnable {
 
 	protected Boolean running = false;
 	protected Thread thread;
-	protected Object oldValue;
-	protected Object newValue;
+	
+	Map<String, ResultValue> valueCache = new HashMap<>();
 
 	private ModbusProtocolDeviceService protocolDevice;
 	private Properties modbusProperties;
@@ -38,7 +41,7 @@ public class ControladorColletor extends Collector implements Runnable {
 
 	@Override
 	public void startCollect() {
-//		Assert.notNull(listener);
+		Assert.notNull(listener);
 		if (thing instanceof Controlador) {
 			this.running = true;
 			thread = new Thread(this);
@@ -57,6 +60,8 @@ public class ControladorColletor extends Collector implements Runnable {
 
 		Controlador controlador = (Controlador) thing;
 
+		this.setModbusProtocolDeviceService(new ModbusProtocolDevice());
+		
 		if (this.protocolDevice != null) {
 			try {
 				this.protocolDevice.disconnect();
@@ -66,7 +71,7 @@ public class ControladorColletor extends Collector implements Runnable {
 		}
 
 		this.modbusProperties = getModbusProperties(controlador);
-
+		
 		try {
 
 			configureDevice();
@@ -82,13 +87,19 @@ public class ControladorColletor extends Collector implements Runnable {
 				MemoriaControlador memoria = (MemoriaControlador) part;
 				
 				Object valorResult = doModbusLoop(memoria);
-
-				if (newValue == null || valorResult != newValue) {
-					oldValue = newValue;
-					newValue = valorResult;
+				
+				ResultValue resultValue = valueCache.get(memoria.getItemId());
+				if (resultValue == null) {
+					resultValue = new ResultValue();
+				}
+				
+				if (resultValue.newValue == null || valorResult != resultValue.newValue) {
+					resultValue.oldValue = resultValue.newValue;
+					resultValue.newValue = valorResult;
 
 					if (listener != null) {
-						listener.onCollect(ModbusResult.of(oldValue, newValue), thing);
+						valueCache.put(memoria.getItemId(), resultValue);
+						listener.onCollect(ModbusResult.of(resultValue.oldValue, resultValue.newValue), memoria);
 					}
 				}
 			}
@@ -138,8 +149,14 @@ public class ControladorColletor extends Collector implements Runnable {
 		prop.setProperty("ethport", String.valueOf(controlador.getPort()));
 		prop.setProperty("ipAddress", controlador.getIp());
 		prop.setProperty("respTimeout", String.valueOf(controlador.getTimeOut()));
-
+		prop.setProperty("mode", "0");
+		prop.setProperty("transmissionMode", "RTU");
+		
 		return prop;
 	}
-
+	
+	class ResultValue {
+		protected Object oldValue;
+		protected Object newValue;
+	}
 }

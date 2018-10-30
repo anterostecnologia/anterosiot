@@ -14,7 +14,8 @@ public class ModbusResult implements CollectResult {
 
 	@Override
 	public JsonObjectBuilder toJson(JsonObjectBuilder builder) {
-		builder.add("oldValue", oldValue.toString()).add("newValue", newValue.toString());
+		builder.add("oldValue", oldValue == null ? "" : oldValue.toString()).add("newValue",
+				newValue == null ? "" : newValue.toString());
 		return builder;
 	}
 
@@ -38,7 +39,7 @@ public class ModbusResult implements CollectResult {
 		this.oldValue = oldValue;
 		this.newValue = newValue;
 	}
-	
+
 	public static ModbusResult of(Object oldValue, Object newValue) {
 		return new ModbusResult(oldValue, newValue);
 	}

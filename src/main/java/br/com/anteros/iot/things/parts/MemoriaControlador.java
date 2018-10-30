@@ -14,9 +14,10 @@ import br.com.anteros.iot.parts.exception.IllegalPartException;
 import br.com.anteros.iot.plant.PlantItem;
 import br.com.anteros.iot.protocol.modbus.type.CollectType;
 import br.com.anteros.iot.protocol.modbus.type.ModifyType;
+import br.com.anteros.iot.things.Publishable;
 import br.com.anteros.iot.triggers.Trigger;
 
-public class MemoriaControlador extends PlantItem implements Part {
+public class MemoriaControlador extends PlantItem implements Part, Publishable {
 
 	protected int registerAddress;
 	protected CollectType type;
@@ -27,7 +28,8 @@ public class MemoriaControlador extends PlantItem implements Part {
 	protected Set<Trigger> triggers = new HashSet<>();
 
 	public MemoriaControlador(MemoriaControladorNode node) {
-		
+		this.itemId = node.getItemName();
+		this.description = node.getDescription();
 		this.registerAddress = node.getRegisterAddress();
 		this.type = node.getType();
 		this.value = node.getValue();
@@ -153,6 +155,11 @@ public class MemoriaControlador extends PlantItem implements Part {
 
 	public void setTriggers(Set<Trigger> triggers) {
 		this.triggers = triggers;
+	}
+
+	@Override
+	public String[] getTopicsToPublishValue() {
+		return new String[] { getPath() };
 	}
 
 }
