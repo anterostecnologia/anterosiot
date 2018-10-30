@@ -7,10 +7,10 @@ import br.com.anteros.iot.Thing;
 import br.com.anteros.iot.domain.DomainConstants;
 import br.com.anteros.iot.domain.PartNode;
 import br.com.anteros.iot.domain.ThingNode;
-import br.com.anteros.iot.things.Controlador;
+import br.com.anteros.iot.things.Plc;
 
 @JsonTypeName(DomainConstants.CONTROLADOR)
-public class ControladorNode extends ThingNode {
+public class PlcNode extends ThingNode {
 
 	private String modbusProtocol;
 	private String ip;
@@ -19,7 +19,7 @@ public class ControladorNode extends ThingNode {
 	private long timeOut;
 	private int slaveAddress;
 
-	public ControladorNode(String itemName, String description, String modbusProtocol, String ip, long port,
+	public PlcNode(String itemName, String description, String modbusProtocol, String ip, long port,
 			long interval, long timeOut, int slaveAddress) {
 		super(itemName, description);
 		this.modbusProtocol = modbusProtocol;
@@ -30,13 +30,13 @@ public class ControladorNode extends ThingNode {
 		this.slaveAddress = slaveAddress;
 	}
 
-	public ControladorNode() {
+	public PlcNode() {
 		super();
 	}
 
 	@Override
 	public Thing getInstanceOfThing() {
-		return new Controlador(this);
+		return new Plc(this);
 	}
 
 	@Override

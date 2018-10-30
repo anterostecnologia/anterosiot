@@ -10,13 +10,13 @@ import br.com.anteros.iot.Thing;
 import br.com.anteros.iot.ThingStatus;
 import br.com.anteros.iot.domain.PlantItemNode;
 import br.com.anteros.iot.domain.ThingNode;
-import br.com.anteros.iot.domain.things.ControladorNode;
+import br.com.anteros.iot.domain.things.PlcNode;
 import br.com.anteros.iot.plant.PlantItem;
 import br.com.anteros.iot.things.exception.ThingException;
-import br.com.anteros.iot.things.parts.MemoriaControlador;
+import br.com.anteros.iot.things.parts.MemoryPlc;
 import br.com.anteros.iot.triggers.Trigger;
 
-public class Controlador extends PlantItem implements Thing, Publishable {
+public class Plc extends PlantItem implements Thing, Publishable {
 
 	protected String modbusProtocol;
 	protected String ip;
@@ -25,7 +25,7 @@ public class Controlador extends PlantItem implements Thing, Publishable {
 	protected long timeOut;
 	protected int slaveAddress;
 
-	public Controlador() {
+	public Plc() {
 		super();
 	}
 
@@ -35,7 +35,7 @@ public class Controlador extends PlantItem implements Thing, Publishable {
 
 	protected Set<Part> memorias = new LinkedHashSet<Part>();
 
-	public Controlador(PlantItemNode node) {
+	public Plc(PlantItemNode node) {
 		loadConfiguration(node);
 	}
 
@@ -62,7 +62,7 @@ public class Controlador extends PlantItem implements Thing, Publishable {
 
 	@Override
 	public Thing addPart(Part part) {
-		if (!(part instanceof MemoriaControlador)) {
+		if (!(part instanceof MemoryPlc)) {
 			throw new ThingException("Tipo de parte inválida para uso com Controlador.");
 		}
 		if (part instanceof PlantItem) {
@@ -90,7 +90,7 @@ public class Controlador extends PlantItem implements Thing, Publishable {
 
 	@Override
 	public Thing loadConfiguration(PlantItemNode node) {
-		ControladorNode controladorNode = (ControladorNode) node;
+		PlcNode controladorNode = (PlcNode) node;
 		this.itemId = node.getItemName();
 		this.description = node.getDescription();
 		this.modbusProtocol = controladorNode.getModbusProtocol();
@@ -124,7 +124,7 @@ public class Controlador extends PlantItem implements Thing, Publishable {
 
 	@Override
 	protected boolean acceptThisTypeOfPlantItem(Class<?> child) {
-		return child.equals(MemoriaControlador.class);
+		return child.equals(MemoryPlc.class);
 	}
 
 	@Override

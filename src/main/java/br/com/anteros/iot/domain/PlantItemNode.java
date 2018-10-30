@@ -26,7 +26,7 @@ import br.com.anteros.iot.domain.plant.PlantNode;
 import br.com.anteros.iot.domain.things.BarrierGateNode;
 import br.com.anteros.iot.domain.things.CameraMotionDetectorNode;
 import br.com.anteros.iot.domain.things.CameraQRCodeReaderNode;
-import br.com.anteros.iot.domain.things.ControladorNode;
+import br.com.anteros.iot.domain.things.PlcNode;
 import br.com.anteros.iot.domain.things.LampOrBulbNode;
 import br.com.anteros.iot.domain.things.MagneticLockNode;
 import br.com.anteros.iot.domain.things.PresenceDetectorNode;
@@ -34,7 +34,7 @@ import br.com.anteros.iot.domain.things.RFIDReaderNode;
 import br.com.anteros.iot.domain.things.SemaphoreNode;
 import br.com.anteros.iot.domain.things.TemperatureOneWireNode;
 import br.com.anteros.iot.domain.things.parts.GreenLEDSemaphorePartNode;
-import br.com.anteros.iot.domain.things.parts.MemoriaControladorNode;
+import br.com.anteros.iot.domain.things.parts.MemoryPlcNode;
 import br.com.anteros.iot.domain.things.parts.RedLEDSemaphorePartNode;
 import br.com.anteros.iot.plant.Place;
 
@@ -54,8 +54,8 @@ import br.com.anteros.iot.plant.Place;
 		@Type(value = TemperatureOneWireNode.class, name = "temperatureOneWire"),
 		@Type(value = PresenceDetectorNode.class, name = "presenceDetector"),
 		@Type(value = SlaveRPiNode.class, name = "slaveRPi"),
-		@Type(value = ControladorNode.class, name = "controladorModBus"),
-		@Type(value = MemoriaControladorNode.class, name = "memoriaControlador"),
+		@Type(value = PlcNode.class, name = "controladorModBus"),
+		@Type(value = MemoryPlcNode.class, name = "memoriaControlador"),
 		@Type(value = MasterComputerNode.class, name = "masterComputer"),
 		@Type(value = CameraMotionDetectorNode.class, name = "cameraMotionDetector") })
 public abstract class PlantItemNode {

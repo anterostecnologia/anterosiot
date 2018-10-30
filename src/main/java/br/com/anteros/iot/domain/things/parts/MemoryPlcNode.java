@@ -4,16 +4,16 @@ import br.com.anteros.iot.Thing;
 import br.com.anteros.iot.domain.PartNode;
 import br.com.anteros.iot.protocol.modbus.type.CollectType;
 import br.com.anteros.iot.protocol.modbus.type.ModifyType;
-import br.com.anteros.iot.things.parts.MemoriaControlador;
+import br.com.anteros.iot.things.parts.MemoryPlc;
 
-public class MemoriaControladorNode extends PartNode {
+public class MemoryPlcNode extends PartNode {
 
 	private int registerAddress;
 	private CollectType type;
 	private Object value;
 	private ModifyType modifyType;
 
-	public MemoriaControladorNode(String itemName, String description, int registerAddress, CollectType type,
+	public MemoryPlcNode(String itemName, String description, int registerAddress, CollectType type,
 			ModifyType modifyType) {
 		super(itemName, description);
 		this.registerAddress = registerAddress;
@@ -23,10 +23,10 @@ public class MemoriaControladorNode extends PartNode {
 
 	@Override
 	public Thing getInstanceOfThing() {
-		return new MemoriaControlador(this);
+		return new MemoryPlc(this);
 	}
 
-	public MemoriaControladorNode() {
+	public MemoryPlcNode() {
 		super();
 	}
 

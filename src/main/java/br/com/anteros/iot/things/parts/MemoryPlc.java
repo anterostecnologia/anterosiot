@@ -9,7 +9,7 @@ import br.com.anteros.iot.Part;
 import br.com.anteros.iot.Thing;
 import br.com.anteros.iot.ThingStatus;
 import br.com.anteros.iot.domain.PlantItemNode;
-import br.com.anteros.iot.domain.things.parts.MemoriaControladorNode;
+import br.com.anteros.iot.domain.things.parts.MemoryPlcNode;
 import br.com.anteros.iot.parts.exception.IllegalPartException;
 import br.com.anteros.iot.plant.PlantItem;
 import br.com.anteros.iot.protocol.modbus.type.CollectType;
@@ -17,7 +17,7 @@ import br.com.anteros.iot.protocol.modbus.type.ModifyType;
 import br.com.anteros.iot.things.Publishable;
 import br.com.anteros.iot.triggers.Trigger;
 
-public class MemoriaControlador extends PlantItem implements Part, Publishable {
+public class MemoryPlc extends PlantItem implements Part, Publishable {
 
 	protected int registerAddress;
 	protected CollectType type;
@@ -27,7 +27,7 @@ public class MemoriaControlador extends PlantItem implements Part, Publishable {
 	protected DeviceController deviceController;
 	protected Set<Trigger> triggers = new HashSet<>();
 
-	public MemoriaControlador(MemoriaControladorNode node) {
+	public MemoryPlc(MemoryPlcNode node) {
 		this.itemId = node.getItemName();
 		this.description = node.getDescription();
 		this.registerAddress = node.getRegisterAddress();

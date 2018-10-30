@@ -14,10 +14,10 @@ import br.com.anteros.iot.protocol.modbus.ModbusProtocolDevice;
 import br.com.anteros.iot.protocol.modbus.ModbusProtocolDeviceService;
 import br.com.anteros.iot.protocol.modbus.ModbusProtocolException;
 import br.com.anteros.iot.protocol.modbus.type.CollectType;
-import br.com.anteros.iot.things.Controlador;
-import br.com.anteros.iot.things.parts.MemoriaControlador;
+import br.com.anteros.iot.things.Plc;
+import br.com.anteros.iot.things.parts.MemoryPlc;
 
-public class ControladorColletor extends Collector implements Runnable {
+public class PlcColletor extends Collector implements Runnable {
 
 	protected Boolean running = false;
 	protected Thread thread;
@@ -27,22 +27,22 @@ public class ControladorColletor extends Collector implements Runnable {
 	private ModbusProtocolDeviceService protocolDevice;
 	private Properties modbusProperties;
 
-	public ControladorColletor(CollectorListener listener, Thing thing) {
+	public PlcColletor(CollectorListener listener, Thing thing) {
 		super(listener, thing);
 	}
 
-	public ControladorColletor() {
+	public PlcColletor() {
 	}
 
 	@Override
 	public boolean isSupportedThing(Thing thing) {
-		return thing instanceof Controlador;
+		return thing instanceof Plc;
 	}
 
 	@Override
 	public void startCollect() {
 		Assert.notNull(listener);
-		if (thing instanceof Controlador) {
+		if (thing instanceof Plc) {
 			this.running = true;
 			thread = new Thread(this);
 			thread.start();
@@ -58,7 +58,7 @@ public class ControladorColletor extends Collector implements Runnable {
 	public void run() {
 		System.out.println("Iniciando coletor da memória");
 
-		Controlador controlador = (Controlador) thing;
+		Plc controlador = (Plc) thing;
 
 		this.setModbusProtocolDeviceService(new ModbusProtocolDevice());
 		
@@ -84,7 +84,7 @@ public class ControladorColletor extends Collector implements Runnable {
 
 			for (Part part : controlador.getMemorias()) {
 				
-				MemoriaControlador memoria = (MemoriaControlador) part;
+				MemoryPlc memoria = (MemoryPlc) part;
 				
 				Object valorResult = doModbusLoop(memoria);
 				
@@ -107,16 +107,16 @@ public class ControladorColletor extends Collector implements Runnable {
 		SleepUtil.sleepMillis(500);
 	}
 
-	private Object doModbusLoop(MemoriaControlador memoria) {
+	private Object doModbusLoop(MemoryPlc memoria) {
 		try {
 
 			if (memoria.getType() == CollectType.COIL) {
 				boolean[] readCoils = this.protocolDevice.readCoils(
-						((Controlador) memoria.getOwner()).getSlaveAddress(), memoria.getRegisterAddress(), 1);
+						((Plc) memoria.getOwner()).getSlaveAddress(), memoria.getRegisterAddress(), 1);
 				return readCoils[0];
 			} else {
 				int[] analogInputs = this.protocolDevice.readInputRegisters(
-						((Controlador) memoria.getOwner()).getSlaveAddress(), memoria.getRegisterAddress(), 1);
+						((Plc) memoria.getOwner()).getSlaveAddress(), memoria.getRegisterAddress(), 1);
 				return analogInputs[0];
 			}
 		} catch (ModbusProtocolException e) {
@@ -140,7 +140,7 @@ public class ControladorColletor extends Collector implements Runnable {
 		this.protocolDevice = null;
 	}
 
-	private Properties getModbusProperties(Controlador controlador) {
+	private Properties getModbusProperties(Plc controlador) {
 
 		Properties prop = new Properties();
 
