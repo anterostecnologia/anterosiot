@@ -16,7 +16,7 @@ import br.com.anteros.iot.things.exception.ThingException;
 import br.com.anteros.iot.things.parts.MemoryPlc;
 import br.com.anteros.iot.triggers.Trigger;
 
-public class Plc extends PlantItem implements Thing, Publishable {
+public class Plc extends PlantItem implements Thing {
 
 	protected String modbusProtocol;
 	protected String ip;
@@ -24,17 +24,14 @@ public class Plc extends PlantItem implements Thing, Publishable {
 	protected long interval;
 	protected long timeOut;
 	protected int slaveAddress;
-
+	protected DeviceController deviceController;
+	protected Set<Trigger> triggers = new HashSet<>();
+	protected Set<Part> memories = new LinkedHashSet<Part>();
+	
 	public Plc() {
 		super();
 	}
-
-	protected DeviceController deviceController;
-
-	protected Set<Trigger> triggers = new HashSet<>();
-
-	protected Set<Part> memorias = new LinkedHashSet<Part>();
-
+	
 	public Plc(PlantItemNode node) {
 		loadConfiguration(node);
 	}
@@ -52,12 +49,12 @@ public class Plc extends PlantItem implements Thing, Publishable {
 
 	@Override
 	public Set<Part> getParts() {
-		return memorias;
+		return memories;
 	}
 
 	@Override
 	public boolean hasParts() {
-		return !memorias.isEmpty();
+		return !memories.isEmpty();
 	}
 
 	@Override
@@ -68,19 +65,19 @@ public class Plc extends PlantItem implements Thing, Publishable {
 		if (part instanceof PlantItem) {
 			((PlantItem) part).setItemOwner(this);
 		}
-		memorias.add(part);
+		memories.add(part);
 		return this;
 	}
 
 	@Override
 	public Thing removePart(Part part) {
-		memorias.remove(part);
+		memories.remove(part);
 		return this;
 	}
 
 	@Override
 	public Part getPartById(String part) {
-		for (Part p : memorias) {
+		for (Part p : memories) {
 			if (p.getThingID().equals(part)) {
 				return p;
 			}
@@ -198,21 +195,21 @@ public class Plc extends PlantItem implements Thing, Publishable {
 		this.slaveAddress = slaveAddress;
 	}
 
-	public Set<Part> getMemorias() {
-		return memorias;
-	}
-
-	public void setMemorias(Set<Part> memorias) {
-		this.memorias = memorias;
-	}
-
 	public void setTriggers(Set<Trigger> triggers) {
 		this.triggers = triggers;
 	}
 
-	@Override
-	public String[] getTopicsToPublishValue() {
-		return new String[] { getPath() };
+//	@Override
+//	public String[] getTopicsToPublishValue() {
+//		return new String[] { getPath() };
+//	}
+
+	public Set<Part> getMemories() {
+		return memories;
+	}
+
+	public void setMemories(Set<Part> memories) {
+		this.memories = memories;
 	}
 
 }

@@ -3,7 +3,6 @@ package br.com.anteros.iot.protocol;
 public class IOTMessage {
 	
 	private String action;
-	private String part;
 	private String value;
 	
 	public IOTMessage() {
@@ -27,13 +26,10 @@ public class IOTMessage {
 		this.value = value;
 	}
 
-	public String getPart() {
-		return part;
+	@Override
+	public String toString() {
+		return "IOTMessage [action=" + action + ", value=" + value + "]";
 	}
-
-	public void setPart(String part) {
-		this.part = part;
-	}
-
-
+	
+	
 }

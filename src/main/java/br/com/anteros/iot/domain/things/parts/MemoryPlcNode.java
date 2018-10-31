@@ -13,7 +13,7 @@ import br.com.anteros.iot.things.parts.MemoryPlc;
 public class MemoryPlcNode extends PartNode {
 
 	private int registerAddress;
-	private CollectType type;
+	private CollectType collectType;
 	private Object value;
 	private ModifyType modifyType;
 
@@ -21,7 +21,7 @@ public class MemoryPlcNode extends PartNode {
 			ModifyType modifyType) {
 		super(itemName, description);
 		this.registerAddress = registerAddress;
-		this.type = type;
+		this.collectType = type;
 		this.modifyType = modifyType;
 	}
 
@@ -32,14 +32,6 @@ public class MemoryPlcNode extends PartNode {
 
 	public MemoryPlcNode() {
 		super();
-	}
-
-	public CollectType getType() {
-		return type;
-	}
-
-	public void setType(CollectType type) {
-		this.type = type;
 	}
 
 	public Object getValue() {
@@ -64,6 +56,14 @@ public class MemoryPlcNode extends PartNode {
 
 	public void setRegisterAddress(int registerAddress) {
 		this.registerAddress = registerAddress;
+	}
+
+	public CollectType getCollectType() {
+		return collectType;
+	}
+
+	public void setCollectType(CollectType collectType) {
+		this.collectType = collectType;
 	}
 
 }

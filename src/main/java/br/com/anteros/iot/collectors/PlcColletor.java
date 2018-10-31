@@ -7,6 +7,7 @@ import java.util.Properties;
 import com.diozero.util.SleepUtil;
 
 import br.com.anteros.core.utils.Assert;
+import br.com.anteros.core.utils.ObjectUtils;
 import br.com.anteros.iot.Collector;
 import br.com.anteros.iot.Part;
 import br.com.anteros.iot.Thing;
@@ -56,10 +57,9 @@ public class PlcColletor extends Collector implements Runnable {
 
 	@Override
 	public void run() {
-		Plc controlador = (Plc) thing;
+		Plc plc = (Plc) thing;
 
-		System.out
-				.println("Iniciando coletor do PLC " + controlador.getItemId() + " - " + controlador.getDescription());
+		System.out.println("Iniciando coletor do PLC " + plc.getItemId() + " - " + plc.getDescription());
 
 		this.protocolDevice = new ModbusProtocolDevice();
 
@@ -71,7 +71,7 @@ public class PlcColletor extends Collector implements Runnable {
 			}
 		}
 
-		this.modbusProperties = getModbusProperties(controlador);
+		this.modbusProperties = getModbusProperties(plc);
 
 		try {
 
@@ -83,24 +83,27 @@ public class PlcColletor extends Collector implements Runnable {
 
 		while (running) {
 
-			for (Part part : controlador.getMemorias()) {
+			for (Part part : plc.getMemories()) {
 
-				MemoryPlc memoria = (MemoryPlc) part;
+				MemoryPlc memory = (MemoryPlc) part;
 
-				Object valorResult = doModbusLoop(memoria);
+				Object valorResult = doModbusLoop(memory);
 
-				ResultValue resultValue = valueCache.get(memoria.getItemId());
-				if (resultValue == null) {
-					resultValue = new ResultValue();
-				}
+				if (!ObjectUtils.isEmpty(valorResult)) {
 
-				if (resultValue.newValue == null || valorResult != resultValue.newValue) {
-					resultValue.oldValue = resultValue.newValue;
-					resultValue.newValue = valorResult;
+					ResultValue resultValue = valueCache.get(memory.getItemId());
+					if (resultValue == null) {
+						resultValue = new ResultValue();
+					}
 
-					if (listener != null) {
-						valueCache.put(memoria.getItemId(), resultValue);
-						listener.onCollect(ModbusResult.of(resultValue.oldValue, resultValue.newValue), memoria);
+					if (resultValue.newValue == null || valorResult != resultValue.newValue) {
+						resultValue.oldValue = resultValue.newValue;
+						resultValue.newValue = valorResult;
+
+						if (listener != null) {
+							valueCache.put(memory.getItemId(), resultValue);
+							listener.onCollect(ModbusResult.of(resultValue.oldValue, resultValue.newValue), memory);
+						}
 					}
 				}
 			}
@@ -108,16 +111,16 @@ public class PlcColletor extends Collector implements Runnable {
 		SleepUtil.sleepMillis(500);
 	}
 
-	private Object doModbusLoop(MemoryPlc memoria) {
+	private Object doModbusLoop(MemoryPlc memory) {
 		try {
 
-			if (memoria.getType() == CollectType.COIL) {
-				boolean[] readCoils = this.protocolDevice.readCoils(((Plc) memoria.getOwner()).getSlaveAddress(),
-						memoria.getRegisterAddress(), 1);
+			if (memory.getCollectType().equals(CollectType.COIL)) {
+				boolean[] readCoils = this.protocolDevice.readCoils(((Plc) memory.getOwner()).getSlaveAddress(),
+						memory.getRegisterAddress(), 1);
 				return readCoils[0];
 			} else {
-				int[] analogInputs = this.protocolDevice.readInputRegisters(
-						((Plc) memoria.getOwner()).getSlaveAddress(), memoria.getRegisterAddress(), 1);
+				int[] analogInputs = this.protocolDevice.readInputRegisters(((Plc) memory.getOwner()).getSlaveAddress(),
+						memory.getRegisterAddress(), 1);
 				return analogInputs[0];
 			}
 		} catch (ModbusProtocolException e) {
@@ -132,16 +135,16 @@ public class PlcColletor extends Collector implements Runnable {
 			this.protocolDevice.configureConnection(this.modbusProperties);
 		}
 	}
-		
-	private Properties getModbusProperties(Plc controlador) {
+
+	private Properties getModbusProperties(Plc plc) {
 
 		Properties prop = new Properties();
 
-		prop.setProperty("connectionType", controlador.getModbusProtocol());
-		prop.setProperty("slaveAddr", String.valueOf(controlador.getSlaveAddress()));
-		prop.setProperty("ethport", String.valueOf(controlador.getPort()));
-		prop.setProperty("ipAddress", controlador.getIp());
-		prop.setProperty("respTimeout", String.valueOf(controlador.getTimeOut()));
+		prop.setProperty("connectionType", plc.getModbusProtocol());
+		prop.setProperty("slaveAddr", String.valueOf(plc.getSlaveAddress()));
+		prop.setProperty("ethport", String.valueOf(plc.getPort()));
+		prop.setProperty("ipAddress", plc.getIp());
+		prop.setProperty("respTimeout", String.valueOf(plc.getTimeOut()));
 		prop.setProperty("mode", "0");
 		prop.setProperty("transmissionMode", "RTU");
 

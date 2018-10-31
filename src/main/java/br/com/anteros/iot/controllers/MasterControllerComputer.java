@@ -123,27 +123,6 @@ public class MasterControllerComputer extends AbstractDeviceController implement
 		cause.printStackTrace();
 	}
 
-	public void messageArrived(String topic, MqttMessage message) throws Exception {
-		try {
-			System.out.println("=> Mensagem recebida: \"" + message.toString() + "\" no tópico \"" + topic.toString()
-					+ "\" para instancia \"" + getThingID() + "\"");
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
-		if (!paused) {
-			byte[] payload = message.getPayload();
-			IOTMessage iotMessage = mapper.readValue(payload, IOTMessage.class);
-			Thing thing = this.getThingByTopic(topic);
-			if (thing != null) {
-				Part part = thing.getPartById(iotMessage.getPart());
-				this.dispatchAction(Action.of(thing, part, iotMessage.getAction(), null, null), null);
-			}
-		}
-	}
-
-	
-
 	public void deliveryComplete(IMqttDeliveryToken token) {
 		try {
 			System.out.println(

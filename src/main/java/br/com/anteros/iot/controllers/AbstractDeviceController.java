@@ -26,6 +26,7 @@ import br.com.anteros.iot.DefaultActuators;
 import br.com.anteros.iot.Device;
 import br.com.anteros.iot.DeviceController;
 import br.com.anteros.iot.DeviceStatus;
+import br.com.anteros.iot.Part;
 import br.com.anteros.iot.Thing;
 import br.com.anteros.iot.app.listeners.AnterosIOTServiceListener;
 import br.com.anteros.iot.collectors.CollectorManager;
@@ -34,6 +35,7 @@ import br.com.anteros.iot.domain.DeviceNode;
 import br.com.anteros.iot.plant.Place;
 import br.com.anteros.iot.plant.Plant;
 import br.com.anteros.iot.plant.PlantItem;
+import br.com.anteros.iot.protocol.IOTMessage;
 import br.com.anteros.iot.support.MqttHelper;
 import br.com.anteros.iot.things.Publishable;
 import br.com.anteros.iot.things.devices.IpAddress;
@@ -231,7 +233,34 @@ public abstract class AbstractDeviceController implements DeviceController, Mqtt
 
 	public abstract void connectionLost(Throwable cause);
 
-	public abstract void messageArrived(String topic, MqttMessage message) throws Exception;
+	public void messageArrived(String topic, MqttMessage message) throws Exception {
+		IOTMessage iotMessage = null;
+
+		try {
+			byte[] payload = message.getPayload();
+			iotMessage = mapper.readValue(payload, IOTMessage.class);
+		} catch (Exception e) {
+			// System.out.println("Erro ao desserializar json: " + e.getMessage());
+		}
+
+		Thing thing = this.getThingByTopic(topic);
+
+		if (iotMessage != null && thing != null) {
+			System.out.println("=> Mensagem recebida: \"" + message.toString() + "\" no tópico \"" + topic.toString()
+					+ "\" para instancia \"" + getThingID() + "\"");
+
+			System.out.println(iotMessage);
+			System.out.println(thing);
+
+			Part part = null;
+			if (thing instanceof Part) {
+				part = (Part) thing;
+				thing = part.getOwner();
+			}
+			this.dispatchAction(Action.of(thing, part, iotMessage.getAction(), null, null), null);
+		}
+
+	}
 
 	public abstract void deliveryComplete(IMqttDeliveryToken token);
 
@@ -253,13 +282,12 @@ public abstract class AbstractDeviceController implements DeviceController, Mqtt
 
 	public void dispatchAction(Action action, String value) {
 		if (action.getThing() != null) {
-			Actuator<?> actuator = actuators.discoverActuatorToThing(action.getThing());
+			Actuator<?> actuator = actuators
+					.discoverActuatorToThing(action.getPart() != null ? action.getPart() : action.getThing());
 			if (actuator != null) {
-				if (action.getPart() != null) {
-					actuator.executeAction(action.getAction(), action.getPart());
-				} else {
-					actuator.executeAction(action.getAction(), action.getThing());
-				}
+				actuator.executeAction(action.getAction(),
+						action.getPart() != null ? action.getPart() : action.getThing());
+
 			}
 		}
 
@@ -288,10 +316,18 @@ public abstract class AbstractDeviceController implements DeviceController, Mqtt
 		List<String> filter = new ArrayList<>();
 
 		for (Thing thing : things) {
-			if (thing instanceof PlantItem && !(thing instanceof Publishable)) {
+			if (thing instanceof PlantItem) {
 				String topic = ((PlantItem) thing).getPath();
 				filter.add(topic);
 				subscribedTopics.put(topic, thing);
+				if (thing.getParts() != null) {
+					for (Part part : thing.getParts()) {
+						String topicPart = ((PlantItem) part).getPath();
+						filter.add(topicPart);
+						subscribedTopics.put(topicPart, part);
+
+					}
+				}
 			}
 		}
 

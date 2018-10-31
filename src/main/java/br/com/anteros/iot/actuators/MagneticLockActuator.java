@@ -11,7 +11,6 @@ import br.com.anteros.iot.Actuator;
 import br.com.anteros.iot.Thing;
 import br.com.anteros.iot.support.Pi4JHelper;
 import br.com.anteros.iot.things.MagneticLock;
-import br.com.anteros.iot.triggers.TriggerType;
 
 public class MagneticLockActuator implements Actuator<Boolean> {
 
@@ -52,14 +51,4 @@ public class MagneticLockActuator implements Actuator<Boolean> {
 	public String toString() {
 		return "MagneticLockActuator [pins=" + pins + "]";
 	}
-
-	@Override
-	public void fireTriggers(TriggerType type, String action, Thing thing) {
-		// TODO Auto-generated method stub
-		
-	}
-	
-	
-	
-
 }

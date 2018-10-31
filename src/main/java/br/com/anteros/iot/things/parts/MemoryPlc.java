@@ -20,10 +20,9 @@ import br.com.anteros.iot.triggers.Trigger;
 public class MemoryPlc extends PlantItem implements Part, Publishable {
 
 	protected int registerAddress;
-	protected CollectType type;
+	protected CollectType collectType;
 	protected Object value;
 	protected ModifyType modifyType;
-	
 	protected DeviceController deviceController;
 	protected Set<Trigger> triggers = new HashSet<>();
 
@@ -31,7 +30,7 @@ public class MemoryPlc extends PlantItem implements Part, Publishable {
 		this.itemId = node.getItemName();
 		this.description = node.getDescription();
 		this.registerAddress = node.getRegisterAddress();
-		this.type = node.getType();
+		this.collectType = node.getCollectType();
 		this.value = node.getValue();
 		this.modifyType = node.getModifyType();
 	}
@@ -129,14 +128,6 @@ public class MemoryPlc extends PlantItem implements Part, Publishable {
 		this.registerAddress = registerAddress;
 	}
 
-	public CollectType getType() {
-		return type;
-	}
-
-	public void setType(CollectType type) {
-		this.type = type;
-	}
-
 	public Object getValue() {
 		return value;
 	}
@@ -160,6 +151,14 @@ public class MemoryPlc extends PlantItem implements Part, Publishable {
 	@Override
 	public String[] getTopicsToPublishValue() {
 		return new String[] { getPath() };
+	}
+
+	public CollectType getCollectType() {
+		return collectType;
+	}
+
+	public void setCollectType(CollectType collectType) {
+		this.collectType = collectType;
 	}
 
 }

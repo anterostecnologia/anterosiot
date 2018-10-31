@@ -10,6 +10,7 @@ import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 
 import br.com.anteros.core.utils.Assert;
+import br.com.anteros.iot.Action;
 import br.com.anteros.iot.Actuator;
 import br.com.anteros.iot.Actuators;
 import br.com.anteros.iot.Device;
@@ -31,21 +32,23 @@ public class SlaveControllerRPi extends AbstractDeviceController implements Slav
 	protected MasterDeviceController master;
 
 	public SlaveControllerRPi(Device device, Actuators actuators) {
-		super(device,actuators);
+		super(device, actuators);
 	}
 
-	public SlaveControllerRPi(MqttClient clientMqtt, DeviceNode node, MasterDeviceController master, Plant plant, Actuators actuators, AnterosIOTServiceListener serviceListener) {
+	public SlaveControllerRPi(MqttClient clientMqtt, DeviceNode node, MasterDeviceController master, Plant plant,
+			Actuators actuators, AnterosIOTServiceListener serviceListener) {
 		super(clientMqtt, node, actuators, serviceListener);
 		this.master = master;
 		loadConfiguration(node, plant);
 	}
 
-	public SlaveControllerRPi(MasterDeviceController master, Device device,Actuators actuators) {
-		super(device,actuators);
+	public SlaveControllerRPi(MasterDeviceController master, Device device, Actuators actuators) {
+		super(device, actuators);
 		this.master = master;
 	}
 
-	public SlaveControllerRPi(MqttClient clientMqtt, MasterDeviceController master, Device device, Actuators actuators) {
+	public SlaveControllerRPi(MqttClient clientMqtt, MasterDeviceController master, Device device,
+			Actuators actuators) {
 		super(clientMqtt, device, actuators);
 		this.master = master;
 	}
@@ -63,33 +66,6 @@ public class SlaveControllerRPi extends AbstractDeviceController implements Slav
 				+ "\" Reason code " + ((MqttException) cause).getReasonCode() + "\" Cause \""
 				+ ((MqttException) cause).getCause() + "\"");
 		cause.printStackTrace();
-	}
-
-	public void messageArrived(String topic, MqttMessage message) throws Exception {
-		try {
-			System.out.println("=> Mensagem recebida: \"" + message.toString() + "\" no tópico \"" + topic.toString()
-					+ "\" para instancia \"" + getThingID() + "\"");
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
-		byte[] payload = message.getPayload();
-		IOTMessage iotMessage = mapper.readValue(payload, IOTMessage.class);
-		System.out.println(iotMessage);
-		Thing thing = this.getThingByTopic(topic);
-		System.out.println(thing);
-		if (thing != null) {
-			Actuator<?> actuator = actuators.discoverActuatorToThing(thing);
-			System.out.println(actuator);
-			if (actuator != null) {
-//				Part part = thing.getPartById(iotMessage.getPart());
-//				if (part != null) {
-//					actuator.executeAction(iotMessage.getAction(), (part != null ? part : thing));
-//				} else {
-					actuator.executeAction(iotMessage.getAction(), thing);
-				//}
-			}
-		}
 	}
 
 	public void deliveryComplete(IMqttDeliveryToken token) {
@@ -116,7 +92,7 @@ public class SlaveControllerRPi extends AbstractDeviceController implements Slav
 			this.device = device;
 			return this;
 		}
-		
+
 		public Builder actuators(Actuators actuators) {
 			this.actuators = actuators;
 			return this;
