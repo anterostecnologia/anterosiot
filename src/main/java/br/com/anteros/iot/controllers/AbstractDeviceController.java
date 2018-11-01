@@ -22,7 +22,6 @@ import br.com.anteros.core.utils.StringUtils;
 import br.com.anteros.iot.Action;
 import br.com.anteros.iot.Actuator;
 import br.com.anteros.iot.Actuators;
-import br.com.anteros.iot.DefaultActuators;
 import br.com.anteros.iot.Device;
 import br.com.anteros.iot.DeviceController;
 import br.com.anteros.iot.DeviceStatus;
@@ -37,7 +36,6 @@ import br.com.anteros.iot.plant.Plant;
 import br.com.anteros.iot.plant.PlantItem;
 import br.com.anteros.iot.protocol.IOTMessage;
 import br.com.anteros.iot.support.MqttHelper;
-import br.com.anteros.iot.things.Publishable;
 import br.com.anteros.iot.things.devices.IpAddress;
 
 public abstract class AbstractDeviceController implements DeviceController, MqttCallback, Runnable {
@@ -198,7 +196,7 @@ public abstract class AbstractDeviceController implements DeviceController, Mqtt
 		}
 
 		CollectorManager collectorManager = SimpleCollectorManager.of(clientCollector, things.toArray(new Thing[] {}),
-				new DefaultActuators());
+				actuators);
 		collectorManager.start();
 
 		boolean first = true;
@@ -240,7 +238,7 @@ public abstract class AbstractDeviceController implements DeviceController, Mqtt
 			byte[] payload = message.getPayload();
 			iotMessage = mapper.readValue(payload, IOTMessage.class);
 		} catch (Exception e) {
-			// System.out.println("Erro ao desserializar json: " + e.getMessage());
+			e.printStackTrace();
 		}
 
 		Thing thing = this.getThingByTopic(topic);

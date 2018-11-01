@@ -3,6 +3,9 @@ package br.com.anteros.iot.app;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.MqttCallback;
@@ -11,11 +14,15 @@ import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 
 import com.diozero.util.SleepUtil;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 
 import br.com.anteros.core.utils.Assert;
 import br.com.anteros.core.utils.StringUtils;
+import br.com.anteros.iot.Actuable;
 import br.com.anteros.iot.app.listeners.AnterosIOTServiceListener;
 import br.com.anteros.iot.controllers.AbstractDeviceController;
 import br.com.anteros.iot.support.MqttHelper;
@@ -32,9 +39,11 @@ public class AnterosIOTService implements Runnable, MqttCallback {
 	private MqttClient client;
 	private AnterosIOTServiceListener serviceListener;
 	private InputStream streamConfig;
+	private Set<Class<? extends Actuable>> actuators = new HashSet<>();
 
 	public AnterosIOTService(String deviceName, String hostMqtt, String port, String username, String password,
-			File config, InputStream streamConfig, AnterosIOTServiceListener serviceListener) {
+			File config, InputStream streamConfig, AnterosIOTServiceListener serviceListener,
+			Class<? extends Actuable>[] actuators) {
 		this.deviceName = deviceName;
 		this.fileConfig = config;
 		this.hostMqtt = hostMqtt;
@@ -43,6 +52,8 @@ public class AnterosIOTService implements Runnable, MqttCallback {
 		this.password = password;
 		this.serviceListener = serviceListener;
 		this.streamConfig = streamConfig;
+		if (actuators != null)
+			this.actuators.addAll(Arrays.asList(actuators));
 	}
 
 	/**
@@ -68,7 +79,8 @@ public class AnterosIOTService implements Runnable, MqttCallback {
 			configFile = new File(config);
 		}
 
-		new Thread(new AnterosIOTService(deviceName, hostMqtt, port, username, password, configFile,null, null)).start();
+		new Thread(new AnterosIOTService(deviceName, hostMqtt, port, username, password, configFile, null, null, null))
+				.start();
 	}
 
 	public static String getArgumentByName(String[] args, String name) {
@@ -106,8 +118,15 @@ public class AnterosIOTService implements Runnable, MqttCallback {
 
 		if (fileConfig != null || streamConfig != null) {
 			try {
-				deviceController = AnterosIOTConfiguration.newConfiguration().deviceName(deviceName).hostMqtt(hostMqtt).port(port)
-						.username(username).password(password).serviceListener(serviceListener).configure(streamConfig).configure(fileConfig).buildDevice();
+				ObjectMapper mapper = new ObjectMapper();
+				mapper.setSerializationInclusion(Include.NON_NULL);
+				mapper.enable(SerializationFeature.INDENT_OUTPUT);
+				if (serviceListener != null) {
+					serviceListener.onAddSubTypeNames(mapper);
+				}
+				deviceController = AnterosIOTConfiguration.newConfiguration().objectMapper(mapper).registerActuators(actuators)
+						.deviceName(deviceName).hostMqtt(hostMqtt).port(port).username(username).password(password)
+						.serviceListener(serviceListener).configure(streamConfig).configure(fileConfig).buildDevice();
 			} catch (JsonParseException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -123,7 +142,7 @@ public class AnterosIOTService implements Runnable, MqttCallback {
 		if (deviceController != null) {
 			deviceController.start();
 		}
-		
+
 		while (true) {
 			SleepUtil.sleepMillis(2000);
 		}

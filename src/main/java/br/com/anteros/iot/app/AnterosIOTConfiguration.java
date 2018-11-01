@@ -19,6 +19,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
 import br.com.anteros.iot.Action;
+import br.com.anteros.iot.Actuable;
 import br.com.anteros.iot.DefaultActuators;
 import br.com.anteros.iot.MasterDeviceController;
 import br.com.anteros.iot.Part;
@@ -46,7 +47,7 @@ public class AnterosIOTConfiguration {
 
 	private PlantItemNode node;
 	private File fileConfig;
-	private ObjectMapper mapper = new ObjectMapper();
+	private ObjectMapper mapper;
 	private String deviceName;
 	private MqttClient clientMqtt;
 	private String hostMqtt;
@@ -56,10 +57,10 @@ public class AnterosIOTConfiguration {
 	private Plant currentPlant;
 	private InputStream streamConfig;
 	private AnterosIOTServiceListener serviceListener;
+	private Set<Class<? extends Actuable>> actuators = new HashSet<>();
 
 	private AnterosIOTConfiguration() {
-		mapper.setSerializationInclusion(Include.NON_NULL);
-		mapper.enable(SerializationFeature.INDENT_OUTPUT);
+
 	}
 
 	public static AnterosIOTConfiguration newConfiguration() {
@@ -68,6 +69,16 @@ public class AnterosIOTConfiguration {
 
 	public AnterosIOTConfiguration addItemNode(PlantItemNode node) {
 		this.node = node;
+		return this;
+	}
+
+	public AnterosIOTConfiguration objectMapper(ObjectMapper mapper) {
+		this.mapper = mapper;
+		return this;
+	}
+
+	public AnterosIOTConfiguration registerActuator(Class<? extends Actuable> actuable) {
+		actuators.add(actuable);
 		return this;
 	}
 
@@ -127,8 +138,11 @@ public class AnterosIOTConfiguration {
 				e1.printStackTrace();
 			}
 
+			DefaultActuators defaultActuators = new DefaultActuators();
+			defaultActuators.registerActuators(actuators);
+
 			deviceResult = ((DeviceNode) deviceNode).getInstanceOfDeviceController(clientMqtt, currentPlant,
-					new DefaultActuators(), serviceListener);
+					defaultActuators, serviceListener);
 
 			if (deviceResult instanceof MasterDeviceController) {
 				List<PlantItemNode> slaves = new ArrayList<>();
@@ -214,25 +228,28 @@ public class AnterosIOTConfiguration {
 										.getPartById(targetActionNode.getPart().getItemName());
 							}
 
-							targetActions.add(Action.of(targetActionThing, targetActionPart,
-									targetActionNode.getAction(), targetActionNode.getMessage(),
-									targetActionNode.getTopics()));
+							targetActions
+									.add(Action.of(targetActionThing, targetActionPart, targetActionNode.getAction(),
+											targetActionNode.getMessage(), targetActionNode.getTopics()));
 
 						}
 
 						// Ação de exceção
-						Thing exceptionActionThing = deviceResult
-								.getThingById(triggerNode.getExceptionAction().getThing().getItemName());
-						Part exceptionActionPart = null;
-						if (triggerNode.getExceptionAction().getPart() != null) {
-							exceptionActionPart = exceptionActionThing
-									.getPartById(triggerNode.getExceptionAction().getPart().getItemName());
-						}
+						Action exceptionAction = null;
+						if (triggerNode.getExceptionAction() != null) {
+							Thing exceptionActionThing = deviceResult
+									.getThingById(triggerNode.getExceptionAction().getThing().getItemName());
+							Part exceptionActionPart = null;
+							if (triggerNode.getExceptionAction().getPart() != null) {
+								exceptionActionPart = exceptionActionThing
+										.getPartById(triggerNode.getExceptionAction().getPart().getItemName());
+							}
 
-						Action exceptionAction = Action.of(exceptionActionThing, exceptionActionPart,
-								triggerNode.getExceptionAction().getAction(),
-								triggerNode.getExceptionAction().getMessage(),
-								triggerNode.getExceptionAction().getTopics());
+							exceptionAction = Action.of(exceptionActionThing, exceptionActionPart,
+									triggerNode.getExceptionAction().getAction(),
+									triggerNode.getExceptionAction().getMessage(),
+									triggerNode.getExceptionAction().getTopics());
+						}
 
 						sourceThing.addTrigger(Trigger.of(triggerNode.getName(), triggerNode.getType(), sourceAction,
 								targetActions.toArray(new Action[] {}), exceptionAction));
@@ -283,6 +300,11 @@ public class AnterosIOTConfiguration {
 
 	public AnterosIOTConfiguration serviceListener(AnterosIOTServiceListener serviceListener) {
 		this.serviceListener = serviceListener;
+		return this;
+	}
+
+	public AnterosIOTConfiguration registerActuators(Set<Class<? extends Actuable>> actuators) {
+		this.actuators.addAll(actuators);
 		return this;
 	}
 

@@ -57,8 +57,7 @@ public class Trigger {
 
 	protected void internalDispatchMessage(CollectResult value, Action action) {
 		String topic = ((PlantItem) action.getThing()).getPath();
-		JsonObjectBuilder builder = Json.createObjectBuilder().add("action", action.getAction())
-				.add("part", action.getPart() != null ? action.getPart().getThingID() : "");
+		JsonObjectBuilder builder = Json.createObjectBuilder().add("action", action.getAction());
 		if (value != null) {
 			value.toJson(builder);
 		}

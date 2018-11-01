@@ -4,7 +4,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import javax.json.Json;
-import javax.json.JsonObjectBuilder;
 
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.MqttClient;
@@ -14,8 +13,8 @@ import org.eclipse.paho.client.mqttv3.MqttPersistenceException;
 
 import br.com.anteros.iot.Actuators;
 import br.com.anteros.iot.Collector;
-import br.com.anteros.iot.Sensor;
 import br.com.anteros.iot.Thing;
+import br.com.anteros.iot.support.MqttHelper;
 import br.com.anteros.iot.things.Publishable;
 
 public class SimpleCollectorManager implements CollectorManager, CollectorListener {
@@ -89,6 +88,18 @@ public class SimpleCollectorManager implements CollectorManager, CollectorListen
 			Collector collector = actuators.discoverCollectorToThing(thing);
 			if (collector != null) {
 				collector.setListener(this);
+				
+				if (collector instanceof MqttCollector) {
+					MqttClient clientCollector = null;
+					try {
+						clientCollector = MqttHelper.createAndConnectMqttClient(mqttClient.getServerURI(),
+								thing.getThingID() + "_collector", "", "", true, true);
+					} catch (MqttException e1) {
+						e1.printStackTrace();
+					}
+					
+					((MqttCollector) collector).setMqttClient(clientCollector);
+				}
 				collector.startCollect();
 				collectorsRunning.add(collector);
 			}

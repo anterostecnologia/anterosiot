@@ -46,12 +46,31 @@ public interface Thing {
 		}
 		return false;
 	}
+	
+	default public boolean hasTriggers(TriggerType type) {
+		for (Trigger trigger : getTriggers()) {
+			if (trigger.getType().equals(type)) {
+				return true;
+			}
+		}
+		return false;
+	}
 
 	
 	default public Trigger[] getTriggersByType(TriggerType type, String action) {
 		List<Trigger> result = new ArrayList<>();
 		for (Trigger trigger : getTriggers()) {
 			if (trigger.getType().equals(type) && trigger.getSourceAction().getAction().equals(action)) {
+				result.add(trigger);
+			}
+		}
+		return result.toArray(new Trigger[] {});
+	}
+	
+	default public Trigger[] getTriggersByType(TriggerType type) {
+		List<Trigger> result = new ArrayList<>();
+		for (Trigger trigger : getTriggers()) {
+			if (trigger.getType().equals(type)) {
 				result.add(trigger);
 			}
 		}

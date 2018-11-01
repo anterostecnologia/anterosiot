@@ -15,7 +15,6 @@ import br.com.anteros.iot.collectors.PlcColletor;
 import br.com.anteros.iot.collectors.PresenceDetectorCollector;
 import br.com.anteros.iot.collectors.RFIDReaderCollector;
 import br.com.anteros.iot.collectors.TemperatureOneWireCollector;
-import br.com.anteros.iot.things.parts.MemoryPlc;
 
 public class DefaultActuators implements Actuators {
 
@@ -86,6 +85,13 @@ public class DefaultActuators implements Actuators {
 			e.printStackTrace();
 		}
 		return null;
+	}
+
+	public DefaultActuators registerActuators(Set<Class<? extends Actuable>> newActuators) {
+		for (Class<? extends Actuable> act : newActuators) {
+			this.registerActuator(act);
+		}
+		return this;
 	}
 
 }
