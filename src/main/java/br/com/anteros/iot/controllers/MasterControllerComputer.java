@@ -21,6 +21,7 @@ import br.com.anteros.iot.app.listeners.AnterosIOTServiceListener;
 import br.com.anteros.iot.domain.DeviceNode;
 import br.com.anteros.iot.plant.Plant;
 import br.com.anteros.iot.protocol.IOTMessage;
+import br.com.anteros.iot.things.devices.Computer;
 import br.com.anteros.iot.things.devices.IpAddress;
 import br.com.anteros.iot.things.devices.RaspberryPI;
 
@@ -143,8 +144,8 @@ public class MasterControllerComputer extends AbstractDeviceController implement
 	}
 
 	@Override
-	protected Device doCreateDevice(String deviceName, IpAddress ipAddress, String description) {
-		return RaspberryPI.of(deviceName, ipAddress, description);
+	protected Device doCreateDevice(String deviceName, IpAddress ipAddress, String description, String pathError) {
+		return Computer.of(deviceName, ipAddress, description, pathError);
 	}
 
 	@Override

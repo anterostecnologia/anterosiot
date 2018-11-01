@@ -109,5 +109,11 @@ public class AsusTinkerBoard extends PlantItem implements Device {
 		return null;
 	}
 
+	@Override
+	public String getPathError() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 	
 }

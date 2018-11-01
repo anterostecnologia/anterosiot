@@ -27,7 +27,7 @@ public class MemoryPlcActuator implements Actuator<Boolean> {
 	@Override
 	public Boolean executeAction(String action, Thing thing) {
 		MemoryPlc memory = (MemoryPlc) thing;
-
+		
 		if (memory.getModifyType().equals(ModifyType.READ)) {
 			System.out.println("A memória do PLC selecioando não pode alterar o valor, verifique.");
 			return false;

@@ -148,8 +148,8 @@ public class MasterControllerRPi extends AbstractDeviceController implements Mas
 	}
 
 	@Override
-	protected Device doCreateDevice(String deviceName, IpAddress ipAddress, String description) {
-		return RaspberryPI.of(deviceName, ipAddress, description);
+	protected Device doCreateDevice(String deviceName, IpAddress ipAddress, String description, String pathError) {
+		return RaspberryPI.of(deviceName, ipAddress, description, pathError);
 	}
 
 	@Override

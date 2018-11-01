@@ -17,6 +17,7 @@ import br.com.anteros.iot.things.devices.IpAddress;
 public abstract class DeviceNode extends PlantItemNode {
 	
 	protected IpAddress ipAddress;
+	protected String pathError;
 	
 	@JsonIdentityInfo(
 			  generator = ObjectIdGenerators.UUIDGenerator.class,
@@ -54,6 +55,14 @@ public abstract class DeviceNode extends PlantItemNode {
 
 	public void setThings(Set<ThingNode> things) {
 		this.things = things;
+	}
+
+	public String getPathError() {
+		return pathError;
+	}
+
+	public void setPathError(String pathError) {
+		this.pathError = pathError;
 	}
 
 

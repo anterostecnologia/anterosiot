@@ -264,7 +264,7 @@ public abstract class AbstractDeviceController implements DeviceController, Mqtt
 
 	public abstract void deliveryComplete(IMqttDeliveryToken token);
 
-	protected abstract Device doCreateDevice(String deviceName, IpAddress ipAddress, String description);
+	protected abstract Device doCreateDevice(String deviceName, IpAddress ipAddress, String description, String pathError);
 
 	public void dispatchMessage(String topic, String message) {
 		if ((StringUtils.isNotEmpty(topic) || StringUtils.isNotEmpty(message))) {
@@ -285,9 +285,18 @@ public abstract class AbstractDeviceController implements DeviceController, Mqtt
 			Actuator<?> actuator = actuators
 					.discoverActuatorToThing(action.getPart() != null ? action.getPart() : action.getThing());
 			if (actuator != null) {
-				actuator.executeAction(action.getAction(),
-						action.getPart() != null ? action.getPart() : action.getThing());
-
+				try {
+					actuator.executeAction(action.getAction(),
+							action.getPart() != null ? action.getPart() : action.getThing());
+				} catch (Exception e) {
+					MqttMessage msg = new MqttMessage(e.getMessage().getBytes());
+					msg.setQos(1);
+					try {
+						this.clientMqtt.publish(device.getPathError(), msg);
+					} catch (MqttException e1) {
+						e1.printStackTrace();
+					}
+				}
 			}
 		}
 
@@ -301,7 +310,7 @@ public abstract class AbstractDeviceController implements DeviceController, Mqtt
 
 	public void loadConfiguration(DeviceNode itemNode, Plant plant) {
 		Place place = (Place) plant.getItemByName(itemNode.getItemNodeOwner().getItemName());
-		this.device = doCreateDevice(itemNode.getItemName(), itemNode.getIpAddress(), itemNode.getDescription());
+		this.device = doCreateDevice(itemNode.getItemName(), itemNode.getIpAddress(), itemNode.getDescription(), itemNode.getPathError());
 		System.out.println("aqui");
 		System.out.println(device);
 		if (!(this.device instanceof PlantItem)) {
