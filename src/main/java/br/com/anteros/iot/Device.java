@@ -7,6 +7,8 @@ public interface Device extends Thing {
 	public IpAddress getIpAddress();
 	
 	public Device setIpAddress(IpAddress ipAddress);
+	
+	public String getPathError();
 
 	
 }

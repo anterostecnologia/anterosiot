@@ -17,12 +17,15 @@ import br.com.anteros.iot.triggers.Trigger;
 public class Computer extends PlantItem implements Device {
 	
 	private IpAddress ipAddress;
+	private String pathError;
+	
 	protected DeviceController deviceController;
 
-	public Computer(String id, IpAddress ipAddress, String description) {
+	private Computer(String id, IpAddress ipAddress, String description, String pathError) {
 		this.itemId = id;
 		this.ipAddress = ipAddress;
 		this.description = description;
+		this.pathError = pathError;
 	}
 
 	public String getThingID() {
@@ -106,5 +109,16 @@ public class Computer extends PlantItem implements Device {
 	public Trigger[] getTriggers() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+	
+	public String getPathError() {
+		if (pathError.equals("")) {
+			return this.getPath() + "/error";
+		}
+		return pathError;
+	}
+
+	public static Device of(String deviceName, IpAddress ipAddress, String description, String pathError) {
+		return new Computer(deviceName, ipAddress, description, pathError);
 	}
 }

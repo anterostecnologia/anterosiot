@@ -57,8 +57,9 @@ public class PlcColletor extends Collector implements Runnable {
 
 	@Override
 	public void run() {
+		
 		Plc plc = (Plc) thing;
-
+		
 		System.out.println("Iniciando coletor do PLC " + plc.getItemId() + " - " + plc.getDescription());
 
 		this.protocolDevice = new ModbusProtocolDevice();

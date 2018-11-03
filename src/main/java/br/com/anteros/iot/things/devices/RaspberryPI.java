@@ -17,12 +17,14 @@ import br.com.anteros.iot.triggers.Trigger;
 public class RaspberryPI extends PlantItem implements Device   {
 
 	private IpAddress ipAddress;
+	private String pathError;
 	protected DeviceController deviceController;
 		
-	protected RaspberryPI(String id, IpAddress ipAddress,String description) {
+	protected RaspberryPI(String id, IpAddress ipAddress,String description, String pathError) {
 		this.itemId = id;
 		this.ipAddress = ipAddress;
 		this.description = description;
+		this.pathError = pathError;
 	}
 
 	public String getThingID() {
@@ -49,8 +51,8 @@ public class RaspberryPI extends PlantItem implements Device   {
 		return this;
 	}
 	
-	public static RaspberryPI of(String id, IpAddress ipAddress,String description) {
-		return new RaspberryPI(id, ipAddress, description);
+	public static RaspberryPI of(String id, IpAddress ipAddress,String description, String pathError) {
+		return new RaspberryPI(id, ipAddress, description, pathError);
 	}
 
 	public IpAddress getIpAddress() {
@@ -112,4 +114,10 @@ public class RaspberryPI extends PlantItem implements Device   {
 		return null;
 	}
 
+	public String getPathError() {
+		if (pathError.equals("")) {
+			return this.getPath() + "/error";
+		}
+		return pathError;
+	}
 }

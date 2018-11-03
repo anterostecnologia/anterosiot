@@ -18,11 +18,13 @@ import br.com.anteros.iot.triggers.Trigger;
 public class RaspberryPIZero extends PlantItem implements Device  {
 	
 	protected IpAddress ipAddress;
+	private String pathError;
 	protected DeviceController deviceController;
 		
-	protected RaspberryPIZero(String id, IpAddress ipAddress) {
+	protected RaspberryPIZero(String id, IpAddress ipAddress, String pathError) {
 		this.itemId = id;
 		this.ipAddress = ipAddress;
+		this.pathError = pathError;
 	}
 
 	public String getThingID() {
@@ -106,5 +108,10 @@ public class RaspberryPIZero extends PlantItem implements Device  {
 	public Trigger[] getTriggers() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public String getPathError() {
+		return pathError;
 	}
 }

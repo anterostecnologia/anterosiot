@@ -107,4 +107,10 @@ public class OdroidC2 extends PlantItem implements Device {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	@Override
+	public String getPathError() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

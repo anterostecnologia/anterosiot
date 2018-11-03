@@ -128,8 +128,8 @@ public class SlaveControllerRPi extends AbstractDeviceController implements Slav
 	}
 
 	@Override
-	protected Device doCreateDevice(String deviceName, IpAddress ipAddress, String description) {
-		return RaspberryPI.of(deviceName, ipAddress, description);
+	protected Device doCreateDevice(String deviceName, IpAddress ipAddress, String description, String pathError) {
+		return RaspberryPI.of(deviceName, ipAddress, description, pathError);
 	}
 
 	@Override

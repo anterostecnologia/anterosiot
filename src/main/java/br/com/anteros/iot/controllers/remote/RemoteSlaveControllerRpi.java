@@ -78,7 +78,7 @@ public class RemoteSlaveControllerRpi extends SlaveControllerRPi implements Remo
 	public void loadConfiguration(DeviceNode itemNode, Plant plant) {
 		System.out.println(itemNode);
 		Place place = (Place) plant.getItemByName(itemNode.getItemNodeOwner().getItemName());
-		this.device = doCreateDevice(itemNode.getItemName(), itemNode.getIpAddress(),itemNode.getDescription());
+		this.device = doCreateDevice(itemNode.getItemName(), itemNode.getIpAddress(),itemNode.getDescription(), itemNode.getPathError());
 		if (!(this.device instanceof PlantItem)) {
 			throw new DeviceException("O device " + itemNode.getItemName() + " não é um item da planta.");
 		}
