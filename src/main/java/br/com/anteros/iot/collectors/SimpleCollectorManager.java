@@ -154,11 +154,6 @@ public class SimpleCollectorManager implements CollectorManager, CollectorListen
 
 				for (String topic : topics) {
 					try {
-						if (thing instanceof Device) {
-							
-						}
-						System.out.println(topic);
-						
 						Map<String, Boolean> config = new HashMap<>();
 
 						config.put(JsonGenerator.PRETTY_PRINTING, true);
@@ -174,8 +169,7 @@ public class SimpleCollectorManager implements CollectorManager, CollectorListen
 							jsonString = writer.toString();
 						} catch (IOException e) {
 						}
-						
-						System.out.println(jsonString);
+
 						MqttMessage message = new MqttMessage(jsonString.getBytes());
 						message.setQos(1);
 						mqttClient.publish(topic, message);
