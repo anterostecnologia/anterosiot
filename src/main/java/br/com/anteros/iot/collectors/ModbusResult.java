@@ -43,4 +43,11 @@ public class ModbusResult implements CollectResult {
 	public static ModbusResult of(Object oldValue, Object newValue) {
 		return new ModbusResult(oldValue, newValue);
 	}
+
+	@Override
+	public String getValueAsString() {
+		if (newValue==null)
+			return "";
+		return newValue.toString();
+	}
 }

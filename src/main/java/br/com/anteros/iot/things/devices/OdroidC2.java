@@ -13,6 +13,7 @@ import br.com.anteros.iot.ThingStatus;
 import br.com.anteros.iot.domain.PlantItemNode;
 import br.com.anteros.iot.plant.Place;
 import br.com.anteros.iot.plant.PlantItem;
+import br.com.anteros.iot.things.devices.telemetry.TelemetryStrategy;
 import br.com.anteros.iot.triggers.Trigger;
 
 public class OdroidC2 extends PlantItem implements Device {
@@ -110,6 +111,24 @@ public class OdroidC2 extends PlantItem implements Device {
 
 	@Override
 	public String getPathError() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public TelemetryStrategy[] getTelemetries() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public boolean hasTelemetries() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public TelemetryStrategy[] getTelemetriesByInterval(long ellapsedTime) {
 		// TODO Auto-generated method stub
 		return null;
 	}

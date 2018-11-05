@@ -9,8 +9,8 @@ import br.com.anteros.iot.DeviceController;
 import br.com.anteros.iot.Part;
 import br.com.anteros.iot.Thing;
 import br.com.anteros.iot.ThingStatus;
+import br.com.anteros.iot.collectors.CollectResult;
 import br.com.anteros.iot.domain.PlantItemNode;
-import br.com.anteros.iot.domain.things.CameraQRCodeReaderNode;
 import br.com.anteros.iot.domain.things.RFIDModel;
 import br.com.anteros.iot.domain.things.RFIDReaderNode;
 import br.com.anteros.iot.plant.PlantItem;
@@ -88,7 +88,7 @@ public class RFIDReader extends PlantItem implements Thing, Publishable {
 	}
 
 	@Override
-	public String[] getTopicsToPublishValue() {
+	public String[] getTopicsToPublishValue(CollectResult collectedData) {
 		System.out.println(ArrayUtils.toString(new String[] {this.getPath()}));
 		if (topics ==null || topics.length==0) {
 			return new String[] {this.getPath()};

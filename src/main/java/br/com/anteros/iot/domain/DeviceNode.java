@@ -18,6 +18,8 @@ public abstract class DeviceNode extends PlantItemNode {
 	
 	protected IpAddress ipAddress;
 	protected String pathError;
+	protected boolean publishSystemInfo;
+	protected int publishSystemInfoInterval;
 	
 	@JsonIdentityInfo(
 			  generator = ObjectIdGenerators.UUIDGenerator.class,
@@ -63,6 +65,22 @@ public abstract class DeviceNode extends PlantItemNode {
 
 	public void setPathError(String pathError) {
 		this.pathError = pathError;
+	}
+
+	public boolean isPublishSystemInfo() {
+		return publishSystemInfo;
+	}
+
+	public void setPublishSystemInfo(boolean publishSystemInfo) {
+		this.publishSystemInfo = publishSystemInfo;
+	}
+
+	public int getPublishSystemInfoInterval() {
+		return publishSystemInfoInterval;
+	}
+
+	public void setPublishSystemInfoInterval(int publishSystemInfoInterval) {
+		this.publishSystemInfoInterval = publishSystemInfoInterval;
 	}
 
 

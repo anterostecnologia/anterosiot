@@ -1,6 +1,5 @@
 package br.com.anteros.iot.things;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
@@ -9,6 +8,7 @@ import br.com.anteros.iot.DeviceController;
 import br.com.anteros.iot.Part;
 import br.com.anteros.iot.Thing;
 import br.com.anteros.iot.ThingStatus;
+import br.com.anteros.iot.collectors.CollectResult;
 import br.com.anteros.iot.domain.PlantItemNode;
 import br.com.anteros.iot.domain.things.CameraMotionDetectorNode;
 import br.com.anteros.iot.plant.PlantItem;
@@ -111,7 +111,7 @@ public class CameraMotionDetector extends PlantItem implements Thing, Publishabl
 	}
 
 	@Override
-	public String[] getTopicsToPublishValue() {
+	public String[] getTopicsToPublishValue(CollectResult collectedData) {
 		return topics;
 	}
 

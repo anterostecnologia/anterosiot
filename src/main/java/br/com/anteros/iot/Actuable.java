@@ -17,8 +17,9 @@ public interface Actuable {
 	}
 	
 	default void fireTriggers(TriggerType type,Thing thing, CollectResult result) {
-		if (thing.hasTriggers(type)) {
-		    for (Trigger trigger : thing.getTriggersByType(type)) {
+		String value = result.getValueAsString();
+		if (thing.hasTriggers(type, value)) {
+		    for (Trigger trigger : thing.getTriggersByType(type, value)) {
 		    	trigger.fire(result);
 		    }
 		}

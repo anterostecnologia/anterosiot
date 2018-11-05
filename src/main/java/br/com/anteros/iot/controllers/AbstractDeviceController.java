@@ -196,7 +196,7 @@ public abstract class AbstractDeviceController implements DeviceController, Mqtt
 		}
 
 		CollectorManager collectorManager = SimpleCollectorManager.of(clientCollector, things.toArray(new Thing[] {}),
-				actuators);
+				actuators, device);
 		collectorManager.start();
 
 		boolean first = true;
@@ -309,7 +309,6 @@ public abstract class AbstractDeviceController implements DeviceController, Mqtt
 	public void loadConfiguration(DeviceNode itemNode, Plant plant) {
 		Place place = (Place) plant.getItemByName(itemNode.getItemNodeOwner().getItemName());
 		this.device = doCreateDevice(itemNode.getItemName(), itemNode.getIpAddress(), itemNode.getDescription(), itemNode.getPathError());
-		System.out.println("aqui");
 		System.out.println(device);
 		if (!(this.device instanceof PlantItem)) {
 			throw new DeviceException("O device " + itemNode.getItemName() + " não é um item da planta.");
@@ -364,6 +363,74 @@ public abstract class AbstractDeviceController implements DeviceController, Mqtt
 	@Override
 	public AnterosIOTServiceListener getServiceListener() {
 		return serviceListener;
+	}
+
+	public Device getDevice() {
+		return device;
+	}
+
+	public void setDevice(Device device) {
+		this.device = device;
+	}
+
+	public Set<Thing> getThings() {
+		return things;
+	}
+
+	public void setThings(Set<Thing> things) {
+		this.things = things;
+	}
+
+	public Boolean getRunning() {
+		return running;
+	}
+
+	public void setRunning(Boolean running) {
+		this.running = running;
+	}
+
+	public Boolean getPaused() {
+		return paused;
+	}
+
+	public void setPaused(Boolean paused) {
+		this.paused = paused;
+	}
+
+	public Thread getThread() {
+		return thread;
+	}
+
+	public void setThread(Thread thread) {
+		this.thread = thread;
+	}
+
+	public ObjectMapper getMapper() {
+		return mapper;
+	}
+
+	public void setMapper(ObjectMapper mapper) {
+		this.mapper = mapper;
+	}
+
+	public Actuators getActuators() {
+		return actuators;
+	}
+
+	public void setActuators(Actuators actuators) {
+		this.actuators = actuators;
+	}
+
+	public Map<String, Thing> getSubscribedTopics() {
+		return subscribedTopics;
+	}
+
+	public void setSubscribedTopics(Map<String, Thing> subscribedTopics) {
+		this.subscribedTopics = subscribedTopics;
+	}
+
+	public void setClientMqtt(MqttClient clientMqtt) {
+		this.clientMqtt = clientMqtt;
 	}
 
 }

@@ -22,4 +22,11 @@ public class SimpleResult implements CollectResult {
 		return builder;
 	}
 
+	@Override
+	public String getValueAsString() {
+		if (value==null)
+			return "";
+		return value.toString();
+	}
+
 }

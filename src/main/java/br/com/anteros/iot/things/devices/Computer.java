@@ -12,6 +12,7 @@ import br.com.anteros.iot.Thing;
 import br.com.anteros.iot.ThingStatus;
 import br.com.anteros.iot.domain.PlantItemNode;
 import br.com.anteros.iot.plant.PlantItem;
+import br.com.anteros.iot.things.devices.telemetry.TelemetryStrategy;
 import br.com.anteros.iot.triggers.Trigger;
 
 public class Computer extends PlantItem implements Device {
@@ -120,5 +121,26 @@ public class Computer extends PlantItem implements Device {
 
 	public static Device of(String deviceName, IpAddress ipAddress, String description, String pathError) {
 		return new Computer(deviceName, ipAddress, description, pathError);
+	}
+
+	public void setPathError(String pathError) {
+		this.pathError = pathError;
+	}
+
+
+	@Override
+	public TelemetryStrategy[] getTelemetries() {
+		return null;
+	}
+
+	@Override
+	public boolean hasTelemetries() {
+		return false;
+	}
+
+	@Override
+	public TelemetryStrategy[] getTelemetriesByInterval(long ellapsedTime) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

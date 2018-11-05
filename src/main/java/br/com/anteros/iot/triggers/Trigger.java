@@ -3,8 +3,6 @@ package br.com.anteros.iot.triggers;
 import javax.json.Json;
 import javax.json.JsonObjectBuilder;
 
-import com.pi4j.util.StringUtil;
-
 import br.com.anteros.core.utils.StringUtils;
 import br.com.anteros.iot.Action;
 import br.com.anteros.iot.app.listeners.AnterosIOTServiceListener;
@@ -15,21 +13,21 @@ public class Trigger {
 
 	private String name;
 	private TriggerType type;
-	private Action sourceAction;
+	private WhenCondition whenCondition;
 	private Action[] targetActions;
 	private Action exceptionAction;
 
-	private Trigger(String name, TriggerType type, Action sourceAction, Action[] targetActions,
+	private Trigger(String name, TriggerType type, WhenCondition whenCondition, Action[] targetActions,
 			Action exceptionAction) {
 		this.name = name;
 		this.type = type;
-		this.sourceAction = sourceAction;
+		this.whenCondition = whenCondition;
 		this.targetActions = targetActions;
 		this.exceptionAction = exceptionAction;
 	}
 
 	public void fire(CollectResult value) {
-		AnterosIOTServiceListener serviceListener = sourceAction.getThing().getDeviceController().getServiceListener();
+		AnterosIOTServiceListener serviceListener = whenCondition.getThing().getDeviceController().getServiceListener();
 		if (serviceListener != null) {
 			try {
 				serviceListener.onFireTrigger(this, value);
@@ -39,7 +37,7 @@ public class Trigger {
 					if (exceptionAction.getThing() instanceof PlantItem) {
 						internalDispatchMessage(value, exceptionAction);
 					}					
-					sourceAction.getThing().getDeviceController().dispatchAction(exceptionAction, null);
+					whenCondition.getThing().getDeviceController().dispatchAction(exceptionAction, null);
 				}
 				return;
 			}
@@ -71,9 +69,9 @@ public class Trigger {
 		}
 	}
 
-	public static Trigger of(String name, TriggerType type, Action sourceAction, Action[] targetActions,
+	public static Trigger of(String name, TriggerType type, WhenCondition whenCondition, Action[] targetActions,
 			Action exceptionAction) {
-		return new Trigger(name, type, sourceAction, targetActions, exceptionAction);
+		return new Trigger(name, type, whenCondition, targetActions, exceptionAction);
 	}
 
 	public String getName() {
@@ -92,14 +90,6 @@ public class Trigger {
 		this.type = type;
 	}
 
-	public Action getSourceAction() {
-		return sourceAction;
-	}
-
-	public void setSourceAction(Action sourceAction) {
-		this.sourceAction = sourceAction;
-	}
-
 	public Action[] getTargetActions() {
 		return targetActions;
 	}
@@ -114,6 +104,14 @@ public class Trigger {
 
 	public void setExceptionAction(Action exceptionAction) {
 		this.exceptionAction = exceptionAction;
+	}
+
+	public WhenCondition getWhenCondition() {
+		return whenCondition;
+	}
+
+	public void setWhenCondition(WhenCondition whenCondition) {
+		this.whenCondition = whenCondition;
 	}
 
 }

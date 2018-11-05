@@ -1,7 +1,9 @@
 package br.com.anteros.iot.things.devices;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import br.com.anteros.core.utils.ReflectionUtils;
@@ -10,21 +12,46 @@ import br.com.anteros.iot.DeviceController;
 import br.com.anteros.iot.Part;
 import br.com.anteros.iot.Thing;
 import br.com.anteros.iot.ThingStatus;
+import br.com.anteros.iot.collectors.CollectResult;
 import br.com.anteros.iot.domain.PlantItemNode;
 import br.com.anteros.iot.plant.Place;
 import br.com.anteros.iot.plant.PlantItem;
+import br.com.anteros.iot.things.Publishable;
+import br.com.anteros.iot.things.devices.telemetry.ClockTelemetryStrategy;
+import br.com.anteros.iot.things.devices.telemetry.CodecTelemetryStrategy;
+import br.com.anteros.iot.things.devices.telemetry.HardwareTelemetryStrategy;
+import br.com.anteros.iot.things.devices.telemetry.JavaTelemetryStrategy;
+import br.com.anteros.iot.things.devices.telemetry.MemoryTelemetryStrategy;
+import br.com.anteros.iot.things.devices.telemetry.NetworkTelemetryStrategy;
+import br.com.anteros.iot.things.devices.telemetry.PlatformTelemetryStrategy;
+import br.com.anteros.iot.things.devices.telemetry.SOTelemetryStrategy;
+import br.com.anteros.iot.things.devices.telemetry.TelemetryConfiguration;
+import br.com.anteros.iot.things.devices.telemetry.TelemetryStrategy;
+import br.com.anteros.iot.things.devices.telemetry.TemperatureTelemetryStrategy;
 import br.com.anteros.iot.triggers.Trigger;
 
-public class RaspberryPIZero extends PlantItem implements Device  {
+public class RaspberryPIZero extends PlantItem implements Device, Publishable  {
 	
 	protected IpAddress ipAddress;
 	private String pathError;
 	protected DeviceController deviceController;
+	private TelemetryConfiguration telemetryConfiguration = TelemetryConfiguration.of(this);
+
 		
 	protected RaspberryPIZero(String id, IpAddress ipAddress, String pathError) {
 		this.itemId = id;
 		this.ipAddress = ipAddress;
 		this.pathError = pathError;
+		
+		telemetryConfiguration.addStrategy(new PlatformTelemetryStrategy(), 10000);
+		telemetryConfiguration.addStrategy(new HardwareTelemetryStrategy(), 10000);
+		telemetryConfiguration.addStrategy(new MemoryTelemetryStrategy(), 1000);
+		telemetryConfiguration.addStrategy(new JavaTelemetryStrategy(), 10000);
+		telemetryConfiguration.addStrategy(new NetworkTelemetryStrategy(), 5000);
+		telemetryConfiguration.addStrategy(new SOTelemetryStrategy(), 10000);
+		telemetryConfiguration.addStrategy(new ClockTelemetryStrategy(), 10000);
+		telemetryConfiguration.addStrategy(new CodecTelemetryStrategy(), 10000);
+		telemetryConfiguration.addStrategy(new TemperatureTelemetryStrategy(), 1000);
 	}
 
 	public String getThingID() {
@@ -113,5 +140,34 @@ public class RaspberryPIZero extends PlantItem implements Device  {
 	@Override
 	public String getPathError() {
 		return pathError;
+	}
+	
+	@Override
+	public String[] getTopicsToPublishValue(CollectResult collectedData) {
+		if (hasTelemetries()) {
+			return new String[] {this.getPath()+"/systemInfo"};
+		}
+		return new String[] {};
+	}
+
+	@Override
+	public TelemetryStrategy[] getTelemetries() {
+		return telemetryConfiguration.getStrategies().keySet().toArray(new TelemetryStrategy[] {});
+	}
+
+	@Override
+	public boolean hasTelemetries() {
+		return telemetryConfiguration.hasTelemetries();
+	}
+
+	@Override
+	public TelemetryStrategy[] getTelemetriesByInterval(long ellapsedTime) {
+		List<TelemetryStrategy> result = new ArrayList<>();
+		for (TelemetryStrategy strategy : telemetryConfiguration.getStrategies().keySet()) {
+			if (ellapsedTime - strategy.getLastIntervalPublishing() >= telemetryConfiguration.getStrategies().get(strategy)) {
+				result.add(strategy);
+			}
+		}
+		return result.toArray(new TelemetryStrategy[] {});
 	}
 }

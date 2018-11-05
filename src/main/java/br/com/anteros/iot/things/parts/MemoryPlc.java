@@ -8,6 +8,7 @@ import br.com.anteros.iot.DeviceController;
 import br.com.anteros.iot.Part;
 import br.com.anteros.iot.Thing;
 import br.com.anteros.iot.ThingStatus;
+import br.com.anteros.iot.collectors.CollectResult;
 import br.com.anteros.iot.domain.PlantItemNode;
 import br.com.anteros.iot.domain.things.parts.MemoryPlcNode;
 import br.com.anteros.iot.parts.exception.IllegalPartException;
@@ -149,7 +150,7 @@ public class MemoryPlc extends PlantItem implements Part, Publishable {
 	}
 
 	@Override
-	public String[] getTopicsToPublishValue() {
+	public String[] getTopicsToPublishValue(CollectResult collectedData) {
 		return new String[] { getPath() };
 	}
 

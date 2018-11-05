@@ -31,6 +31,7 @@ import br.com.anteros.iot.domain.things.LampOrBulbNode;
 import br.com.anteros.iot.domain.things.MagneticLockNode;
 import br.com.anteros.iot.domain.things.PresenceDetectorNode;
 import br.com.anteros.iot.domain.things.RFIDReaderNode;
+import br.com.anteros.iot.domain.things.RingStripLED12Node;
 import br.com.anteros.iot.domain.things.SemaphoreNode;
 import br.com.anteros.iot.domain.things.TemperatureOneWireNode;
 import br.com.anteros.iot.domain.things.parts.GreenLEDSemaphorePartNode;
@@ -57,7 +58,8 @@ import br.com.anteros.iot.plant.Place;
 		@Type(value = PlcNode.class, name = "controladorModBus"),
 		@Type(value = MemoryPlcNode.class, name = "memoriaControlador"),
 		@Type(value = MasterComputerNode.class, name = "masterComputer"),
-		@Type(value = CameraMotionDetectorNode.class, name = "cameraMotionDetector") })
+		@Type(value = CameraMotionDetectorNode.class, name = "cameraMotionDetector"),
+		@Type(value = RingStripLED12Node.class, name = DomainConstants.RING_STRIP_LED12)})
 public abstract class PlantItemNode {
 
 	protected String itemName;

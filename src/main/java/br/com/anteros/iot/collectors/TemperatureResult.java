@@ -44,4 +44,11 @@ public class TemperatureResult implements CollectResult {
 		
 	}
 
+	@Override
+	public String getValueAsString() {
+		if (newTemperature==null)
+			return "";
+		return newTemperature.toString();
+	}
+
 }

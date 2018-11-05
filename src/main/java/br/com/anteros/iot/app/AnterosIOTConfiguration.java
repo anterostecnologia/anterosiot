@@ -42,6 +42,7 @@ import br.com.anteros.iot.plant.Plant;
 import br.com.anteros.iot.plant.PlantItem;
 import br.com.anteros.iot.support.MqttHelper;
 import br.com.anteros.iot.triggers.Trigger;
+import br.com.anteros.iot.triggers.WhenCondition;
 
 public class AnterosIOTConfiguration {
 
@@ -206,16 +207,15 @@ public class AnterosIOTConfiguration {
 
 						// Source action - que disparou a trigger
 						Thing sourceActionThing = deviceResult
-								.getThingById(triggerNode.getSourceAction().getThing().getItemName());
+								.getThingById(triggerNode.getWhenConditionNode().getThing().getItemName());
 						Part sourceActionPart = null;
-						if (triggerNode.getSourceAction().getPart() != null) {
+						if (triggerNode.getWhenConditionNode().getPart() != null) {
 							sourceActionPart = sourceActionThing
-									.getPartById(triggerNode.getSourceAction().getPart().getItemName());
+									.getPartById(triggerNode.getWhenConditionNode().getPart().getItemName());
 						}
 
-						Action sourceAction = Action.of(sourceActionThing, sourceActionPart,
-								triggerNode.getSourceAction().getAction(), triggerNode.getSourceAction().getMessage(),
-								triggerNode.getSourceAction().getTopics());
+						WhenCondition whenCondition = WhenCondition.of(sourceActionThing, sourceActionPart,
+								triggerNode.getWhenConditionNode().getActionOrValue());
 
 						// Target actions - ações a serem despachadas
 						Set<Action> targetActions = new HashSet<>();
@@ -223,7 +223,7 @@ public class AnterosIOTConfiguration {
 							Thing targetActionThing = deviceResult
 									.getThingById(targetActionNode.getThing().getItemName());
 							Part targetActionPart = null;
-							if (triggerNode.getSourceAction().getPart() != null) {
+							if (triggerNode.getWhenConditionNode().getPart() != null) {
 								targetActionPart = sourceActionThing
 										.getPartById(targetActionNode.getPart().getItemName());
 							}
@@ -251,7 +251,7 @@ public class AnterosIOTConfiguration {
 									triggerNode.getExceptionAction().getTopics());
 						}
 
-						sourceThing.addTrigger(Trigger.of(triggerNode.getName(), triggerNode.getType(), sourceAction,
+						sourceThing.addTrigger(Trigger.of(triggerNode.getName(), triggerNode.getType(), whenCondition,
 								targetActions.toArray(new Action[] {}), exceptionAction));
 					}
 				}

@@ -8,4 +8,6 @@ public interface CollectResult {
 	
 	public JsonObjectBuilder toJson(JsonObjectBuilder builder);
 
+	public String getValueAsString();
+
 }

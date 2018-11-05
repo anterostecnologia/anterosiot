@@ -1,9 +1,17 @@
 package br.com.anteros.iot.collectors;
 
+import java.io.IOException;
+import java.io.StringWriter;
+import java.io.Writer;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import javax.json.Json;
+import javax.json.JsonObjectBuilder;
+import javax.json.JsonWriterFactory;
+import javax.json.stream.JsonGenerator;
 
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.MqttClient;
@@ -13,6 +21,7 @@ import org.eclipse.paho.client.mqttv3.MqttPersistenceException;
 
 import br.com.anteros.iot.Actuators;
 import br.com.anteros.iot.Collector;
+import br.com.anteros.iot.Device;
 import br.com.anteros.iot.Thing;
 import br.com.anteros.iot.support.MqttHelper;
 import br.com.anteros.iot.things.Publishable;
@@ -24,14 +33,16 @@ public class SimpleCollectorManager implements CollectorManager, CollectorListen
 	private Thing[] things;
 	private Boolean running = false;
 	private Boolean paused = false;
+	private Device device;
 	private Set<Collector> collectorsRunning = new HashSet<>();
 	private Actuators actuators;
 
-	protected SimpleCollectorManager(MqttClient mqttClient, Thing[] things, Actuators actuators) {
+	protected SimpleCollectorManager(MqttClient mqttClient, Thing[] things, Actuators actuators, Device device) {
 		this.mqttClient = mqttClient;
 		this.thread = new Thread(this);
 		this.things = things;
 		this.actuators = actuators;
+		this.device = device;
 	}
 
 	public void stop() {
@@ -58,8 +69,8 @@ public class SimpleCollectorManager implements CollectorManager, CollectorListen
 		}
 	}
 
-	public static SimpleCollectorManager of(MqttClient mqttClient, Thing[] things, Actuators actuators) {
-		return new SimpleCollectorManager(mqttClient, things, actuators);
+	public static SimpleCollectorManager of(MqttClient mqttClient, Thing[] things, Actuators actuators, Device device) {
+		return new SimpleCollectorManager(mqttClient, things, actuators,device);
 	}
 
 	@Override
@@ -83,6 +94,15 @@ public class SimpleCollectorManager implements CollectorManager, CollectorListen
 	public void run() {
 		running = true;
 		boolean first = true;
+		
+		if (device.hasTelemetries()) {
+			Collector collector = actuators.discoverCollectorToThing(device);
+			if (collector != null) {
+				collector.setListener(this);			
+				collector.startCollect();
+				collectorsRunning.add(collector);
+			}
+		}
 
 		for (Thing thing : things) {
 			Collector collector = actuators.discoverCollectorToThing(thing);
@@ -129,12 +149,34 @@ public class SimpleCollectorManager implements CollectorManager, CollectorListen
 	public void onCollect(CollectResult result, Thing thing) {
 		if (!paused) {
 			if (thing instanceof Publishable) {
-				String[] topics = ((Publishable) thing).getTopicsToPublishValue();
+				
+				String[] topics = ((Publishable) thing).getTopicsToPublishValue(result);
 
 				for (String topic : topics) {
 					try {
+						if (thing instanceof Device) {
+							
+						}
 						System.out.println(topic);
-						MqttMessage message = new MqttMessage(result.toJson(Json.createObjectBuilder()).build().toString().getBytes());
+						
+						Map<String, Boolean> config = new HashMap<>();
+
+						config.put(JsonGenerator.PRETTY_PRINTING, true);
+
+						JsonWriterFactory writerFactory = Json.createWriterFactory(config);
+
+						
+						JsonObjectBuilder builder = Json.createObjectBuilder();
+						result.toJson(builder);
+						String jsonString="";	
+						try (Writer writer = new StringWriter()) {
+							writerFactory.createWriter(writer).write(builder.build());
+							jsonString = writer.toString();
+						} catch (IOException e) {
+						}
+						
+						System.out.println(jsonString);
+						MqttMessage message = new MqttMessage(jsonString.getBytes());
 						message.setQos(1);
 						mqttClient.publish(topic, message);
 					} catch (MqttPersistenceException e) {

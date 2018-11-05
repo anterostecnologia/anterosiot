@@ -9,8 +9,10 @@ import br.com.anteros.iot.actuators.LampOrBulbActuator;
 import br.com.anteros.iot.actuators.LedActuator;
 import br.com.anteros.iot.actuators.MagneticLockActuator;
 import br.com.anteros.iot.actuators.MemoryPlcActuator;
+import br.com.anteros.iot.actuators.RingStripLED12Actuator;
 import br.com.anteros.iot.collectors.CameraMotionDetectorCollector;
 import br.com.anteros.iot.collectors.CameraQRCodeCollector;
+import br.com.anteros.iot.collectors.DeviceSystemInfoCollector;
 import br.com.anteros.iot.collectors.PlcColletor;
 import br.com.anteros.iot.collectors.PresenceDetectorCollector;
 import br.com.anteros.iot.collectors.RFIDReaderCollector;
@@ -22,6 +24,7 @@ public class DefaultActuators implements Actuators {
 	private Map<Class<? extends Actuable>, Actuable> cacheActuators = new HashMap<>();
 
 	public DefaultActuators() {
+		registerActuator(DeviceSystemInfoCollector.class);
 		registerActuator(LedActuator.class);
 		registerActuator(LampOrBulbActuator.class);
 		registerActuator(MagneticLockActuator.class);
@@ -32,6 +35,7 @@ public class DefaultActuators implements Actuators {
 		registerActuator(CameraMotionDetectorCollector.class);
 		registerActuator(PlcColletor.class);
 		registerActuator(MemoryPlcActuator.class);
+		registerActuator(RingStripLED12Actuator.class);
 	}
 
 	public DefaultActuators registerActuator(Class<? extends Actuable> actuable) {
@@ -48,7 +52,13 @@ public class DefaultActuators implements Actuators {
 	public Collector discoverCollectorToThing(Thing thing) {
 		try {
 			for (Class<? extends Actuable> actuable : actuators) {
-				Actuable collector = actuable.newInstance();
+				Actuable collector = null;
+				if (cacheActuators.containsKey(actuable)) {
+					collector = cacheActuators.get(actuable);
+				} else {
+					collector = actuable.newInstance();
+					cacheActuators.put(actuable, collector);
+				}
 				
 				if (collector.isSupportedThing(thing)) {
 					if (collector instanceof Collector) {

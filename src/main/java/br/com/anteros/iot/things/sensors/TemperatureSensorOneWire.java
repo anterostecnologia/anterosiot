@@ -13,6 +13,7 @@ import br.com.anteros.iot.Sensor;
 import br.com.anteros.iot.SensorCollectionType;
 import br.com.anteros.iot.Thing;
 import br.com.anteros.iot.ThingStatus;
+import br.com.anteros.iot.collectors.CollectResult;
 import br.com.anteros.iot.domain.PlantItemNode;
 import br.com.anteros.iot.domain.things.TemperatureOneWireNode;
 import br.com.anteros.iot.plant.PlantItem;
@@ -82,7 +83,7 @@ public class TemperatureSensorOneWire extends PlantItem implements Sensor {
 	}
 
 	@Override
-	public String[] getTopicsToPublishValue() {
+	public String[] getTopicsToPublishValue(CollectResult collectedData) {
 		System.out.println(ArrayUtils.toString(new String[] {this.getPath()}));
 		if (topics ==null || topics.length==0) {
 			return new String[] {this.getPath()};
