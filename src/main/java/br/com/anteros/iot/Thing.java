@@ -43,8 +43,8 @@ public interface Thing {
 	default public boolean hasTriggers(TriggerType type, String actionOrValue) {
 		for (Trigger trigger : getTriggers()) {
 			if (StringUtils.isEmpty(trigger.getWhenCondition().getActionOrValue())
-					|| trigger.getWhenCondition().getActionOrValue().equals(WhenCondition.ALL_VALUES)
-					|| trigger.getWhenCondition().getActionOrValue().equals(actionOrValue)) {
+					|| trigger.getWhenCondition().hasActionOrValueEquals(WhenCondition.ALL_VALUES)
+					|| trigger.getWhenCondition().hasActionOrValueEquals(actionOrValue)) {
 				return true;
 			}
 		}
@@ -66,8 +66,8 @@ public interface Thing {
 			if (trigger.getType().equals(type)) {
 
 				if (StringUtils.isEmpty(trigger.getWhenCondition().getActionOrValue())
-						|| trigger.getWhenCondition().getActionOrValue().equals(WhenCondition.ALL_VALUES)
-						|| trigger.getWhenCondition().getActionOrValue().equals(actionOrValue)) {
+						|| trigger.getWhenCondition().hasActionOrValueEquals(WhenCondition.ALL_VALUES)
+						|| trigger.getWhenCondition().hasActionOrValueEquals(actionOrValue)) {
 					result.add(trigger);
 				}
 			}

@@ -9,15 +9,15 @@ public class WhenCondition {
 	
 	private Thing thing;
 	private Part part;
-	private String actionOrValue;
+	private String[] actionOrValue;
 
-	public WhenCondition(Thing thing, Part part, String actionOrValue) {
+	public WhenCondition(Thing thing, Part part, String... actionOrValue) {
 		this.thing = thing;
 		this.part = part;
 		this.actionOrValue = actionOrValue;
 	}
 	
-	public static WhenCondition of(Thing thing, Part part, String actionOrValue) {
+	public static WhenCondition of(Thing thing, Part part, String... actionOrValue) {
 		return new WhenCondition(thing, part, actionOrValue);
 	}
 
@@ -37,12 +37,24 @@ public class WhenCondition {
 		this.part = part;
 	}
 
-	public String getActionOrValue() {
+	public String[] getActionOrValue() {
 		return actionOrValue;
 	}
 
-	public void setActionOrValue(String actionOrValue) {
+	public void setActionOrValue(String... actionOrValue) {
 		this.actionOrValue = actionOrValue;
+	}
+
+	public boolean hasActionOrValueEquals(String actionOrValue) {
+		if (this.actionOrValue==null)
+			return false;
+		
+		for (String actVal : this.actionOrValue) {
+			if (actVal.equals(actionOrValue)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	

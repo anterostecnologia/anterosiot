@@ -11,9 +11,9 @@ public class WhenConditionNode extends PlantItemNode {
 
 	private ThingNode thing;
 	private PartNode part;
-	private String actionOrValue;
+	private String[] actionOrValue;
 	
-	public WhenConditionNode(ThingNode thing, PartNode part, String actionOrValue) {
+	public WhenConditionNode(ThingNode thing, PartNode part, String... actionOrValue) {
 		super();
 		this.thing = thing;
 		this.part = part;
@@ -41,11 +41,11 @@ public class WhenConditionNode extends PlantItemNode {
 		this.part = part;
 	}
 
-	public String getActionOrValue() {
+	public String[] getActionOrValue() {
 		return actionOrValue;
 	}
 
-	public void setAction(String actionOrValue) {
+	public void setAction(String... actionOrValue) {
 		this.actionOrValue = actionOrValue;
 	}
 
