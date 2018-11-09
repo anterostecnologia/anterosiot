@@ -64,7 +64,7 @@ public class SimpleProcessorManager implements ProcessorManager, ProcessorListen
 			e.printStackTrace();
 		}
 
-		this.autoSubscribe(clientProcessor);
+		this.autoSubscribe();
 		this.clientProcessor.setCallback(this);
 
 		if (!running && !registeredProcessors.isEmpty()) {
@@ -116,7 +116,6 @@ public class SimpleProcessorManager implements ProcessorManager, ProcessorListen
 	public void deliveryComplete(IMqttDeliveryToken token) {
 	}
 
-	@SuppressWarnings("rawtypes")
 	@Override
 	public void execute(MqttMessage message, Thing thing) {
 
@@ -156,7 +155,7 @@ public class SimpleProcessorManager implements ProcessorManager, ProcessorListen
 		return null;
 	}
 
-	public void autoSubscribe(MqttClient client) {
+	public void autoSubscribe() {
 		List<String> filter = new ArrayList<>();
 
 		for (Processor<?> processor : registeredProcessors) {
@@ -170,7 +169,7 @@ public class SimpleProcessorManager implements ProcessorManager, ProcessorListen
 
 		try {
 			System.out.println(Arrays.toString(filter.toArray(new String[] {})));
-			client.subscribe(filter.toArray(new String[] {}));
+			this.clientProcessor.subscribe(filter.toArray(new String[] {}));
 		} catch (MqttException e) {
 			e.printStackTrace();
 		}
