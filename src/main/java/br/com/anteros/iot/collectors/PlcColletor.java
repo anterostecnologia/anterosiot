@@ -125,6 +125,7 @@ public class PlcColletor extends Collector implements Runnable {
 				return analogInputs[0];
 			}
 		} catch (ModbusProtocolException e) {
+			e.printStackTrace();
 			return null;
 		}
 	}

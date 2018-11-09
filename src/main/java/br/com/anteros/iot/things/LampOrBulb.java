@@ -1,7 +1,9 @@
 package br.com.anteros.iot.things;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import br.com.anteros.iot.DeviceController;
@@ -11,6 +13,7 @@ import br.com.anteros.iot.ThingStatus;
 import br.com.anteros.iot.domain.PlantItemNode;
 import br.com.anteros.iot.domain.things.LampOrBulbNode;
 import br.com.anteros.iot.plant.PlantItem;
+import br.com.anteros.iot.processors.Processor;
 import br.com.anteros.iot.triggers.Trigger;
 
 public class LampOrBulb extends PlantItem implements Thing {
@@ -18,6 +21,7 @@ public class LampOrBulb extends PlantItem implements Thing {
 	protected DeviceController deviceController;
 	protected int pin;
 	protected Set<Trigger> triggers = new HashSet<>();
+	protected List<Processor<?>> processors = new ArrayList<>();
 
 	protected LampOrBulb(String id, int pin) {
 		this.itemId = id;
@@ -110,6 +114,21 @@ public class LampOrBulb extends PlantItem implements Thing {
 		// TODO Auto-generated method stub
 		return null;
 	}
+	
+	@Override
+	public Thing addProcessor(Processor<?> processor) {
+		processors.add(processor);
+		return this;
+	}
 
+	@Override
+	public Thing removeProcessor(Processor<?> processor) {
+		processors.remove(processor);
+		return this;
+	}
 
+	@Override
+	public Processor<?>[] getProcessors() {
+		return processors.toArray(new Processor[] {});
+	}
 }

@@ -1,0 +1,28 @@
+package br.com.anteros.iot.domain.processors;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import br.com.anteros.iot.Thing;
+import br.com.anteros.iot.collectors.CollectResult;
+import br.com.anteros.iot.domain.PlantItemNode;
+import br.com.anteros.iot.processors.Processor;
+
+public abstract class ProcessorNode<T extends CollectResult> extends PlantItemNode {
+	
+	
+	public ProcessorNode() {
+	}
+
+	@Override
+	protected boolean acceptThisTypeOfChild(Class<?> child) {
+		return false;
+	}
+
+	@Override
+	public Thing getInstanceOfThing() {
+		return null;
+	}
+	
+	@JsonIgnore
+	public abstract Processor<T> getInstanceOfProcessor();
+}

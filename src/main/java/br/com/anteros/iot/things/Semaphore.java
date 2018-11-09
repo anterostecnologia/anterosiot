@@ -1,7 +1,9 @@
 package br.com.anteros.iot.things;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 
 import br.com.anteros.iot.DeviceController;
@@ -11,6 +13,7 @@ import br.com.anteros.iot.ThingStatus;
 import br.com.anteros.iot.domain.PlantItemNode;
 import br.com.anteros.iot.domain.ThingNode;
 import br.com.anteros.iot.plant.PlantItem;
+import br.com.anteros.iot.processors.Processor;
 import br.com.anteros.iot.things.exception.ThingException;
 import br.com.anteros.iot.things.parts.GreenLEDSemaphorePart;
 import br.com.anteros.iot.things.parts.LedSemaphore;
@@ -19,12 +22,11 @@ import br.com.anteros.iot.things.parts.YellowLEDSemaphorePart;
 import br.com.anteros.iot.triggers.Trigger;
 
 public class Semaphore extends PlantItem implements Thing {
-	
-	protected DeviceController deviceController;
 
+	protected DeviceController deviceController;
 	protected Set<Part> leds = new LinkedHashSet<Part>();
-	
 	protected Set<Trigger> triggers = new HashSet<>();
+	protected List<Processor<?>> processors = new ArrayList<>();
 
 	public Semaphore(String id) {
 		this.itemId = id;
@@ -90,7 +92,7 @@ public class Semaphore extends PlantItem implements Thing {
 		for (PlantItemNode child : node.getItems()) {
 			if (child instanceof ThingNode) {
 				Thing part = child.getInstanceOfThing();
-				((PlantItem)part).setItemOwner(this);
+				((PlantItem) part).setItemOwner(this);
 				if (part instanceof Part) {
 					this.addPart((Part) part);
 				}
@@ -112,12 +114,11 @@ public class Semaphore extends PlantItem implements Thing {
 	public void setDeviceController(DeviceController deviceController) {
 		this.deviceController = deviceController;
 	}
-	
+
 	@Override
 	public Trigger[] getTriggers() {
 		return triggers.toArray(new Trigger[] {});
 	}
-
 
 	@Override
 	public Thing addTrigger(Trigger trigger) {
@@ -137,4 +138,20 @@ public class Semaphore extends PlantItem implements Thing {
 		return null;
 	}
 
+	@Override
+	public Thing addProcessor(Processor<?> processor) {
+		processors.add(processor);
+		return this;
+	}
+
+	@Override
+	public Thing removeProcessor(Processor<?> processor) {
+		processors.remove(processor);
+		return this;
+	}
+
+	@Override
+	public Processor<?>[] getProcessors() {
+		return processors.toArray(new Processor[] {});
+	}
 }

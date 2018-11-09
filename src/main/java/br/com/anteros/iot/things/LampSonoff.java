@@ -1,7 +1,9 @@
 package br.com.anteros.iot.things;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import br.com.anteros.iot.DeviceController;
@@ -11,17 +13,19 @@ import br.com.anteros.iot.ThingStatus;
 import br.com.anteros.iot.domain.PlantItemNode;
 import br.com.anteros.iot.domain.things.LampSonoffNode;
 import br.com.anteros.iot.plant.PlantItem;
+import br.com.anteros.iot.processors.Processor;
 import br.com.anteros.iot.triggers.Trigger;
 
 public class LampSonoff extends PlantItem implements Thing {
-	
+
 	protected DeviceController deviceController;
 	protected String topic;
 	protected Set<Trigger> triggers = new HashSet<>();
+	protected List<Processor<?>> processors = new ArrayList<>();
 
 	protected LampSonoff(String id, String topic) {
 		this.itemId = id;
-		this.topic =topic;
+		this.topic = topic;
 	}
 
 	public LampSonoff(LampSonoffNode node) {
@@ -81,12 +85,11 @@ public class LampSonoff extends PlantItem implements Thing {
 	public void setDeviceController(DeviceController deviceController) {
 		this.deviceController = deviceController;
 	}
-	
+
 	@Override
 	public Trigger[] getTriggers() {
 		return triggers.toArray(new Trigger[] {});
 	}
-
 
 	@Override
 	public Thing addTrigger(Trigger trigger) {
@@ -106,5 +109,20 @@ public class LampSonoff extends PlantItem implements Thing {
 		return null;
 	}
 
+	@Override
+	public Thing addProcessor(Processor<?> processor) {
+		processors.add(processor);
+		return this;
+	}
 
+	@Override
+	public Thing removeProcessor(Processor<?> processor) {
+		processors.remove(processor);
+		return this;
+	}
+
+	@Override
+	public Processor<?>[] getProcessors() {
+		return processors.toArray(new Processor[] {});
+	}
 }

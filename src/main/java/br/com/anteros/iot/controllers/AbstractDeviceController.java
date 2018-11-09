@@ -34,6 +34,9 @@ import br.com.anteros.iot.domain.DeviceNode;
 import br.com.anteros.iot.plant.Place;
 import br.com.anteros.iot.plant.Plant;
 import br.com.anteros.iot.plant.PlantItem;
+import br.com.anteros.iot.processors.Processor;
+import br.com.anteros.iot.processors.ProcessorManager;
+import br.com.anteros.iot.processors.SimpleProcessorManager;
 import br.com.anteros.iot.protocol.IOTMessage;
 import br.com.anteros.iot.support.MqttHelper;
 import br.com.anteros.iot.things.devices.IpAddress;
@@ -195,6 +198,10 @@ public abstract class AbstractDeviceController implements DeviceController, Mqtt
 			e1.printStackTrace();
 		}
 
+		System.out.println("Iniciando processador");
+		ProcessorManager processorManager = SimpleProcessorManager.of(device, clientMqtt, getProcessors());
+		processorManager.start();
+		
 		CollectorManager collectorManager = SimpleCollectorManager.of(clientCollector, things.toArray(new Thing[] {}),
 				actuators, device);
 		collectorManager.start();
@@ -214,6 +221,22 @@ public abstract class AbstractDeviceController implements DeviceController, Mqtt
 		collectorManager.stop();
 		System.out.println("Parando controlador " + this.getThingID());
 		this.thread.interrupt();
+	}
+
+	private List<Processor<?>> getProcessors() {
+		List<Processor<?>> processors = new ArrayList<>();
+		for (Thing thing : things) {
+			if (thing.hasProcessor()) {
+				processors.addAll(Arrays.asList(thing.getProcessors()));
+			}
+			
+			for (Thing part : thing.getParts()) {
+				if (part.hasProcessor()) {
+					processors.addAll(Arrays.asList(part.getProcessors()));
+				}
+			}
+		}
+		return processors;
 	}
 
 	@Override
@@ -238,7 +261,7 @@ public abstract class AbstractDeviceController implements DeviceController, Mqtt
 			byte[] payload = message.getPayload();
 			iotMessage = mapper.readValue(payload, IOTMessage.class);
 		} catch (Exception e) {
-			e.printStackTrace();
+			//e.printStackTrace();
 		}
 
 		Thing thing = this.getThingByTopic(topic);
@@ -262,7 +285,8 @@ public abstract class AbstractDeviceController implements DeviceController, Mqtt
 
 	public abstract void deliveryComplete(IMqttDeliveryToken token);
 
-	protected abstract Device doCreateDevice(String deviceName, IpAddress ipAddress, String description, String pathError);
+	protected abstract Device doCreateDevice(String deviceName, IpAddress ipAddress, String description,
+			String pathError);
 
 	public void dispatchMessage(String topic, String message) {
 		if ((StringUtils.isNotEmpty(topic) || StringUtils.isNotEmpty(message))) {
@@ -308,7 +332,8 @@ public abstract class AbstractDeviceController implements DeviceController, Mqtt
 
 	public void loadConfiguration(DeviceNode itemNode, Plant plant) {
 		Place place = (Place) plant.getItemByName(itemNode.getItemNodeOwner().getItemName());
-		this.device = doCreateDevice(itemNode.getItemName(), itemNode.getIpAddress(), itemNode.getDescription(), itemNode.getPathError());
+		this.device = doCreateDevice(itemNode.getItemName(), itemNode.getIpAddress(), itemNode.getDescription(),
+				itemNode.getPathError());
 		System.out.println(device);
 		if (!(this.device instanceof PlantItem)) {
 			throw new DeviceException("O device " + itemNode.getItemName() + " não é um item da planta.");

@@ -9,16 +9,18 @@ import br.com.anteros.iot.DeviceController;
 import br.com.anteros.iot.Part;
 import br.com.anteros.iot.Thing;
 import br.com.anteros.iot.ThingStatus;
+import br.com.anteros.iot.collectors.CollectResult;
 import br.com.anteros.iot.domain.PlantItemNode;
 import br.com.anteros.iot.domain.things.BarrierGateNode;
 import br.com.anteros.iot.plant.PlantItem;
+import br.com.anteros.iot.processors.Processor;
 import br.com.anteros.iot.triggers.Trigger;
-import br.com.anteros.iot.triggers.TriggerType;
 
 public class BarrierGate extends PlantItem implements Thing {
 	
 	protected DeviceController deviceController;
 	protected Set<Trigger> triggers = new HashSet<>();
+	protected List<Processor<?>> processors = new ArrayList<>();
 
 	public BarrierGate() {
 	}
@@ -104,5 +106,20 @@ public class BarrierGate extends PlantItem implements Thing {
 		return this;
 	}
 
+	@Override
+	public Thing addProcessor(Processor<?> processor) {
+		processors.add(processor);
+		return this;
+	}
 
+	@Override
+	public Thing removeProcessor(Processor<?> processor) {
+		processors.remove(processor);
+		return this;
+	}
+
+	@Override
+	public Processor<?>[] getProcessors() {
+		return processors.toArray(new Processor[] {});
+	}
 }
