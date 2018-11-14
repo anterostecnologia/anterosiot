@@ -131,7 +131,7 @@ public class SimpleProcessorManager implements ProcessorManager, ProcessorListen
 
 					result = mapper.readValue(payload, collectResult);
 				} catch (Exception e) {
-					e.printStackTrace();
+					System.out.println("JSon não é do tipo " + processor.getCollectResult().getSimpleName());
 				}
 
 				if (result != null && thing != null) {

@@ -1,5 +1,7 @@
 package br.com.anteros.iot;
 
+import javax.json.JsonObject;
+
 public class Action {
 
 	private Thing thing;
@@ -7,19 +9,25 @@ public class Action {
 	private String action;
 	private String message;
 	private String[] topics;
+	private JsonObject receivedPayload;
 
-	public Action(Thing thing, Part part, String action, String message, String[] topics) {
+	public Action(Thing thing, Part part, String action, String message, String[] topics, JsonObject receivedPayload) {
 		this.thing = thing;
 		this.part = part;
 		this.action = action;
 		this.message = message;
 		this.topics = topics;
-	}
-	
-	public static Action of(Thing thing, Part part, String action, String message, String[] topics) {
-		return new Action(thing, part, action, message, topics);
+		this.receivedPayload = receivedPayload;
 	}
 
+	public static Action of(Thing thing, Part part, String action, String message, String[] topics) {
+		return new Action(thing, part, action, message, topics, null);
+	}
+	
+	public static Action of(Thing thing, Part part, JsonObject recivedPayload) {
+		return new Action(thing, part, null, null, null, recivedPayload);
+	}
+	
 	public Thing getThing() {
 		return thing;
 	}
@@ -58,6 +66,14 @@ public class Action {
 
 	public void setTopics(String[] topics) {
 		this.topics = topics;
+	}
+
+	public JsonObject getReceivedPayload() {
+		return receivedPayload;
+	}
+
+	public void setReceivedPayload(JsonObject receivedPayload) {
+		this.receivedPayload = receivedPayload;
 	}
 
 }

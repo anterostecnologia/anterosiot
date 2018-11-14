@@ -1,6 +1,8 @@
 package br.com.anteros.iot.controllers;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -8,6 +10,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import javax.json.Json;
+import javax.json.JsonObject;
+import javax.json.JsonReader;
 
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.MqttCallback;
@@ -37,7 +43,6 @@ import br.com.anteros.iot.plant.PlantItem;
 import br.com.anteros.iot.processors.Processor;
 import br.com.anteros.iot.processors.ProcessorManager;
 import br.com.anteros.iot.processors.SimpleProcessorManager;
-import br.com.anteros.iot.protocol.IOTMessage;
 import br.com.anteros.iot.support.MqttHelper;
 import br.com.anteros.iot.things.devices.IpAddress;
 
@@ -201,7 +206,7 @@ public abstract class AbstractDeviceController implements DeviceController, Mqtt
 		System.out.println("Iniciando processador");
 		ProcessorManager processorManager = SimpleProcessorManager.of(device, clientMqtt, getProcessors());
 		processorManager.start();
-		
+
 		CollectorManager collectorManager = SimpleCollectorManager.of(clientCollector, things.toArray(new Thing[] {}),
 				actuators, device);
 		collectorManager.start();
@@ -229,7 +234,7 @@ public abstract class AbstractDeviceController implements DeviceController, Mqtt
 			if (thing.hasProcessor()) {
 				processors.addAll(Arrays.asList(thing.getProcessors()));
 			}
-			
+
 			for (Thing part : thing.getParts()) {
 				if (part.hasProcessor()) {
 					processors.addAll(Arrays.asList(part.getProcessors()));
@@ -255,22 +260,21 @@ public abstract class AbstractDeviceController implements DeviceController, Mqtt
 	public abstract void connectionLost(Throwable cause);
 
 	public void messageArrived(String topic, MqttMessage message) throws Exception {
-		IOTMessage iotMessage = null;
 
-		try {
-			byte[] payload = message.getPayload();
-			iotMessage = mapper.readValue(payload, IOTMessage.class);
-		} catch (Exception e) {
-			//e.printStackTrace();
-		}
+		byte[] payload = message.getPayload();
+		InputStream stream = new ByteArrayInputStream(payload);
+		
+		JsonReader jsonReader = Json.createReader(stream);
+		JsonObject receivedPayload = jsonReader.readObject();
+		jsonReader.close();
 
 		Thing thing = this.getThingByTopic(topic);
 
-		if (iotMessage != null && thing != null) {
+		if (receivedPayload != null && thing != null && receivedPayload.containsKey("action")) {
 			System.out.println("=> Mensagem recebida: \"" + message.toString() + "\" no tópico \"" + topic.toString()
 					+ "\" para instancia \"" + getThingID() + "\"");
 
-			System.out.println(iotMessage);
+			System.out.println(receivedPayload);
 			System.out.println(thing);
 
 			Part part = null;
@@ -278,7 +282,7 @@ public abstract class AbstractDeviceController implements DeviceController, Mqtt
 				part = (Part) thing;
 				thing = part.getOwner();
 			}
-			this.dispatchAction(Action.of(thing, part, iotMessage.getAction(), null, null), null);
+			this.dispatchAction(Action.of(thing, part, receivedPayload), null);
 		}
 
 	}
@@ -308,7 +312,7 @@ public abstract class AbstractDeviceController implements DeviceController, Mqtt
 					.discoverActuatorToThing(action.getPart() != null ? action.getPart() : action.getThing());
 			if (actuator != null) {
 				try {
-					actuator.executeAction(action.getAction(),
+					actuator.executeAction(action.getReceivedPayload(),
 							action.getPart() != null ? action.getPart() : action.getThing());
 				} catch (Exception e) {
 					MqttMessage msg = new MqttMessage(e.getMessage().getBytes());

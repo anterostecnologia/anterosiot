@@ -3,6 +3,8 @@ package br.com.anteros.iot.actuators;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.json.JsonObject;
+
 import com.diozero.util.SleepUtil;
 import com.pi4j.io.gpio.GpioController;
 import com.pi4j.io.gpio.GpioPinDigitalOutput;
@@ -24,13 +26,14 @@ public class MagneticLockActuator implements Actuator<Boolean> {
 	}
 
 	@Override
-	public Boolean executeAction(String action, Thing thing) {
+	public Boolean executeAction(JsonObject recivedPayload, Thing thing) {
+		String action = recivedPayload.getString("action");
 		if (thing instanceof MagneticLock) {
 			if (action.equals(OPEN)) {
 				GpioController gpio = Pi4JHelper.getGpioController();
 				final GpioPinDigitalOutput pin = getOutputPinFromThing(gpio, thing);
 				gpio.low(pin);
-				SleepUtil.sleepMillis(((MagneticLock)thing).getTimeWaitOpening());
+				SleepUtil.sleepMillis(((MagneticLock) thing).getTimeWaitOpening());
 				gpio.high(pin);
 				return true;
 			}
