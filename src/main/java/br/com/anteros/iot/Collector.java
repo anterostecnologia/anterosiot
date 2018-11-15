@@ -1,6 +1,6 @@
 package br.com.anteros.iot;
 
-import br.com.anteros.iot.collectors.CollectorListener;
+import br.com.anteros.iot.actuators.collectors.CollectorListener;
 
 public abstract class Collector implements Actuable {
 

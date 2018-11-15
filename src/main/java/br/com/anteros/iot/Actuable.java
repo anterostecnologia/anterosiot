@@ -1,6 +1,6 @@
 package br.com.anteros.iot;
 
-import br.com.anteros.iot.collectors.CollectResult;
+import br.com.anteros.iot.actuators.collectors.CollectResult;
 import br.com.anteros.iot.triggers.Trigger;
 import br.com.anteros.iot.triggers.TriggerType;
 

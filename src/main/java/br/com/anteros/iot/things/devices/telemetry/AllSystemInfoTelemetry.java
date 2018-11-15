@@ -3,7 +3,7 @@ package br.com.anteros.iot.things.devices.telemetry;
 import javax.json.JsonObject;
 
 import br.com.anteros.iot.Device;
-import br.com.anteros.iot.collectors.TelemetryType;
+import br.com.anteros.iot.actuators.collectors.TelemetryType;
 import br.com.anteros.iot.support.SystemInfoHelper;
 import br.com.anteros.iot.things.devices.RaspberryPI;
 import br.com.anteros.iot.things.devices.RaspberryPIZero;

@@ -5,8 +5,8 @@ import javax.json.JsonObjectBuilder;
 
 import br.com.anteros.core.utils.StringUtils;
 import br.com.anteros.iot.Action;
+import br.com.anteros.iot.actuators.collectors.CollectResult;
 import br.com.anteros.iot.app.listeners.AnterosIOTServiceListener;
-import br.com.anteros.iot.collectors.CollectResult;
 import br.com.anteros.iot.plant.PlantItem;
 
 public class Trigger {

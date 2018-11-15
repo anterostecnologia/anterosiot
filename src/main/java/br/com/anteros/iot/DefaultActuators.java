@@ -10,13 +10,13 @@ import br.com.anteros.iot.actuators.LedActuator;
 import br.com.anteros.iot.actuators.MagneticLockActuator;
 import br.com.anteros.iot.actuators.MemoryPlcActuator;
 import br.com.anteros.iot.actuators.RingStripLED12Actuator;
-import br.com.anteros.iot.collectors.CameraMotionDetectorCollector;
-import br.com.anteros.iot.collectors.CameraQRCodeCollector;
-import br.com.anteros.iot.collectors.DeviceSystemInfoCollector;
-import br.com.anteros.iot.collectors.PlcColletor;
-import br.com.anteros.iot.collectors.PresenceDetectorCollector;
-import br.com.anteros.iot.collectors.RFIDReaderCollector;
-import br.com.anteros.iot.collectors.TemperatureOneWireCollector;
+import br.com.anteros.iot.actuators.collectors.CameraMotionDetectorCollector;
+import br.com.anteros.iot.actuators.collectors.CameraQRCodeCollector;
+import br.com.anteros.iot.actuators.collectors.DeviceSystemInfoCollector;
+import br.com.anteros.iot.actuators.collectors.PlcColletor;
+import br.com.anteros.iot.actuators.collectors.PresenceDetectorCollector;
+import br.com.anteros.iot.actuators.collectors.RFIDReaderCollector;
+import br.com.anteros.iot.actuators.collectors.TemperatureOneWireCollector;
 
 public class DefaultActuators implements Actuators {
 

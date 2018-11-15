@@ -10,7 +10,7 @@ import br.com.anteros.iot.Sensor;
 import br.com.anteros.iot.SensorCollectionType;
 import br.com.anteros.iot.Thing;
 import br.com.anteros.iot.ThingStatus;
-import br.com.anteros.iot.collectors.CollectResult;
+import br.com.anteros.iot.actuators.collectors.CollectResult;
 import br.com.anteros.iot.domain.PlantItemNode;
 import br.com.anteros.iot.domain.things.PresenceDetectorNode;
 import br.com.anteros.iot.plant.PlantItem;
