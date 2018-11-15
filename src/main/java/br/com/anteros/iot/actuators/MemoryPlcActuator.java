@@ -2,6 +2,8 @@ package br.com.anteros.iot.actuators;
 
 import java.util.Properties;
 
+import javax.json.JsonObject;
+
 import br.com.anteros.core.utils.StringUtils;
 import br.com.anteros.iot.Actuator;
 import br.com.anteros.iot.Thing;
@@ -25,9 +27,10 @@ public class MemoryPlcActuator implements Actuator<Boolean> {
 	}
 
 	@Override
-	public Boolean executeAction(String action, Thing thing) {
+	public Boolean executeAction(JsonObject recivedPayload, Thing thing) {
+		String action = recivedPayload.get("action").toString();
 		MemoryPlc memory = (MemoryPlc) thing;
-		
+
 		if (memory.getModifyType().equals(ModifyType.READ)) {
 			System.out.println("A memória do PLC selecioando não pode alterar o valor, verifique.");
 			return false;

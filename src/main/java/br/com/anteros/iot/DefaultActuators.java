@@ -34,7 +34,7 @@ public class DefaultActuators implements Actuators {
 		registerActuator(TemperatureOneWireCollector.class);
 		registerActuator(CameraMotionDetectorCollector.class);
 		registerActuator(PlcColletor.class);
-		registerActuator(MemoryPlcActuator.class);
+		//registerActuator(MemoryPlcActuator.class);
 		registerActuator(RingStripLED12Actuator.class);
 	}
 

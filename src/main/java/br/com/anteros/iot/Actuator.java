@@ -1,8 +1,10 @@
 package br.com.anteros.iot;
 
+import javax.json.JsonObject;
+
 public interface Actuator<T> extends Actuable {	
 	
-	public T executeAction(String action, Thing thing);
+	public T executeAction(JsonObject recivedPayload, Thing thing);
 	
 	
 

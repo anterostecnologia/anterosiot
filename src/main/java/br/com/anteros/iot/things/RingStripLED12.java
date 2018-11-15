@@ -1,8 +1,10 @@
 package br.com.anteros.iot.things;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 
 import br.com.anteros.iot.DeviceController;
@@ -12,6 +14,7 @@ import br.com.anteros.iot.ThingStatus;
 import br.com.anteros.iot.domain.PlantItemNode;
 import br.com.anteros.iot.domain.things.RingStripLED12Node;
 import br.com.anteros.iot.plant.PlantItem;
+import br.com.anteros.iot.processors.Processor;
 import br.com.anteros.iot.support.colors.RGB;
 import br.com.anteros.iot.things.test.LEDDisplayType;
 import br.com.anteros.iot.triggers.Trigger;
@@ -26,7 +29,8 @@ public class RingStripLED12 extends PlantItem implements Thing {
 	protected int brightness = 64;	
 	protected int numPixels = 60;
 	protected Set<Trigger> triggers = new LinkedHashSet<>();
-
+	protected List<Processor<?>> processors = new ArrayList<>();
+	
 	protected RingStripLED12(String id, int pin, LEDDisplayType ledType, int animateMiliseconds,
 			int brightness, int numPixels ) {
 		this.itemId = id;
@@ -184,5 +188,20 @@ public class RingStripLED12 extends PlantItem implements Thing {
 		this.numPixels = numPixels;
 	}
 
+	@Override
+	public Thing addProcessor(Processor<?> processor) {
+		processors.add(processor);
+		return this;
+	}
 
+	@Override
+	public Thing removeProcessor(Processor<?> processor) {
+		processors.remove(processor);
+		return this;
+	}
+
+	@Override
+	public Processor<?>[] getProcessors() {
+		return processors.toArray(new Processor[] {});
+	}
 }

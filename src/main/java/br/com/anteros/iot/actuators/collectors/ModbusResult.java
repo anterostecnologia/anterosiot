@@ -9,7 +9,7 @@ public class ModbusResult implements CollectResult {
 
 	@Override
 	public Object getValue() {
-		return this;
+		return newValue;
 	}
 
 	@Override
@@ -38,6 +38,9 @@ public class ModbusResult implements CollectResult {
 	private ModbusResult(Object oldValue, Object newValue) {
 		this.oldValue = oldValue;
 		this.newValue = newValue;
+	}
+	
+	public ModbusResult() {
 	}
 
 	public static ModbusResult of(Object oldValue, Object newValue) {

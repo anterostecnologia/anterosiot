@@ -10,13 +10,10 @@ import java.util.Set;
 
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttException;
-import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 
 import br.com.anteros.iot.Action;
 import br.com.anteros.iot.Actuable;
@@ -32,14 +29,17 @@ import br.com.anteros.iot.controllers.remote.RemoteDeviceControllerFactory;
 import br.com.anteros.iot.domain.DeviceMasterNode;
 import br.com.anteros.iot.domain.DeviceNode;
 import br.com.anteros.iot.domain.DeviceSlaveNode;
+import br.com.anteros.iot.domain.PartNode;
 import br.com.anteros.iot.domain.PlantItemNode;
 import br.com.anteros.iot.domain.ThingNode;
 import br.com.anteros.iot.domain.actions.ActionNode;
 import br.com.anteros.iot.domain.plant.PlantNode;
+import br.com.anteros.iot.domain.processors.ProcessorNode;
 import br.com.anteros.iot.domain.triggers.TriggerNode;
 import br.com.anteros.iot.plant.Place;
 import br.com.anteros.iot.plant.Plant;
 import br.com.anteros.iot.plant.PlantItem;
+import br.com.anteros.iot.processors.Processor;
 import br.com.anteros.iot.support.MqttHelper;
 import br.com.anteros.iot.triggers.Trigger;
 import br.com.anteros.iot.triggers.WhenCondition;
@@ -128,7 +128,6 @@ public class AnterosIOTConfiguration {
 			String broker = "tcp://" + hostMqtt + ":" + (port == null ? 1883 : port);
 
 			String clientId = deviceName + "_controller";
-			MemoryPersistence persistence = new MemoryPersistence();
 
 			System.out.println("Conectando servidor broker MQTT..." + broker);
 
@@ -253,6 +252,34 @@ public class AnterosIOTConfiguration {
 
 						sourceThing.addTrigger(Trigger.of(triggerNode.getName(), triggerNode.getType(), whenCondition,
 								targetActions.toArray(new Action[] {}), exceptionAction));
+					}
+				}
+
+			}
+
+			for (ThingNode thingNode : deviceNode.getThings()) {
+				Thing sourceThing = deviceResult.getThingById(thingNode.getItemName());
+				if (thingNode.getProcessors() != null && !thingNode.getProcessors().isEmpty()) {
+					for (ProcessorNode<?> processorNode : thingNode.getProcessors()) {
+						Processor<?> processor = processorNode.getInstanceOfProcessor(); 
+						processor.setThings(sourceThing);
+						sourceThing.addProcessor(processor);
+					}
+				}
+				
+				if (thingNode.getItems() != null && !thingNode.getItems().isEmpty()) {
+					for (PlantItemNode node : thingNode.getItems()) {
+						
+						if(node instanceof PartNode) {
+							Part sourcePart = sourceThing.getPartById(node.getItemName());
+							if (((PartNode) node).getProcessors() != null && !((PartNode)node).getProcessors().isEmpty()) {
+								for (ProcessorNode<?> processorNode : ((PartNode) node).getProcessors()) {
+									Processor<?> processor = processorNode.getInstanceOfProcessor(); 
+									processor.setThings(sourcePart);
+									sourcePart.addProcessor(processor);
+								}
+							}	
+						}
 					}
 				}
 

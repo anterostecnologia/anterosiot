@@ -3,29 +3,19 @@ package br.com.anteros.iot.controllers;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.json.Json;
-
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttException;
-import org.eclipse.paho.client.mqttv3.MqttMessage;
-import org.eclipse.paho.client.mqttv3.MqttPersistenceException;
 
 import br.com.anteros.core.utils.Assert;
-import br.com.anteros.core.utils.StringUtils;
-import br.com.anteros.iot.Action;
-import br.com.anteros.iot.Actuator;
 import br.com.anteros.iot.Actuators;
 import br.com.anteros.iot.Device;
 import br.com.anteros.iot.DeviceController;
 import br.com.anteros.iot.MasterDeviceController;
-import br.com.anteros.iot.Part;
 import br.com.anteros.iot.SlaveDeviceController;
-import br.com.anteros.iot.Thing;
 import br.com.anteros.iot.app.listeners.AnterosIOTServiceListener;
 import br.com.anteros.iot.domain.DeviceNode;
 import br.com.anteros.iot.plant.Plant;
-import br.com.anteros.iot.protocol.IOTMessage;
 import br.com.anteros.iot.things.devices.IpAddress;
 import br.com.anteros.iot.things.devices.RaspberryPI;
 

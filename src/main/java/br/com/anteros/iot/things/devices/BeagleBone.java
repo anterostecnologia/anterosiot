@@ -12,6 +12,7 @@ import br.com.anteros.iot.Thing;
 import br.com.anteros.iot.ThingStatus;
 import br.com.anteros.iot.domain.PlantItemNode;
 import br.com.anteros.iot.plant.PlantItem;
+import br.com.anteros.iot.processors.Processor;
 import br.com.anteros.iot.things.devices.telemetry.TelemetryStrategy;
 import br.com.anteros.iot.triggers.Trigger;
 
@@ -132,4 +133,21 @@ public class BeagleBone extends PlantItem implements Device {
 		return null;
 	}
 
+	@Override
+	public Thing addProcessor(Processor<?> processor) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Thing removeProcessor(Processor<?> processor) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Processor<?>[] getProcessors() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

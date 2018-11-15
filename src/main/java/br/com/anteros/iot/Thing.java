@@ -6,6 +6,7 @@ import java.util.Set;
 
 import br.com.anteros.core.utils.StringUtils;
 import br.com.anteros.iot.domain.PlantItemNode;
+import br.com.anteros.iot.processors.Processor;
 import br.com.anteros.iot.triggers.Trigger;
 import br.com.anteros.iot.triggers.TriggerType;
 import br.com.anteros.iot.triggers.WhenCondition;
@@ -85,4 +86,18 @@ public interface Thing {
 		return result.toArray(new Trigger[] {});
 	}
 
+	public Thing addProcessor(Processor<?> processor);
+
+	public Thing removeProcessor(Processor<?> processor);
+
+	public Processor<?>[] getProcessors();
+
+	default public boolean hasProcessor() {
+		for (Processor<?> processor : getProcessors()) {
+			if (processor.isSupportedThing(this)) {
+				return true;
+			}
+		}
+		return false;
+	}
 }
