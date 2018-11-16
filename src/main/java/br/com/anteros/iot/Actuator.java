@@ -4,7 +4,7 @@ import javax.json.JsonObject;
 
 public interface Actuator<T> extends Actuable {	
 	
-	public T executeAction(JsonObject recivedPayload, Thing thing);
+	public T executeAction(JsonObject receivedPayload, Thing thing);
 	
 	
 

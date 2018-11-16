@@ -132,7 +132,7 @@ public class BluetoothLeBeaconManagerImpl
         }
     }
 
-    public void stopBeaconAdvertising(String interfaceName) throws BLECommandException {
+    public void stopBeaconAdvertising(String interfaceName) throws BLECommandException { 
         String[] cmd = { CMD, OGF_CONTROLLER_CMD, OCF_ADVERTISING_ENABLE_CMD, "00" };
 
         logger.debug(SET_ADVERTISING_PARAMETERS_HCITOOL_MESSAGE, () -> interfaceName, () -> String.join(" ", cmd));

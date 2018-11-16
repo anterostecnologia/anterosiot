@@ -5,6 +5,8 @@ import com.diozero.ws281xj.PixelAnimations;
 import com.diozero.ws281xj.PixelColour;
 import com.diozero.ws281xj.rpiws281x.WS281x;
 
+import br.com.anteros.iot.support.colors.RGB;
+
 public class TestLED {
 	public static void main(String[] args) {
 		//int gpio_num = 18;
@@ -16,8 +18,10 @@ public class TestLED {
 		System.out.println("Using GPIO " + gpio_num);
 		
 		try (LedDriverInterface led_driver = new WS281x(gpio_num, brightness, num_pixels)) {
+			
 //			rainbowColours(led_driver);
 			test2(led_driver);
+			
 //			hsbTest(led_driver);
 //			hslTest(led_driver);
 //
@@ -56,14 +60,15 @@ public class TestLED {
 
 		// Gradually add red
 		System.out.println("Adding red...");
-		for (int i=0; i<256; i+=2) {
-			for (int pixel=0; pixel<ledDriver.getNumPixels(); pixel++) {
-				ledDriver.setRedComponent(pixel, i);
-			}
-			
-			ledDriver.render();
-			PixelAnimations.delay(delay);
-		}
+//		for (int i=0; i<256; i+=2) {
+//			for (int pixel=0; pixel<ledDriver.getNumPixels(); pixel++) {
+//				ledDriver.setRedComponent(pixel, i);
+//			}
+//			
+//			ledDriver.render();
+//			PixelAnimations.delay(delay);
+//			PixelAnimations.colourWipe(ledDriver, 0, 200);
+//		}
 
 		// Gradually add green
 		System.out.println("Adding green...");
@@ -71,21 +76,25 @@ public class TestLED {
 			for (int pixel=0; pixel<ledDriver.getNumPixels(); pixel++) {
 				ledDriver.setGreenComponent(pixel, i);
 			}
-			
+		
 			ledDriver.render();
-			PixelAnimations.delay(delay);
+		PixelAnimations.delay(delay);
+		
 		}
+		
 
-		// Gradually add blue
-		System.out.println("Adding blue...");
-		for (int i=0; i<256; i+=2) {
-			for (int pixel=0; pixel<ledDriver.getNumPixels(); pixel++) {
-				ledDriver.setBlueComponent(pixel, i);
-			}
-			
-			ledDriver.render();
-			PixelAnimations.delay(delay);
-		}
+		PixelAnimations.colourWipe(ledDriver, 0, 200);
+
+//		// Gradually add blue
+//		System.out.println("Adding blue...");
+//		for (int i=0; i<256; i+=2) {
+//			for (int pixel=0; pixel<ledDriver.getNumPixels(); pixel++) {
+//				ledDriver.setBlueComponent(pixel, i);
+//			}
+//			
+//			ledDriver.render();
+//			PixelAnimations.delay(delay);
+//		}
 		
 		// Set all off
 		ledDriver.allOff();

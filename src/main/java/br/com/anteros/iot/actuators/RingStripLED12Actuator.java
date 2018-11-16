@@ -5,6 +5,7 @@ import java.util.Map;
 
 import javax.json.JsonObject;
 
+import com.diozero.util.SleepUtil;
 import com.diozero.ws281xj.LedDriverInterface;
 import com.diozero.ws281xj.PixelAnimations;
 import com.diozero.ws281xj.PixelColour;
@@ -59,6 +60,29 @@ public class RingStripLED12Actuator implements Actuator<Boolean> {
 				PixelAnimations.delay(animateMiliseconds);
 		}
 	}
+	
+	protected void simpleColorCountdown(LedDriverInterface ledDriver, RGB rgb, int wait , int timeMiliseconds) {
+		int rgbInt = PixelColour.createColourRGB(rgb.getRed(), rgb.getGreen(), rgb.getBlue());
+		for (int i=0; i<ledDriver.getNumPixels(); i++) {
+			ledDriver.setPixelColour(i, rgbInt);
+			ledDriver.render();
+			if (!running.isRunning()) {
+				return;
+			}
+			SleepUtil.sleepMillis(wait);
+		}
+		
+		for (int i=0; i<ledDriver.getNumPixels(); i++) {
+			ledDriver.setPixelColour(i, 0);
+			ledDriver.render();
+			if (!running.isRunning()) {
+				return;
+			}
+			SleepUtil.sleepMillis(timeMiliseconds/12);
+		}
+	}
+	
+	
 
 	protected void rainbowColours(LedDriverInterface ledDriver) {
 		System.out.println("rainbowColours - start");
@@ -151,7 +175,7 @@ public class RingStripLED12Actuator implements Actuator<Boolean> {
 			} else if (LEDDisplayType.RAINBOW_CYCLE_ANIMATED.equals(ringLed.getLedType())) {
 				PixelAnimations.rainbowCycle(ledDriver, 20);
 			} else if (LEDDisplayType.SIMPLE_COLOR.equals(ringLed.getLedType())) {
-				rainbowColours(ledDriver);// simpleColor(ringLed.getColor(), ringLed.getAnimateMiliseconds());
+				simpleColorCountdown(ledDriver, ringLed.getColor(), ringLed.getAnimateMiliseconds(), 8000);
 			} else if (LEDDisplayType.THEATER_CHASE_ANIMATED.equals(ringLed.getLedType())) {
 				PixelAnimations.theatreChase(ledDriver, rgb, ringLed.getAnimateMiliseconds());
 			} else if (LEDDisplayType.THEATER_CHASE_RAINBOW_ANIMATED.equals(ringLed.getLedType())) {

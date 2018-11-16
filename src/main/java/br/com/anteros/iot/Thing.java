@@ -93,11 +93,12 @@ public interface Thing {
 	public Processor<?>[] getProcessors();
 
 	default public boolean hasProcessor() {
-		if (getProcessors() != null && getProcessors().length != 0) {
-			for (Processor<?> processor : getProcessors()) {
-				if (processor.isSupportedThing(this)) {
-					return true;
-				}
+		if (getProcessors()==null)
+			return false;
+		
+		for (Processor<?> processor : getProcessors()) {
+			if (processor.isSupportedThing(this)) {
+				return true;
 			}
 		}
 		return false;
