@@ -9,9 +9,9 @@ import br.com.anteros.iot.DeviceController;
 import br.com.anteros.iot.Part;
 import br.com.anteros.iot.Thing;
 import br.com.anteros.iot.ThingStatus;
+import br.com.anteros.iot.actuators.processors.Processor;
 import br.com.anteros.iot.domain.PlantItemNode;
 import br.com.anteros.iot.plant.PlantItem;
-import br.com.anteros.iot.processors.Processor;
 import br.com.anteros.iot.triggers.Trigger;
 
 public class CameraSecurity extends PlantItem implements Thing {

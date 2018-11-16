@@ -4,8 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import br.com.anteros.iot.Thing;
 import br.com.anteros.iot.actuators.collectors.CollectResult;
+import br.com.anteros.iot.actuators.processors.Processor;
 import br.com.anteros.iot.domain.PlantItemNode;
-import br.com.anteros.iot.processors.Processor;
 
 public abstract class ProcessorNode<T extends CollectResult> extends PlantItemNode {
 	

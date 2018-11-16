@@ -4,6 +4,9 @@ import java.util.Properties;
 
 import javax.json.JsonObject;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import br.com.anteros.core.utils.StringUtils;
 import br.com.anteros.iot.Actuator;
 import br.com.anteros.iot.Thing;
@@ -17,7 +20,8 @@ import br.com.anteros.iot.things.parts.MemoryPlc;
 import br.com.anteros.iot.triggers.TriggerType;
 
 public class MemoryPlcActuator implements Actuator<Boolean> {
-
+	
+	private static final Logger logger = LogManager.getLogger(MemoryPlcActuator.class);
 	private ModbusProtocolDeviceService protocolDevice;
 	private Properties modbusProperties;
 
@@ -32,7 +36,7 @@ public class MemoryPlcActuator implements Actuator<Boolean> {
 		MemoryPlc memory = (MemoryPlc) thing;
 
 		if (memory.getModifyType().equals(ModifyType.READ)) {
-			System.out.println("A memória do PLC selecioando não pode alterar o valor, verifique.");
+			logger.error("A memória do PLC selecioando não pode alterar o valor, verifique.");
 			return false;
 		}
 
@@ -40,7 +44,7 @@ public class MemoryPlcActuator implements Actuator<Boolean> {
 			try {
 				this.protocolDevice.disconnect();
 			} catch (ModbusProtocolException e) {
-				System.out.println("Failed to disconnect : " + e.getMessage());
+				logger.error("Failed to disconnect : " + e.getMessage());
 				return false;
 			}
 		} else {
@@ -82,7 +86,7 @@ public class MemoryPlcActuator implements Actuator<Boolean> {
 				}
 			}
 		} catch (ModbusProtocolException e) {
-			System.out.println(e.getMessage());
+			logger.error(e.getMessage());
 		}
 
 		return false;

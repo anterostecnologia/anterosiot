@@ -5,8 +5,8 @@ import java.util.List;
 import java.util.Set;
 
 import br.com.anteros.core.utils.StringUtils;
+import br.com.anteros.iot.actuators.processors.Processor;
 import br.com.anteros.iot.domain.PlantItemNode;
-import br.com.anteros.iot.processors.Processor;
 import br.com.anteros.iot.triggers.Trigger;
 import br.com.anteros.iot.triggers.TriggerType;
 import br.com.anteros.iot.triggers.WhenCondition;
@@ -93,9 +93,11 @@ public interface Thing {
 	public Processor<?>[] getProcessors();
 
 	default public boolean hasProcessor() {
-		for (Processor<?> processor : getProcessors()) {
-			if (processor.isSupportedThing(this)) {
-				return true;
+		if (getProcessors() != null && getProcessors().length != 0) {
+			for (Processor<?> processor : getProcessors()) {
+				if (processor.isSupportedThing(this)) {
+					return true;
+				}
 			}
 		}
 		return false;

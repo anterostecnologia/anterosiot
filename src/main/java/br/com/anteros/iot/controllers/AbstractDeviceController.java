@@ -35,14 +35,14 @@ import br.com.anteros.iot.Part;
 import br.com.anteros.iot.Thing;
 import br.com.anteros.iot.actuators.collectors.CollectorManager;
 import br.com.anteros.iot.actuators.collectors.SimpleCollectorManager;
+import br.com.anteros.iot.actuators.processors.Processor;
+import br.com.anteros.iot.actuators.processors.ProcessorManager;
+import br.com.anteros.iot.actuators.processors.SimpleProcessorManager;
 import br.com.anteros.iot.app.listeners.AnterosIOTServiceListener;
 import br.com.anteros.iot.domain.DeviceNode;
 import br.com.anteros.iot.plant.Place;
 import br.com.anteros.iot.plant.Plant;
 import br.com.anteros.iot.plant.PlantItem;
-import br.com.anteros.iot.processors.Processor;
-import br.com.anteros.iot.processors.ProcessorManager;
-import br.com.anteros.iot.processors.SimpleProcessorManager;
 import br.com.anteros.iot.support.MqttHelper;
 import br.com.anteros.iot.things.devices.IpAddress;
 

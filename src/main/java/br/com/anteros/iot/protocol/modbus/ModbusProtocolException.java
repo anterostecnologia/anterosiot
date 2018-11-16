@@ -5,8 +5,8 @@ import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import br.com.anteros.iot.protocol.modbus.type.ModbusProtocolErrorCode;
 
@@ -17,7 +17,7 @@ public class ModbusProtocolException extends Exception {
     private static final String PROTOCOL_GENERIC_MESSAGES_PATTERN = "Generic Error - {0}: {1} {2} {3} {4} {5}";
     private static final String PROTOCOL_EXCEPTION_MESSAGES_BUNDLE = "org.eclipse.kura.protocol.messages.ProtocolExceptionMessagesBundle";
 
-    private static final Logger s_logger = LoggerFactory.getLogger(ModbusProtocolException.class);
+    private static final Logger s_logger = LogManager.getLogger(ModbusProtocolException.class);
 
     protected ModbusProtocolErrorCode m_code;
     private Object[] m_arguments;

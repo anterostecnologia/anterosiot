@@ -4,6 +4,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.diozero.util.SleepUtil;
 
 import br.com.anteros.core.utils.Assert;
@@ -19,7 +22,8 @@ import br.com.anteros.iot.things.Plc;
 import br.com.anteros.iot.things.parts.MemoryPlc;
 
 public class PlcColletor extends Collector implements Runnable {
-
+	
+	private static final Logger logger = LogManager.getLogger(PlcColletor.class);
 	protected Boolean running = false;
 	protected Thread thread;
 
@@ -60,7 +64,7 @@ public class PlcColletor extends Collector implements Runnable {
 		
 		Plc plc = (Plc) thing;
 		
-		System.out.println("Iniciando coletor do PLC " + plc.getItemId() + " - " + plc.getDescription());
+		logger.info("Iniciando coletor do PLC " + plc.getItemId() + " - " + plc.getDescription());
 
 		this.protocolDevice = new ModbusProtocolDevice();
 
@@ -68,7 +72,7 @@ public class PlcColletor extends Collector implements Runnable {
 			try {
 				this.protocolDevice.disconnect();
 			} catch (ModbusProtocolException e) {
-				System.out.println("Failed to disconnect : " + e.getMessage());
+				logger.error("Failed to disconnect : " + e.getMessage());
 			}
 		}
 
@@ -79,7 +83,7 @@ public class PlcColletor extends Collector implements Runnable {
 			configureDevice();
 
 		} catch (ModbusProtocolException e) {
-			System.out.println("ModbusProtocolException : " + e.getMessage());
+			logger.error("ModbusProtocolException : " + e.getMessage());
 		}
 
 		while (running) {
@@ -125,7 +129,7 @@ public class PlcColletor extends Collector implements Runnable {
 				return analogInputs[0];
 			}
 		} catch (ModbusProtocolException e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 			return null;
 		}
 	}

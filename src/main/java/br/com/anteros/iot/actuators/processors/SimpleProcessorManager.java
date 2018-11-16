@@ -1,4 +1,4 @@
-package br.com.anteros.iot.processors;
+package br.com.anteros.iot.actuators.processors;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -14,6 +14,8 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import br.com.anteros.core.log.Logger;
+import br.com.anteros.core.log.LoggerProvider;
 import br.com.anteros.iot.Device;
 import br.com.anteros.iot.Thing;
 import br.com.anteros.iot.actuators.collectors.CollectResult;
@@ -22,6 +24,10 @@ import br.com.anteros.iot.support.MqttHelper;
 
 public class SimpleProcessorManager implements ProcessorManager, ProcessorListener {
 
+	//private static final Logger logger = LogManager.getLogger(SimpleProcessorManager.class);
+	private static final Logger logger = LoggerProvider.getInstance().getLogger(SimpleProcessorManager.class.getName());
+	
+	
 	private MqttClient mqttClient;
 	private Thread thread;
 	private Boolean running = false;
@@ -61,14 +67,17 @@ public class SimpleProcessorManager implements ProcessorManager, ProcessorListen
 			clientProcessor = MqttHelper.createAndConnectMqttClient(mqttClient.getServerURI(),
 					device.getThingID() + "_processor", "", "", true, true);
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		}
 
-		this.autoSubscribe();
-		this.clientProcessor.setCallback(this);
+		if (registeredProcessors != null && !registeredProcessors.isEmpty()) {
+			this.autoSubscribe();
+			this.clientProcessor.setCallback(this);
 
-		if (!running && !registeredProcessors.isEmpty()) {
-			this.thread.start();
+			if (!running) {
+				logger.debug("Iniciou simple processor.");
+				this.thread.start();
+			}
 		}
 	}
 
@@ -79,23 +88,23 @@ public class SimpleProcessorManager implements ProcessorManager, ProcessorListen
 
 		while (running) {
 			if (first) {
-				System.out.println("Processador de dados rodando...");
+				logger.debug("Processador de dados rodando...");
 				first = false;
 			}
 			try {
 				Thread.sleep(500);
 			} catch (InterruptedException e) {
-				e.printStackTrace();
+				logger.error(e.getMessage());
 			}
 		}
-		System.out.println("Parando processador de dados.");
+		logger.debug("Parando processador de dados.");
 
 		processorExecutor.shutdown();
-		
+
 		while (processorExecutor.getActiveCount() > 0) {
 		}
-		System.out.println("THREADS ATIVAS > " + processorExecutor.getActiveCount());
-		
+		logger.debug("THREADS ATIVAS > " + processorExecutor.getActiveCount());
+
 		this.thread.interrupt();
 	}
 
@@ -131,13 +140,10 @@ public class SimpleProcessorManager implements ProcessorManager, ProcessorListen
 
 					result = mapper.readValue(payload, collectResult);
 				} catch (Exception e) {
-					System.out.println("JSon não é do tipo " + processor.getCollectResult().getSimpleName());
+					logger.error("JSon não é do tipo " + processor.getCollectResult().getSimpleName());
 				}
 
 				if (result != null && thing != null) {
-//					System.out.println("=> Mensagem recebida: \"" + message.toString() + "\" no tópico \""
-//							+ ((PlantItem) thing).getPath() + "\" para instancia \"" + thing.getThingID() + "\"");
-
 					processor.setResult(result);
 					processorExecutor.submit(processor);
 				}
@@ -171,7 +177,7 @@ public class SimpleProcessorManager implements ProcessorManager, ProcessorListen
 			System.out.println(Arrays.toString(filter.toArray(new String[] {})));
 			this.clientProcessor.subscribe(filter.toArray(new String[] {}));
 		} catch (MqttException e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		}
 	}
 }

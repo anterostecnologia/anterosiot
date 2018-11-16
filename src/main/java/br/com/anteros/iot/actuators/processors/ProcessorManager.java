@@ -1,4 +1,4 @@
-package br.com.anteros.iot.processors;
+package br.com.anteros.iot.actuators.processors;
 
 import org.eclipse.paho.client.mqttv3.MqttCallback;
 
