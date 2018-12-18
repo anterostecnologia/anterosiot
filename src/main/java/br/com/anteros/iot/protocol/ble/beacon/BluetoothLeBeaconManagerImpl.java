@@ -121,7 +121,7 @@ public class BluetoothLeBeaconManagerImpl
     public void startBeaconAdvertising(String interfaceName) throws BLECommandException {
         String[] cmd = { CMD, OGF_CONTROLLER_CMD, OCF_ADVERTISING_ENABLE_CMD, "01" };
 
-        logger.debug(SET_ADVERTISING_PARAMETERS_HCITOOL_MESSAGE, () -> interfaceName, () -> String.join(" ", cmd));
+        //logger.debug(SET_ADVERTISING_PARAMETERS_HCITOOL_MESSAGE, () -> interfaceName, () -> String.join(" ", cmd));
 
         logger.info("Start Advertising on interface {}", interfaceName);
 
@@ -135,7 +135,7 @@ public class BluetoothLeBeaconManagerImpl
     public void stopBeaconAdvertising(String interfaceName) throws BLECommandException { 
         String[] cmd = { CMD, OGF_CONTROLLER_CMD, OCF_ADVERTISING_ENABLE_CMD, "00" };
 
-        logger.debug(SET_ADVERTISING_PARAMETERS_HCITOOL_MESSAGE, () -> interfaceName, () -> String.join(" ", cmd));
+        //logger.debug(SET_ADVERTISING_PARAMETERS_HCITOOL_MESSAGE, () -> interfaceName, () -> String.join(" ", cmd));
 
         logger.info("Stop Advertising on interface {}", interfaceName);
 
@@ -157,7 +157,7 @@ public class BluetoothLeBeaconManagerImpl
         String[] cmd = { CMD, OGF_CONTROLLER_CMD, OCF_ADVERTISING_PARAM_CMD, minHex[1], minHex[0], maxHex[1], maxHex[0],
                 "03", "00", "00", "00", "00", "00", "00", "00", "00", "07", "00" };
 
-        logger.debug(SET_ADVERTISING_PARAMETERS_HCITOOL_MESSAGE, () -> interfaceName, () -> String.join(" ", cmd));
+        //logger.debug(SET_ADVERTISING_PARAMETERS_HCITOOL_MESSAGE, () -> interfaceName, () -> String.join(" ", cmd));
 
         logger.info("Set Advertising Parameters on interface {}", interfaceName);
 
@@ -192,7 +192,7 @@ public class BluetoothLeBeaconManagerImpl
             cmd[i + 3] = data[i];
         }
 
-        logger.debug("Set Advertising Data : hcitool -i {} {}", () -> interfaceName, () -> String.join(" ", cmd));
+        //logger.debug("Set Advertising Data : hcitool -i {} {}", () -> interfaceName, () -> String.join(" ", cmd));
 
         logger.info("Set Advertising Data on interface {}", interfaceName);
         try {

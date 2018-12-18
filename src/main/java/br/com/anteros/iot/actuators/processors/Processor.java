@@ -15,7 +15,7 @@ public abstract class Processor<T extends CollectResult> implements Runnable {
 	protected Processor(Class<? extends CollectResult> collectResult) {
 		this.collectResult = collectResult;
 	}
-	
+
 	public abstract boolean isSupportedThing(Thing thing);
 
 	public Thing getThing() {

@@ -12,6 +12,11 @@ public class MqttHelper {
 		MqttClient client = null;
 		client = new MqttClient(uri, name);
 		MqttConnectOptions connOpts = new MqttConnectOptions();
+		
+		if (!userName.isEmpty() && !password.isEmpty()) {
+			connOpts.setUserName(userName);
+			connOpts.setPassword(password.toCharArray());
+		}
 		connOpts.setAutomaticReconnect(automaticReconnect);
 		connOpts.setCleanSession(cleanSession);
 		client.connect(connOpts);

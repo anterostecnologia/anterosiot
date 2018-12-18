@@ -1,7 +1,5 @@
 package br.com.anteros.iot.actuators.collectors;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Properties;
 
 import org.apache.logging.log4j.LogManager;
@@ -26,8 +24,6 @@ public class PlcColletor extends Collector implements Runnable {
 	private static final Logger logger = LogManager.getLogger(PlcColletor.class);
 	protected Boolean running = false;
 	protected Thread thread;
-
-	Map<String, ResultValue> valueCache = new HashMap<>();
 
 	private ModbusProtocolDeviceService protocolDevice;
 	private Properties modbusProperties;
@@ -96,18 +92,13 @@ public class PlcColletor extends Collector implements Runnable {
 
 				if (!ObjectUtils.isEmpty(valorResult)) {
 
-					ResultValue resultValue = valueCache.get(memory.getItemId());
-					if (resultValue == null) {
-						resultValue = new ResultValue();
-					}
-
-					if (resultValue.newValue == null || valorResult != resultValue.newValue) {
-						resultValue.oldValue = resultValue.newValue;
-						resultValue.newValue = valorResult;
-
+					if (memory.getValue() == null || valorResult != memory.getValue()) {
+						
+						Object oldValue = memory.getValue();
+						memory.setValue(valorResult);;
+						
 						if (listener != null) {
-							valueCache.put(memory.getItemId(), resultValue);
-							listener.onCollect(ModbusResult.of(resultValue.oldValue, resultValue.newValue), memory);
+							listener.onCollect(ModbusResult.of(oldValue, memory.getValue()), memory);
 						}
 					}
 				}
@@ -155,10 +146,5 @@ public class PlcColletor extends Collector implements Runnable {
 		prop.setProperty("transmissionMode", "RTU");
 
 		return prop;
-	}
-
-	class ResultValue {
-		protected Object oldValue;
-		protected Object newValue;
 	}
 }

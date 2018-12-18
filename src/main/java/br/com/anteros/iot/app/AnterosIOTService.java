@@ -110,7 +110,7 @@ public class AnterosIOTService implements Runnable, MqttCallback {
 		System.out.println("Conectando servidor broker MQTT...");
 
 		try {
-			client = MqttHelper.createAndConnectMqttClient(broker, clientId, "", "", true, true);
+			client = MqttHelper.createAndConnectMqttClient(broker, clientId, username, password, true, true);
 		} catch (MqttException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();

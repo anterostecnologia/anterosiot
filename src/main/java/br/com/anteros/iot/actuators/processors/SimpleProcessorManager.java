@@ -24,10 +24,10 @@ import br.com.anteros.iot.support.MqttHelper;
 
 public class SimpleProcessorManager implements ProcessorManager, ProcessorListener {
 
-	//private static final Logger logger = LogManager.getLogger(SimpleProcessorManager.class);
+	// private static final Logger logger =
+	// LogManager.getLogger(SimpleProcessorManager.class);
 	private static final Logger logger = LoggerProvider.getInstance().getLogger(SimpleProcessorManager.class.getName());
-	
-	
+
 	private MqttClient mqttClient;
 	private Thread thread;
 	private Boolean running = false;
@@ -35,14 +35,16 @@ public class SimpleProcessorManager implements ProcessorManager, ProcessorListen
 	private MqttClient clientProcessor;
 	private ObjectMapper mapper = new ObjectMapper();
 	private Map<String, Thing> subscribedTopics = new HashMap<>();
-	private Device device;
 	private ThreadPoolTaskExecutor processorExecutor;
+	protected String username;
+	protected String password;
 
-	protected SimpleProcessorManager(Device device, MqttClient mqttClient, List<Processor<?>> processors) {
+	protected SimpleProcessorManager(MqttClient mqttClient, List<Processor<?>> processors, String username, String password) {
 		this.thread = new Thread(this);
 		this.registeredProcessors = processors;
 		this.mqttClient = mqttClient;
-		this.device = device;
+		this.username = username;
+		this.password = password;
 
 		processorExecutor = new ThreadPoolTaskExecutor();
 		processorExecutor.setCorePoolSize(10);
@@ -51,8 +53,8 @@ public class SimpleProcessorManager implements ProcessorManager, ProcessorListen
 		processorExecutor.initialize();
 	}
 
-	public static SimpleProcessorManager of(Device device, MqttClient mqttClient, List<Processor<?>> processors) {
-		return new SimpleProcessorManager(device, mqttClient, processors);
+	public static SimpleProcessorManager of(MqttClient mqttClient, List<Processor<?>> processors, String username, String password) {
+		return new SimpleProcessorManager(mqttClient, processors, username, password);
 	}
 
 	public void stop() {
@@ -65,7 +67,7 @@ public class SimpleProcessorManager implements ProcessorManager, ProcessorListen
 
 		try {
 			clientProcessor = MqttHelper.createAndConnectMqttClient(mqttClient.getServerURI(),
-					device.getThingID() + "_processor", "", "", true, true);
+					SimpleProcessorManager.class.getSimpleName() + "_processor", username, password, true, true);
 		} catch (Exception e) {
 			logger.error(e.getMessage());
 		}
@@ -143,13 +145,23 @@ public class SimpleProcessorManager implements ProcessorManager, ProcessorListen
 					logger.error("JSon não é do tipo " + processor.getCollectResult().getSimpleName());
 				}
 
+				if (processor instanceof MqttProcessor && ((MqttProcessor) processor).getMqttClient() == null) {
+
+					try {
+						((MqttProcessor) processor)
+								.setMqttClient(MqttHelper.createAndConnectMqttClient(mqttClient.getServerURI(),
+										processor.getClass().getSimpleName() + "_processor", username, password, true, true));
+					} catch (Exception e) {
+						logger.error(e.getMessage());
+					}
+				}
+
 				if (result != null && thing != null) {
 					processor.setResult(result);
 					processorExecutor.submit(processor);
 				}
 			}
 		}
-
 	}
 
 	public Thing getThingByTopic(String topic) {

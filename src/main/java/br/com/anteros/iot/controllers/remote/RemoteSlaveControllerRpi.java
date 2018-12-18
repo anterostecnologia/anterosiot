@@ -21,8 +21,8 @@ public class RemoteSlaveControllerRpi extends SlaveControllerRPi implements Remo
 	}
 
 	public RemoteSlaveControllerRpi(MqttClient clientMqtt, DeviceNode node, MasterDeviceController master,
-			Plant plant) {
-		super(clientMqtt, node, master, plant,null, null);
+			Plant plant, String username, String password) {
+		super(clientMqtt, node, master, plant,null, null, username, password);
 	}
 
 	@Override
@@ -70,8 +70,8 @@ public class RemoteSlaveControllerRpi extends SlaveControllerRPi implements Remo
 	}
 
 	public static RemoteSlaveControllerRpi of(MqttClient clientMqtt, DeviceNode node, MasterDeviceController master,
-			Plant plant) {
-		return new RemoteSlaveControllerRpi(clientMqtt, node, master, plant);
+			Plant plant, String username, String password) {
+		return new RemoteSlaveControllerRpi(clientMqtt, node, master, plant, username, password);
 	}
 
 	@Override

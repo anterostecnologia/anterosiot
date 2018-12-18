@@ -27,19 +27,19 @@ public class MasterControllerRPi extends AbstractDeviceController implements Mas
 		super(device, actuators);
 	}
 
-	protected MasterControllerRPi(MqttClient clientMqtt, Device device, Actuators actuators) {
-		super(clientMqtt, device, actuators);
+	protected MasterControllerRPi(MqttClient clientMqtt, Device device, Actuators actuators, String username, String password) {
+		super(clientMqtt, device, actuators, username, password);
 	}
 
 	protected MasterControllerRPi(MqttClient clientMqtt, Device device, Actuators actuators,
-			Set<DeviceController> slaves) {
-		super(clientMqtt, device, actuators);
+			Set<DeviceController> slaves, String username, String password) {
+		super(clientMqtt, device, actuators, username, password);
 		this.devices.addAll(slaves);
 	}
 
 	public MasterControllerRPi(MqttClient clientMqtt, DeviceNode node, Plant plant, Actuators actuators,
-			AnterosIOTServiceListener serviceListener) {
-		super(clientMqtt, node, actuators, serviceListener);
+			AnterosIOTServiceListener serviceListener, String username, String password) {
+		super(clientMqtt, node, actuators, serviceListener, username, password);
 		loadConfiguration(node, plant);
 	}
 
@@ -58,6 +58,8 @@ public class MasterControllerRPi extends AbstractDeviceController implements Mas
 		private Actuators actuators;
 		private Set<DeviceController> slaves = new HashSet<>();
 		private MqttClient clientMqtt;
+		private String username; 
+		private String password;
 
 		public static Builder create() {
 			return new Builder();
@@ -82,7 +84,7 @@ public class MasterControllerRPi extends AbstractDeviceController implements Mas
 
 		public MasterDeviceController build() {
 			Assert.notNull(device, "Informe o dispositivo para o controlador master.");
-			return MasterControllerRPi.of(clientMqtt, device, actuators, slaves);
+			return MasterControllerRPi.of(clientMqtt, device, actuators, slaves, username, password);
 		}
 
 		public Builder clientMqtt(MqttClient clientMqtt) {
@@ -93,8 +95,8 @@ public class MasterControllerRPi extends AbstractDeviceController implements Mas
 	}
 
 	public static MasterDeviceController of(MqttClient clientMqtt, Device device, Actuators actuators,
-			Set<DeviceController> slaves) {
-		return new MasterControllerRPi(clientMqtt, device, actuators, slaves);
+			Set<DeviceController> slaves, String username, String password) {
+		return new MasterControllerRPi(clientMqtt, device, actuators, slaves, username, password);
 	}
 
 	public void stopAllSlaves() {
@@ -133,8 +135,8 @@ public class MasterControllerRPi extends AbstractDeviceController implements Mas
 	}
 
 	public static MasterControllerRPi of(MqttClient clientMqtt, DeviceNode node, Plant plant, Actuators actuators,
-			AnterosIOTServiceListener serviceListener) {
-		return new MasterControllerRPi(clientMqtt, node, plant, actuators, serviceListener);
+			AnterosIOTServiceListener serviceListener, String username, String password) {
+		return new MasterControllerRPi(clientMqtt, node, plant, actuators, serviceListener, username, password);
 	}
 
 	@Override

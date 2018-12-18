@@ -133,7 +133,7 @@ public class AnterosIOTConfiguration {
 
 			MqttClient clientMqtt = null;
 			try {
-				clientMqtt = MqttHelper.createAndConnectMqttClient(broker, clientId, "", "", true, true);
+				clientMqtt = MqttHelper.createAndConnectMqttClient(broker, clientId, username, password, true, true);
 			} catch (MqttException e1) {
 				e1.printStackTrace();
 			}
@@ -142,7 +142,7 @@ public class AnterosIOTConfiguration {
 			defaultActuators.registerActuators(actuators);
 
 			deviceResult = ((DeviceNode) deviceNode).getInstanceOfDeviceController(clientMqtt, currentPlant,
-					defaultActuators, serviceListener);
+					defaultActuators, serviceListener, username, password);
 
 			if (deviceResult instanceof MasterDeviceController) {
 				List<PlantItemNode> slaves = new ArrayList<>();
@@ -154,13 +154,13 @@ public class AnterosIOTConfiguration {
 						MqttClient remoteClientMqtt = null;
 						try {
 							remoteClientMqtt = MqttHelper.createAndConnectMqttClient(broker,
-									deviceName + "_remoteController", "", "", true, true);
+									deviceName + "_remoteController", username, password, true, true);
 						} catch (MqttException e1) {
 							e1.printStackTrace();
 						}
 						((MasterDeviceController) deviceResult).addChildDeviceController(
 								RemoteDeviceControllerFactory.createSlaveFrom(remoteClientMqtt,
-										(MasterDeviceController) deviceResult, (DeviceSlaveNode) slave, currentPlant));
+										(MasterDeviceController) deviceResult, (DeviceSlaveNode) slave, currentPlant, username, password));
 					}
 				}
 			} else {
@@ -182,7 +182,7 @@ public class AnterosIOTConfiguration {
 				}
 
 				RemoteMasterDeviceController remoteMaster = RemoteDeviceControllerFactory
-						.createMasterFrom(remoteClientMqtt, master, currentPlant);
+						.createMasterFrom(remoteClientMqtt, master, currentPlant, username, password);
 
 				((SlaveDeviceController) deviceResult).setMaster(remoteMaster);
 			}

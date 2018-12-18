@@ -14,20 +14,20 @@ import br.com.anteros.iot.domain.DomainConstants;
 import br.com.anteros.iot.plant.Plant;
 
 @JsonTypeName(DomainConstants.MASTER_COMPUTER)
-public class MasterComputerNode extends DeviceMasterNode{
-	
+public class MasterComputerNode extends DeviceMasterNode {
+
 	public MasterComputerNode() {
 		super();
 	}
-	
+
 	public MasterComputerNode(String itemName, String description) {
-		super(itemName, description);		
+		super(itemName, description);
 	}
-	
+
 	@Override
 	public AbstractDeviceController getInstanceOfDeviceController(MqttClient clientMqtt, Plant plant,
-			Actuators actuators, AnterosIOTServiceListener serviceListener) {
-		return MasterControllerComputer.of(clientMqtt, this, plant, actuators, serviceListener);
+			Actuators actuators, AnterosIOTServiceListener serviceListener, String username, String password) {
+		return MasterControllerComputer.of(clientMqtt, this, plant, actuators, serviceListener, username, password);
 	}
 
 	@Override

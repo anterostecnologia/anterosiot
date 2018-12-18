@@ -30,8 +30,8 @@ public class SlaveControllerRPi extends AbstractDeviceController implements Slav
 	}
 
 	public SlaveControllerRPi(MqttClient clientMqtt, DeviceNode node, MasterDeviceController master, Plant plant,
-			Actuators actuators, AnterosIOTServiceListener serviceListener) {
-		super(clientMqtt, node, actuators, serviceListener);
+			Actuators actuators, AnterosIOTServiceListener serviceListener, String username, String password) {
+		super(clientMqtt, node, actuators, serviceListener, username, password);
 		this.master = master;
 		loadConfiguration(node, plant);
 	}
@@ -41,9 +41,9 @@ public class SlaveControllerRPi extends AbstractDeviceController implements Slav
 		this.master = master;
 	}
 
-	public SlaveControllerRPi(MqttClient clientMqtt, MasterDeviceController master, Device device,
-			Actuators actuators) {
-		super(clientMqtt, device, actuators);
+	public SlaveControllerRPi(MqttClient clientMqtt, MasterDeviceController master, Device device, Actuators actuators,
+			String username, String password) {
+		super(clientMqtt, device, actuators, username, password);
 		this.master = master;
 	}
 
@@ -77,6 +77,8 @@ public class SlaveControllerRPi extends AbstractDeviceController implements Slav
 		private Actuators actuators;
 		private MqttClient clientMqtt;
 		private RemoteMasterDeviceController master;
+		private String username;
+		private String password;
 
 		public static Builder create() {
 			return new Builder();
@@ -101,7 +103,7 @@ public class SlaveControllerRPi extends AbstractDeviceController implements Slav
 			Assert.notNull(device, "Informe o dispositivo para o controlador slave.");
 			Assert.notNull(master, "Informe o dispositivo master remoto para o controlador slave.");
 			Assert.notNull(clientMqtt, "Informe o dispositivo master remoto para o controlador slave.");
-			return SlaveControllerRPi.of(clientMqtt, master, device, actuators);
+			return SlaveControllerRPi.of(clientMqtt, master, device, actuators, username, password);
 		}
 
 		public Builder clientMqtt(MqttClient clientMqtt) {
@@ -112,13 +114,15 @@ public class SlaveControllerRPi extends AbstractDeviceController implements Slav
 	}
 
 	public static SlaveControllerRPi of(MqttClient clientMqtt, DeviceNode itemNode, MasterDeviceController master,
-			Plant plant, Actuators actuators, AnterosIOTServiceListener serviceListener) {
-		return new SlaveControllerRPi(clientMqtt, itemNode, master, plant, actuators, serviceListener);
+			Plant plant, Actuators actuators, AnterosIOTServiceListener serviceListener, String username,
+			String password) {
+		return new SlaveControllerRPi(clientMqtt, itemNode, master, plant, actuators, serviceListener, username,
+				password);
 	}
 
 	public static SlaveControllerRPi of(MqttClient clientMqtt, MasterDeviceController master, Device device,
-			Actuators actuators) {
-		return new SlaveControllerRPi(clientMqtt, master, device, actuators);
+			Actuators actuators, String username, String password) {
+		return new SlaveControllerRPi(clientMqtt, master, device, actuators, username, password);
 	}
 
 	@Override

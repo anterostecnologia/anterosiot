@@ -14,8 +14,8 @@ public abstract class DeviceMasterNode extends DeviceNode {
 
 	@Override
 	protected boolean acceptThisTypeOfChild(Class<?> child) {
-		return child.equals(DeviceSlaveNode.class) || ReflectionUtils.isExtendsClass(DeviceSlaveNode.class, child) || 
-				ReflectionUtils.isExtendsClass(ThingNode.class, child);
+		return child.equals(DeviceSlaveNode.class) || ReflectionUtils.isExtendsClass(DeviceSlaveNode.class, child)
+				|| ReflectionUtils.isExtendsClass(ThingNode.class, child);
 	}
 
 }

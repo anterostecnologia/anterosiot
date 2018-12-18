@@ -16,8 +16,8 @@ public class RemoteMasterControllerRPi extends MasterControllerRPi implements Re
 		super(device,null);
 	}
 	
-	public RemoteMasterControllerRPi(MqttClient clientMqtt,DeviceNode node, Plant plant) {
-		super(clientMqtt,node, plant,null, null);
+	public RemoteMasterControllerRPi(MqttClient clientMqtt,DeviceNode node, Plant plant, String username, String password) {
+		super(clientMqtt,node, plant,null, null, username, password);
 	}
 	
 	
@@ -52,8 +52,8 @@ public class RemoteMasterControllerRPi extends MasterControllerRPi implements Re
 	}
 	
 
-	public static RemoteMasterControllerRPi of(MqttClient clientMqtt, DeviceNode node, Plant plant) {
-		return new RemoteMasterControllerRPi(clientMqtt,node, plant);
+	public static RemoteMasterControllerRPi of(MqttClient clientMqtt, DeviceNode node, Plant plant, String username, String password) {
+		return new RemoteMasterControllerRPi(clientMqtt,node, plant, username, password);
 	}
 	
 	

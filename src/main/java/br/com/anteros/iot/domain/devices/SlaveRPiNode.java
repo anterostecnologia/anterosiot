@@ -30,8 +30,8 @@ public class SlaveRPiNode extends DeviceSlaveNode {
 	}
 
 	@Override
-	public AbstractDeviceController getInstanceOfDeviceController(MqttClient clientMqtt, Plant plant, Actuators actuators,AnterosIOTServiceListener serviceListener) {
-		return SlaveControllerRPi.of(clientMqtt, this, null, plant, actuators, serviceListener);
+	public AbstractDeviceController getInstanceOfDeviceController(MqttClient clientMqtt, Plant plant, Actuators actuators,AnterosIOTServiceListener serviceListener, String username, String password) {
+		return SlaveControllerRPi.of(clientMqtt, this, null, plant, actuators, serviceListener, username, password);
 	}
 
 

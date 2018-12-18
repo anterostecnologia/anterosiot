@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.json.Json;
+import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 import javax.json.JsonWriterFactory;
 import javax.json.stream.JsonGenerator;
@@ -36,13 +37,17 @@ public class SimpleCollectorManager implements CollectorManager, CollectorListen
 	private Device device;
 	private Set<Collector> collectorsRunning = new HashSet<>();
 	private Actuators actuators;
+	protected String username;
+	protected String password;
 
-	protected SimpleCollectorManager(MqttClient mqttClient, Thing[] things, Actuators actuators, Device device) {
+	protected SimpleCollectorManager(MqttClient mqttClient, Thing[] things, Actuators actuators, Device device, String username, String password) {
 		this.mqttClient = mqttClient;
 		this.thread = new Thread(this);
 		this.things = things;
 		this.actuators = actuators;
 		this.device = device;
+		this.username = username;
+		this.password = password;
 	}
 
 	public void stop() {
@@ -69,8 +74,8 @@ public class SimpleCollectorManager implements CollectorManager, CollectorListen
 		}
 	}
 
-	public static SimpleCollectorManager of(MqttClient mqttClient, Thing[] things, Actuators actuators, Device device) {
-		return new SimpleCollectorManager(mqttClient, things, actuators,device);
+	public static SimpleCollectorManager of(MqttClient mqttClient, Thing[] things, Actuators actuators, Device device, String username, String password) {
+		return new SimpleCollectorManager(mqttClient, things, actuators,device, username, password);
 	}
 
 	@Override
@@ -113,7 +118,7 @@ public class SimpleCollectorManager implements CollectorManager, CollectorListen
 					MqttClient clientCollector = null;
 					try {
 						clientCollector = MqttHelper.createAndConnectMqttClient(mqttClient.getServerURI(),
-								thing.getThingID() + "_collector", "", "", true, true);
+								thing.getThingID() + "_collector", username, password, true, true);
 					} catch (MqttException e1) {
 						e1.printStackTrace();
 					}
@@ -158,19 +163,22 @@ public class SimpleCollectorManager implements CollectorManager, CollectorListen
 
 						config.put(JsonGenerator.PRETTY_PRINTING, true);
 
-						JsonWriterFactory writerFactory = Json.createWriterFactory(config);
+//						JsonWriterFactory writerFactory = Json.createWriterFactory(config);
 
 						
 						JsonObjectBuilder builder = Json.createObjectBuilder();
-						result.toJson(builder);
-						String jsonString="";	
-						try (Writer writer = new StringWriter()) {
-							writerFactory.createWriter(writer).write(builder.build());
-							jsonString = writer.toString();
-						} catch (IOException e) {
-						}
+						JsonObject jsonMessage = result.toJson(builder).build();
+						
+//						String jsonString="";	
+//						try (Writer writer = new StringWriter()) {
+//							writerFactory.createWriter(writer).write(builder.build());
+//							jsonString = writer.toString();
+//						} catch (IOException e) {
+//						}
 
-						MqttMessage message = new MqttMessage(jsonString.getBytes());
+//						MqttMessage message = new MqttMessage(jsonString.getBytes());
+						
+						MqttMessage message = new MqttMessage(jsonMessage.toString().getBytes());
 						message.setQos(1);
 						mqttClient.publish(topic, message);
 					} catch (MqttPersistenceException e) {

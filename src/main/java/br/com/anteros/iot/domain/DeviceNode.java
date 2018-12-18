@@ -15,15 +15,13 @@ import br.com.anteros.iot.plant.Plant;
 import br.com.anteros.iot.things.devices.IpAddress;
 
 public abstract class DeviceNode extends PlantItemNode {
-	
+
 	protected IpAddress ipAddress;
 	protected String pathError;
 	protected boolean publishSystemInfo;
 	protected int publishSystemInfoInterval;
-	
-	@JsonIdentityInfo(
-			  generator = ObjectIdGenerators.UUIDGenerator.class,
-			  property = "@id")
+
+	@JsonIdentityInfo(generator = ObjectIdGenerators.UUIDGenerator.class, property = "@id")
 	protected Set<ThingNode> things = new HashSet<>();
 
 	public DeviceNode() {
@@ -41,15 +39,16 @@ public abstract class DeviceNode extends PlantItemNode {
 	public void setIpAddress(IpAddress ipAddress) {
 		this.ipAddress = ipAddress;
 	}
-	
+
 	public void addThingsToController(ThingNode... things) {
 		for (ThingNode thing : things) {
 			thing.setControllerOwner(this);
 			this.things.add(thing);
 		}
 	}
-	
-	public abstract AbstractDeviceController getInstanceOfDeviceController(MqttClient clientMqtt, Plant currentPlant, Actuators actuators, AnterosIOTServiceListener serviceListener);
+
+	public abstract AbstractDeviceController getInstanceOfDeviceController(MqttClient clientMqtt, Plant currentPlant,
+			Actuators actuators, AnterosIOTServiceListener serviceListener, String username, String password);
 
 	public Set<ThingNode> getThings() {
 		return things;
@@ -82,6 +81,5 @@ public abstract class DeviceNode extends PlantItemNode {
 	public void setPublishSystemInfoInterval(int publishSystemInfoInterval) {
 		this.publishSystemInfoInterval = publishSystemInfoInterval;
 	}
-
 
 }

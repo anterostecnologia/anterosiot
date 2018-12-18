@@ -27,19 +27,19 @@ public class MasterControllerComputer extends AbstractDeviceController implement
 		super(device, actuators);
 	}
 
-	protected MasterControllerComputer(MqttClient clientMqtt, Device device, Actuators actuators) {
-		super(clientMqtt, device, actuators);
+	protected MasterControllerComputer(MqttClient clientMqtt, Device device, Actuators actuators, String username, String password) {
+		super(clientMqtt, device, actuators, username, password);
 	}
 
 	protected MasterControllerComputer(MqttClient clientMqtt, Device device, Actuators actuators,
-			Set<DeviceController> slaves) {
-		super(clientMqtt, device, actuators);
+			Set<DeviceController> slaves, String username, String password) {
+		super(clientMqtt, device, actuators, username, password);
 		this.devices.addAll(slaves);
 	}
 
 	public MasterControllerComputer(MqttClient clientMqtt, DeviceNode node, Plant plant, Actuators actuators,
-			AnterosIOTServiceListener serviceListener) {
-		super(clientMqtt, node, actuators, serviceListener);
+			AnterosIOTServiceListener serviceListener, String username, String password) {
+		super(clientMqtt, node, actuators, serviceListener, username, password);
 		loadConfiguration(node, plant);
 	}
 
@@ -58,6 +58,8 @@ public class MasterControllerComputer extends AbstractDeviceController implement
 		private Actuators actuators;
 		private Set<DeviceController> slaves = new HashSet<>();
 		private MqttClient clientMqtt;
+		private String username; 
+		private String password;
 
 		public static Builder create() {
 			return new Builder();
@@ -82,7 +84,7 @@ public class MasterControllerComputer extends AbstractDeviceController implement
 
 		public MasterDeviceController build() {
 			Assert.notNull(device, "Informe o dispositivo para o controlador master.");
-			return MasterControllerComputer.of(clientMqtt, device, actuators, slaves);
+			return MasterControllerComputer.of(clientMqtt, device, actuators, slaves, username, password);
 		}
 
 		public Builder clientMqtt(MqttClient clientMqtt) {
@@ -93,8 +95,8 @@ public class MasterControllerComputer extends AbstractDeviceController implement
 	}
 
 	public static MasterDeviceController of(MqttClient clientMqtt, Device device, Actuators actuators,
-			Set<DeviceController> slaves) {
-		return new MasterControllerComputer(clientMqtt, device, actuators, slaves);
+			Set<DeviceController> slaves, String username, String password) {
+		return new MasterControllerComputer(clientMqtt, device, actuators, slaves, username, password);
 	}
 
 	public void stopAllSlaves() {
@@ -133,8 +135,8 @@ public class MasterControllerComputer extends AbstractDeviceController implement
 	}
 
 	public static MasterControllerComputer of(MqttClient clientMqtt, DeviceNode node, Plant plant, Actuators actuators,
-			AnterosIOTServiceListener serviceListener) {
-		return new MasterControllerComputer(clientMqtt, node, plant, actuators, serviceListener);
+			AnterosIOTServiceListener serviceListener, String username, String password) {
+		return new MasterControllerComputer(clientMqtt, node, plant, actuators, serviceListener, username, password);
 	}
 
 	@Override

@@ -27,9 +27,10 @@ public class SlaveBeagleBoneNode extends DeviceSlaveNode {
 	public Thing getInstanceOfThing() {
 		return null;
 	}
-	
+
 	@Override
-	public AbstractDeviceController getInstanceOfDeviceController(MqttClient clientMqtt, Plant plant, Actuators actuators,AnterosIOTServiceListener serviceListener) {
+	public AbstractDeviceController getInstanceOfDeviceController(MqttClient clientMqtt, Plant plant,
+			Actuators actuators, AnterosIOTServiceListener serviceListener, String username, String password) {
 		return null;
 	}
 

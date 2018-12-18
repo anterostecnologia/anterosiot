@@ -15,6 +15,7 @@ import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonReader;
 
+import org.apache.commons.logging.Log;
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.MqttCallback;
 import org.eclipse.paho.client.mqttv3.MqttClient;
@@ -51,6 +52,8 @@ public abstract class AbstractDeviceController implements DeviceController, Mqtt
 	protected Device device;
 	protected Set<Thing> things = new HashSet<Thing>();
 	protected MqttClient clientMqtt;
+	protected String username;
+	protected String password;
 	protected Boolean running = false;
 	protected Boolean paused = false;
 	protected Thread thread;
@@ -64,8 +67,10 @@ public abstract class AbstractDeviceController implements DeviceController, Mqtt
 	}
 
 	public AbstractDeviceController(MqttClient clientMqtt, DeviceNode node, Actuators actuators,
-			AnterosIOTServiceListener serviceListener) {
+			AnterosIOTServiceListener serviceListener, String username, String password) {
 		this.clientMqtt = clientMqtt;
+		this.username = username;
+		this.password = password;
 		this.clientMqtt.setCallback(this);
 		this.thread = new Thread(this);
 		this.actuators = actuators;
@@ -78,9 +83,11 @@ public abstract class AbstractDeviceController implements DeviceController, Mqtt
 		this.actuators = actuators;
 	}
 
-	protected AbstractDeviceController(MqttClient clientMqtt, Device device, Actuators actuators) {
+	protected AbstractDeviceController(MqttClient clientMqtt, Device device, Actuators actuators, String username, String password) {
 		this(device, actuators);
 		this.clientMqtt = clientMqtt;
+		this.username = username;
+		this.password = password;
 		this.clientMqtt.setCallback(this);
 		this.actuators = actuators;
 	}
@@ -196,19 +203,20 @@ public abstract class AbstractDeviceController implements DeviceController, Mqtt
 		System.out.println("Iniciando controlador " + this.getThingID());
 
 		MqttClient clientCollector = null;
+		
 		try {
 			clientCollector = MqttHelper.createAndConnectMqttClient(clientMqtt.getServerURI(),
-					this.device.getThingID() + "_collector", "", "", true, true);
+					this.device.getThingID() + "_collector", username, password, true, true);
 		} catch (MqttException e1) {
 			e1.printStackTrace();
 		}
 
 		System.out.println("Iniciando processador");
-		ProcessorManager processorManager = SimpleProcessorManager.of(device, clientMqtt, getProcessors());
+		ProcessorManager processorManager = SimpleProcessorManager.of(clientMqtt, getProcessors(), username, password);
 		processorManager.start();
 
 		CollectorManager collectorManager = SimpleCollectorManager.of(clientCollector, things.toArray(new Thing[] {}),
-				actuators, device);
+				actuators, device, username, password);
 		collectorManager.start();
 
 		boolean first = true;
@@ -262,11 +270,17 @@ public abstract class AbstractDeviceController implements DeviceController, Mqtt
 	public void messageArrived(String topic, MqttMessage message) throws Exception {
 
 		byte[] payload = message.getPayload();
-		InputStream stream = new ByteArrayInputStream(payload);
-		
-		JsonReader jsonReader = Json.createReader(stream);
-		JsonObject receivedPayload = jsonReader.readObject();
-		jsonReader.close();
+		JsonObject receivedPayload = null;
+		try {
+			InputStream stream = new ByteArrayInputStream(payload);
+
+			JsonReader jsonReader = Json.createReader(stream);
+			receivedPayload = jsonReader.readObject();
+			jsonReader.close();
+
+		} catch (Exception e) {
+			System.out.println("Mensagem recebida não é do tipo JSON, verifique");
+		}
 
 		Thing thing = this.getThingByTopic(topic);
 
@@ -315,9 +329,15 @@ public abstract class AbstractDeviceController implements DeviceController, Mqtt
 					actuator.executeAction(action.getReceivedPayload(),
 							action.getPart() != null ? action.getPart() : action.getThing());
 				} catch (Exception e) {
-					MqttMessage msg = new MqttMessage(e.getMessage().getBytes());
+					JsonObject jsonMessage = Json.createObjectBuilder()
+							.add("thing", action.getPart().getThingID() != null ? action.getPart().getThingID()
+									: action.getThing().getThingID())
+							.add("message", e.getMessage()).build();
+					MqttMessage msg = new MqttMessage(jsonMessage.toString().getBytes());
 					msg.setQos(1);
 					try {
+						System.out.println(device.getPathError());
+						System.out.println("==> Erro: " + e.getMessage());
 						this.clientMqtt.publish(device.getPathError(), msg);
 					} catch (MqttException e1) {
 						e1.printStackTrace();
@@ -460,6 +480,14 @@ public abstract class AbstractDeviceController implements DeviceController, Mqtt
 
 	public void setClientMqtt(MqttClient clientMqtt) {
 		this.clientMqtt = clientMqtt;
+	}
+
+	public String getUsername() {
+		return username;
+	}
+
+	public String getPassword() {
+		return password;
 	}
 
 }
