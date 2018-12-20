@@ -27,4 +27,5 @@ public class DomainConstants {
 	public static final String MEMORY_PLC = "memoryPlc";
 	public static final String MASTER_COMPUTER = "masterComputer";
 	public static final String RING_STRIP_LED12 = "ringStripLed12";
+	public static final String SLAVE_COMPUTER = "slaveComputer";
 }
