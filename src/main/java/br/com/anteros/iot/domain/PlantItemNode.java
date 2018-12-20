@@ -20,15 +20,16 @@ import br.com.anteros.iot.domain.devices.MasterAsusTinkerNode;
 import br.com.anteros.iot.domain.devices.MasterComputerNode;
 import br.com.anteros.iot.domain.devices.MasterDeviceRPiNode;
 import br.com.anteros.iot.domain.devices.SlaveAsusTinkerNode;
+import br.com.anteros.iot.domain.devices.SlaveComputerNode;
 import br.com.anteros.iot.domain.devices.SlaveRPiNode;
 import br.com.anteros.iot.domain.plant.PlaceNode;
 import br.com.anteros.iot.domain.plant.PlantNode;
 import br.com.anteros.iot.domain.things.BarrierGateNode;
 import br.com.anteros.iot.domain.things.CameraMotionDetectorNode;
 import br.com.anteros.iot.domain.things.CameraQRCodeReaderNode;
-import br.com.anteros.iot.domain.things.PlcNode;
 import br.com.anteros.iot.domain.things.LampOrBulbNode;
 import br.com.anteros.iot.domain.things.MagneticLockNode;
+import br.com.anteros.iot.domain.things.PlcNode;
 import br.com.anteros.iot.domain.things.PresenceDetectorNode;
 import br.com.anteros.iot.domain.things.RFIDReaderNode;
 import br.com.anteros.iot.domain.things.RingStripLED12Node;
@@ -37,7 +38,6 @@ import br.com.anteros.iot.domain.things.TemperatureOneWireNode;
 import br.com.anteros.iot.domain.things.parts.GreenLEDSemaphorePartNode;
 import br.com.anteros.iot.domain.things.parts.MemoryPlcNode;
 import br.com.anteros.iot.domain.things.parts.RedLEDSemaphorePartNode;
-import br.com.anteros.iot.plant.Place;
 
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = As.PROPERTY, property = "type")
 @JsonIdentityInfo(generator = ObjectIdGenerators.UUIDGenerator.class, property = "@id")
@@ -58,6 +58,7 @@ import br.com.anteros.iot.plant.Place;
 		@Type(value = PlcNode.class, name = "controladorModBus"),
 		@Type(value = MemoryPlcNode.class, name = "memoriaControlador"),
 		@Type(value = MasterComputerNode.class, name = "masterComputer"),
+		@Type(value = SlaveComputerNode.class, name = "slaveComputer"),
 		@Type(value = CameraMotionDetectorNode.class, name = "cameraMotionDetector"),
 		@Type(value = RingStripLED12Node.class, name = DomainConstants.RING_STRIP_LED12)})
 public abstract class PlantItemNode {
