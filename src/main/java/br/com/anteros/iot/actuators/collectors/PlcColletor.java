@@ -104,7 +104,7 @@ public class PlcColletor extends Collector implements Runnable {
 				}
 			}
 		}
-		SleepUtil.sleepMillis(500);
+		SleepUtil.sleepMillis(plc.getInterval());
 	}
 
 	private Object doModbusLoop(MemoryPlc memory) {
