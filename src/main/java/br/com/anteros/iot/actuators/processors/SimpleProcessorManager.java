@@ -39,7 +39,8 @@ public class SimpleProcessorManager implements ProcessorManager, ProcessorListen
 	protected String username;
 	protected String password;
 
-	protected SimpleProcessorManager(MqttClient mqttClient, List<Processor<?>> processors, String username, String password) {
+	protected SimpleProcessorManager(MqttClient mqttClient, List<Processor<?>> processors, String username,
+			String password) {
 		this.thread = new Thread(this);
 		this.registeredProcessors = processors;
 		this.mqttClient = mqttClient;
@@ -53,7 +54,8 @@ public class SimpleProcessorManager implements ProcessorManager, ProcessorListen
 		processorExecutor.initialize();
 	}
 
-	public static SimpleProcessorManager of(MqttClient mqttClient, List<Processor<?>> processors, String username, String password) {
+	public static SimpleProcessorManager of(MqttClient mqttClient, List<Processor<?>> processors, String username,
+			String password) {
 		return new SimpleProcessorManager(mqttClient, processors, username, password);
 	}
 
@@ -148,9 +150,8 @@ public class SimpleProcessorManager implements ProcessorManager, ProcessorListen
 				if (processor instanceof MqttProcessor && ((MqttProcessor) processor).getMqttClient() == null) {
 
 					try {
-						((MqttProcessor) processor)
-								.setMqttClient(MqttHelper.createAndConnectMqttClient(mqttClient.getServerURI(),
-										processor.getClass().getSimpleName() + "_processor", username, password, true, true));
+						((MqttProcessor) processor).setMqttClient(MqttHelper.createAndConnectMqttClient(
+								mqttClient.getServerURI(), null, username, password, true, true));
 					} catch (Exception e) {
 						logger.error(e.getMessage());
 					}

@@ -5,11 +5,18 @@ import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttSecurityException;
 
+import br.com.anteros.core.utils.StringUtils;
+
 public class MqttHelper {
 
 	public static MqttClient createAndConnectMqttClient(String uri, String name, String userName, String password,
 			boolean automaticReconnect, boolean cleanSession) throws MqttSecurityException, MqttException {
 		MqttClient client = null;
+		
+		if (StringUtils.isBlank(name)) {
+			name = MqttClient.generateClientId();
+		}
+		
 		client = new MqttClient(uri, name);
 		MqttConnectOptions connOpts = new MqttConnectOptions();
 		

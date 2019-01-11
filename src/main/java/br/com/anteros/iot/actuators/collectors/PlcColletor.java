@@ -12,6 +12,7 @@ import br.com.anteros.core.utils.ObjectUtils;
 import br.com.anteros.iot.Collector;
 import br.com.anteros.iot.Part;
 import br.com.anteros.iot.Thing;
+import br.com.anteros.iot.protocol.modbus.ConnectionStatus;
 import br.com.anteros.iot.protocol.modbus.ModbusProtocolDevice;
 import br.com.anteros.iot.protocol.modbus.ModbusProtocolDeviceService;
 import br.com.anteros.iot.protocol.modbus.ModbusProtocolException;
@@ -20,12 +21,11 @@ import br.com.anteros.iot.things.Plc;
 import br.com.anteros.iot.things.parts.MemoryPlc;
 
 public class PlcColletor extends Collector implements Runnable {
-	
+
 	private static final Logger logger = LogManager.getLogger(PlcColletor.class);
 	protected Boolean running = false;
 	protected Thread thread;
 
-	private ModbusProtocolDeviceService protocolDevice;
 	private Properties modbusProperties;
 
 	public PlcColletor(CollectorListener listener, Thing thing) {
@@ -57,79 +57,61 @@ public class PlcColletor extends Collector implements Runnable {
 
 	@Override
 	public void run() {
-		
+
 		Plc plc = (Plc) thing;
-		
+
 		logger.info("Iniciando coletor do PLC " + plc.getItemId() + " - " + plc.getDescription());
 
-		this.protocolDevice = new ModbusProtocolDevice();
-
-		if (this.protocolDevice != null) {
-			try {
-				this.protocolDevice.disconnect();
-			} catch (ModbusProtocolException e) {
-				logger.error("Failed to disconnect : " + e.getMessage());
-			}
-		}
-
-		this.modbusProperties = getModbusProperties(plc);
-
-		try {
-
-			configureDevice();
-
-		} catch (ModbusProtocolException e) {
-			logger.error("ModbusProtocolException : " + e.getMessage());
-		}
-
 		while (running) {
+
+			ModbusProtocolDeviceService protocolDevice = new ModbusProtocolDevice();
+			this.modbusProperties = getModbusProperties(plc);
 
 			for (Part part : plc.getMemories()) {
 
 				MemoryPlc memory = (MemoryPlc) part;
 
-				Object valorResult = doModbusLoop(memory);
+				Object valorResult = doModbusLoop(memory, protocolDevice);
 
 				if (!ObjectUtils.isEmpty(valorResult)) {
 
 					if (memory.getValue() == null || valorResult != memory.getValue()) {
-						
+
 						Object oldValue = memory.getValue();
-						memory.setValue(valorResult);;
-						
+						memory.setValue(valorResult);
+
 						if (listener != null) {
 							listener.onCollect(ModbusResult.of(oldValue, memory.getValue()), memory);
 						}
 					}
 				}
 			}
+			SleepUtil.sleepMillis(plc.getInterval());
 		}
-		SleepUtil.sleepMillis(plc.getInterval());
 	}
 
-	private Object doModbusLoop(MemoryPlc memory) {
+	private Object doModbusLoop(MemoryPlc memory, ModbusProtocolDeviceService protocolDevice) {
 		try {
 
+
+				protocolDevice.configureConnection(this.modbusProperties);
+
+			
 			if (memory.getCollectType().equals(CollectType.COIL)) {
-				boolean[] readCoils = this.protocolDevice.readCoils(((Plc) memory.getOwner()).getSlaveAddress(),
+				boolean[] readCoils = protocolDevice.readCoils(((Plc) memory.getOwner()).getSlaveAddress(),
 						memory.getRegisterAddress(), 1);
+				protocolDevice.disconnect();
 				return readCoils[0];
 			} else {
-				int[] analogInputs = this.protocolDevice.readInputRegisters(((Plc) memory.getOwner()).getSlaveAddress(),
+				int[] analogInputs = protocolDevice.readInputRegisters(((Plc) memory.getOwner()).getSlaveAddress(),
 						memory.getRegisterAddress(), 1);
+				protocolDevice.disconnect();
 				return analogInputs[0];
 			}
+
 		} catch (ModbusProtocolException e) {
 			logger.error(e.getMessage());
 			return null;
-		}
-	}
-
-	private void configureDevice() throws ModbusProtocolException {
-		if (this.protocolDevice != null) {
-			this.protocolDevice.disconnect();
-
-			this.protocolDevice.configureConnection(this.modbusProperties);
 		}
 	}
 

@@ -164,7 +164,7 @@ public class ModbusProtocolDevice implements ModbusProtocolDeviceService {
 			this.m_comm.disconnect();
 			this.m_comm = null;
 			this.m_connConfigd = false;
-			s_logger.info("Serial comm disconnected");
+			s_logger.debug("Serial comm disconnected");
 		}
 		this.m_protConfigd = false;
 	}
@@ -232,7 +232,7 @@ public class ModbusProtocolDevice implements ModbusProtocolDeviceService {
 							this.inputStream = this.socket.getInputStream();
 							this.outputStream = this.socket.getOutputStream();
 							this.connected = true;
-							s_logger.info("TCP connected");
+							s_logger.debug("TCP connected");
 						} catch (IOException e) {
 							disconnect();
 							s_logger.error("Failed to get socket streams: " + e);

@@ -22,20 +22,21 @@ public class DefaultActuators implements Actuators {
 
 	private Set<Class<? extends Actuable>> actuators = new HashSet<>();
 	private Map<Class<? extends Actuable>, Actuable> cacheActuators = new HashMap<>();
+	private Map<Thing, Actuable> cacheColletors = new HashMap<>();
 
 	public DefaultActuators() {
-		registerActuator(DeviceSystemInfoCollector.class);
-		registerActuator(LedActuator.class);
-		registerActuator(LampOrBulbActuator.class);
-		registerActuator(MagneticLockActuator.class);
-		registerActuator(PresenceDetectorCollector.class);
-		registerActuator(RFIDReaderCollector.class);
-		registerActuator(CameraQRCodeCollector.class);
-		registerActuator(TemperatureOneWireCollector.class);
-		registerActuator(CameraMotionDetectorCollector.class);
+		//registerActuator(DeviceSystemInfoCollector.class);
+		//registerActuator(LedActuator.class);
+		//registerActuator(LampOrBulbActuator.class);
+		//registerActuator(MagneticLockActuator.class);
+		//registerActuator(PresenceDetectorCollector.class);
+		//registerActuator(RFIDReaderCollector.class);
+		//registerActuator(CameraQRCodeCollector.class);
+		//registerActuator(TemperatureOneWireCollector.class);
+		//registerActuator(CameraMotionDetectorCollector.class);
 		registerActuator(PlcColletor.class);
 		//registerActuator(MemoryPlcActuator.class);
-		registerActuator(RingStripLED12Actuator.class);
+		//registerActuator(RingStripLED12Actuator.class);
 	}
 
 	public DefaultActuators registerActuator(Class<? extends Actuable> actuable) {
@@ -53,13 +54,14 @@ public class DefaultActuators implements Actuators {
 		try {
 			for (Class<? extends Actuable> actuable : actuators) {
 				Actuable collector = null;
-				if (cacheActuators.containsKey(actuable)) {
-					collector = cacheActuators.get(actuable);
-				} else {
+					
+//				if (cacheColletors.containsKey(thing)) {
+//					collector = cacheColletors.get(thing);
+//				} else {
 					collector = actuable.newInstance();
-					cacheActuators.put(actuable, collector);
-				}
-				
+//					cacheColletors.put(thing, collector);
+//				}
+					
 				if (collector.isSupportedThing(thing)) {
 					if (collector instanceof Collector) {
 						((Collector) collector).setThing(thing);						
