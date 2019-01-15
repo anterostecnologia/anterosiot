@@ -1,5 +1,6 @@
 package br.com.anteros.iot.actuators.processors;
 
+import br.com.anteros.iot.Device;
 import br.com.anteros.iot.Thing;
 import br.com.anteros.iot.actuators.collectors.CollectResult;
 
@@ -8,6 +9,7 @@ public abstract class Processor<T extends CollectResult> implements Runnable {
 	protected Thing thing;
 	protected Class<? extends CollectResult> collectResult;
 	protected T result;
+	protected Device device;
 
 	public Processor() {
 	}
@@ -47,5 +49,13 @@ public abstract class Processor<T extends CollectResult> implements Runnable {
 
 	public void setResult(T result) {
 		this.result = result;
+	}
+
+	public void setDevice(Device device) {
+		this.device = device;
+	}
+
+	public Device getDevice() {
+		return device;
 	}
 }

@@ -38,14 +38,16 @@ public class SimpleProcessorManager implements ProcessorManager, ProcessorListen
 	private ThreadPoolTaskExecutor processorExecutor;
 	protected String username;
 	protected String password;
+	protected Device device;
 
 	protected SimpleProcessorManager(MqttClient mqttClient, List<Processor<?>> processors, String username,
-			String password) {
+			String password, Device device) {
 		this.thread = new Thread(this);
 		this.registeredProcessors = processors;
 		this.mqttClient = mqttClient;
 		this.username = username;
 		this.password = password;
+		this.device = device;
 
 		processorExecutor = new ThreadPoolTaskExecutor();
 		processorExecutor.setCorePoolSize(10);
@@ -55,8 +57,8 @@ public class SimpleProcessorManager implements ProcessorManager, ProcessorListen
 	}
 
 	public static SimpleProcessorManager of(MqttClient mqttClient, List<Processor<?>> processors, String username,
-			String password) {
-		return new SimpleProcessorManager(mqttClient, processors, username, password);
+			String password, Device device) {
+		return new SimpleProcessorManager(mqttClient, processors, username, password, device);
 	}
 
 	public void stop() {
@@ -120,9 +122,7 @@ public class SimpleProcessorManager implements ProcessorManager, ProcessorListen
 	@Override
 	public void messageArrived(String topic, MqttMessage message) throws Exception {
 		Thing thing = this.getThingByTopic(topic);
-
 		execute(message, thing);
-
 	}
 
 	@Override
@@ -145,6 +145,7 @@ public class SimpleProcessorManager implements ProcessorManager, ProcessorListen
 					result = mapper.readValue(payload, collectResult);
 				} catch (Exception e) {
 					logger.error("JSon não é do tipo " + processor.getCollectResult().getSimpleName());
+					return;
 				}
 
 				if (processor instanceof MqttProcessor && ((MqttProcessor) processor).getMqttClient() == null) {
@@ -156,7 +157,11 @@ public class SimpleProcessorManager implements ProcessorManager, ProcessorListen
 						logger.error(e.getMessage());
 					}
 				}
-
+				
+				if(processor.getDevice() == null) {
+					processor.setDevice(device);
+				}
+				
 				if (result != null && thing != null) {
 					processor.setResult(result);
 					processorExecutor.submit(processor);

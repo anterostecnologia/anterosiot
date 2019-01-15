@@ -83,7 +83,8 @@ public abstract class AbstractDeviceController implements DeviceController, Mqtt
 		this.actuators = actuators;
 	}
 
-	protected AbstractDeviceController(MqttClient clientMqtt, Device device, Actuators actuators, String username, String password) {
+	protected AbstractDeviceController(MqttClient clientMqtt, Device device, Actuators actuators, String username,
+			String password) {
 		this(device, actuators);
 		this.clientMqtt = clientMqtt;
 		this.username = username;
@@ -203,7 +204,7 @@ public abstract class AbstractDeviceController implements DeviceController, Mqtt
 		System.out.println("Iniciando controlador " + this.getThingID());
 
 		MqttClient clientCollector = null;
-		
+
 		try {
 			clientCollector = MqttHelper.createAndConnectMqttClient(clientMqtt.getServerURI(),
 					this.device.getThingID() + "_collector", username, password, true, true);
@@ -211,9 +212,12 @@ public abstract class AbstractDeviceController implements DeviceController, Mqtt
 			e1.printStackTrace();
 		}
 
-		System.out.println("Iniciando processador");
-		ProcessorManager processorManager = SimpleProcessorManager.of(clientMqtt, getProcessors(), username, password);
-		processorManager.start();
+		if (getProcessors() != null && !getProcessors().isEmpty()) {
+			System.out.println("Iniciando processador");
+			ProcessorManager processorManager = SimpleProcessorManager.of(clientMqtt, getProcessors(), username,
+					password, device);
+			processorManager.start();
+		}
 
 		CollectorManager collectorManager = SimpleCollectorManager.of(clientCollector, things.toArray(new Thing[] {}),
 				actuators, device, username, password);
