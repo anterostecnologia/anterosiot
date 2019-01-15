@@ -27,7 +27,7 @@ public class Computer extends PlantItem implements Device {
 		this.itemId = id;
 		this.ipAddress = ipAddress;
 		this.description = description;
-		this.pathError = pathError;
+		this.pathError = pathError == null ? "": pathError;
 	}
 
 	public String getThingID() {
@@ -114,7 +114,7 @@ public class Computer extends PlantItem implements Device {
 	}
 	
 	public String getPathError() {
-		if (pathError.equals("")) {
+		if ("".equals(pathError)) {
 			return this.getPath() + "/error";
 		}
 		return pathError;
