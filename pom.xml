@@ -96,6 +96,8 @@
 			<groupId>org.opencv</groupId>
 			<artifactId>opencv</artifactId>
 			<version>3.4.3</version>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/opencv/opencv-343.jar</systemPath>
 		</dependency>
 		<dependency>
 			<groupId>com.diozero</groupId>
