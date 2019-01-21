@@ -11,14 +11,24 @@ import br.com.anteros.iot.things.CameraQRCodeReader;
 public class CameraQRCodeReaderNode extends ThingNode {
 	
 	protected String[] topics;
+	protected int intervalToReadSameQrCode = 3000;
+
+	public int getIntervalToReadSameQrCode() {
+		return intervalToReadSameQrCode;
+	}
+
+	public void setIntervalToReadSameQrCode(int intervalToReadSameQrCode) {
+		this.intervalToReadSameQrCode = intervalToReadSameQrCode;
+	}
 
 	public CameraQRCodeReaderNode() {
 		super();
 	}
 
-	public CameraQRCodeReaderNode(String itemName, String description, String[] topics) {
+	public CameraQRCodeReaderNode(String itemName, String description, String[] topics, int intervalToReadSameQrCode) {
 		super(itemName, description);
 		this.topics = topics;
+		this.intervalToReadSameQrCode= intervalToReadSameQrCode;
 	}
 
 	@Override
