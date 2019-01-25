@@ -40,7 +40,8 @@ public class SimpleCollectorManager implements CollectorManager, CollectorListen
 	protected String username;
 	protected String password;
 
-	protected SimpleCollectorManager(MqttClient mqttClient, Thing[] things, Actuators actuators, Device device, String username, String password) {
+	protected SimpleCollectorManager(MqttClient mqttClient, Thing[] things, Actuators actuators, Device device,
+			String username, String password) {
 		this.mqttClient = mqttClient;
 		this.thread = new Thread(this);
 		this.things = things;
@@ -74,8 +75,9 @@ public class SimpleCollectorManager implements CollectorManager, CollectorListen
 		}
 	}
 
-	public static SimpleCollectorManager of(MqttClient mqttClient, Thing[] things, Actuators actuators, Device device, String username, String password) {
-		return new SimpleCollectorManager(mqttClient, things, actuators,device, username, password);
+	public static SimpleCollectorManager of(MqttClient mqttClient, Thing[] things, Actuators actuators, Device device,
+			String username, String password) {
+		return new SimpleCollectorManager(mqttClient, things, actuators, device, username, password);
 	}
 
 	@Override
@@ -99,11 +101,11 @@ public class SimpleCollectorManager implements CollectorManager, CollectorListen
 	public void run() {
 		running = true;
 		boolean first = true;
-		
+
 		if (device.hasTelemetries()) {
 			Collector collector = actuators.discoverCollectorToThing(device);
 			if (collector != null) {
-				collector.setListener(this);			
+				collector.setListener(this);
 				collector.startCollect();
 				collectorsRunning.add(collector);
 			}
@@ -113,7 +115,7 @@ public class SimpleCollectorManager implements CollectorManager, CollectorListen
 			Collector collector = actuators.discoverCollectorToThing(thing);
 			if (collector != null) {
 				collector.setListener(this);
-				
+
 				if (collector instanceof MqttCollector) {
 					MqttClient clientCollector = null;
 					try {
@@ -122,7 +124,7 @@ public class SimpleCollectorManager implements CollectorManager, CollectorListen
 					} catch (MqttException e1) {
 						e1.printStackTrace();
 					}
-					
+
 					((MqttCollector) collector).setMqttClient(clientCollector);
 				}
 				collector.startCollect();
@@ -145,6 +147,15 @@ public class SimpleCollectorManager implements CollectorManager, CollectorListen
 		for (Collector collector : collectorsRunning) {
 			collector.stopCollect();
 		}
+
+		try {
+			if (mqttClient.isConnected())
+				mqttClient.disconnect();
+		} catch (MqttException e) {
+			System.out.println("Ocorreu uma falha ao parar o coletor: " + e.getMessage());
+			e.printStackTrace();
+		}
+
 		collectorsRunning.clear();
 		this.thread.interrupt();
 
@@ -154,7 +165,7 @@ public class SimpleCollectorManager implements CollectorManager, CollectorListen
 	public void onCollect(CollectResult result, Thing thing) {
 		if (!paused) {
 			if (thing instanceof Publishable) {
-				
+
 				String[] topics = ((Publishable) thing).getTopicsToPublishValue(result);
 
 				for (String topic : topics) {
@@ -165,10 +176,9 @@ public class SimpleCollectorManager implements CollectorManager, CollectorListen
 
 //						JsonWriterFactory writerFactory = Json.createWriterFactory(config);
 
-						
 						JsonObjectBuilder builder = Json.createObjectBuilder();
 						JsonObject jsonMessage = result.toJson(builder).build();
-						
+
 //						String jsonString="";	
 //						try (Writer writer = new StringWriter()) {
 //							writerFactory.createWriter(writer).write(builder.build());
@@ -177,7 +187,7 @@ public class SimpleCollectorManager implements CollectorManager, CollectorListen
 //						}
 
 //						MqttMessage message = new MqttMessage(jsonString.getBytes());
-						
+
 						MqttMessage message = new MqttMessage(jsonMessage.toString().getBytes());
 						message.setQos(1);
 						mqttClient.publish(topic, message);

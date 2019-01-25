@@ -2,8 +2,6 @@ package br.com.anteros.iot.protocol.modbus;
 
 import java.util.Properties;
 
-import br.com.anteros.iot.protocol.modbus.type.ModbusProtocolErrorCode;
-
 public interface ModbusProtocolDeviceService {
 	
 	/**

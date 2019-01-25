@@ -16,6 +16,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import br.com.anteros.core.log.Logger;
 import br.com.anteros.core.log.LoggerProvider;
+import br.com.anteros.core.utils.ArrayUtils;
 import br.com.anteros.iot.Device;
 import br.com.anteros.iot.Thing;
 import br.com.anteros.iot.actuators.collectors.CollectResult;
@@ -111,6 +112,21 @@ public class SimpleProcessorManager implements ProcessorManager, ProcessorListen
 		}
 		logger.debug("THREADS ATIVAS > " + processorExecutor.getActiveCount());
 
+		try {
+			if (clientProcessor.isConnected())
+				clientProcessor.disconnect();
+
+			for (Processor<?> processor : registeredProcessors) {
+				if (processor instanceof MqttProcessor && ((MqttProcessor<?>) processor).getMqttClient() != null) {
+					if (((MqttProcessor<?>) processor).getMqttClient().isConnected())
+						((MqttProcessor<?>) processor).getMqttClient().disconnect();
+				}
+			}
+		} catch (MqttException e) {
+			System.out.println("Ocorreu uma falha ao parar o ProcessorManager : " + e.getMessage());
+			e.printStackTrace();
+		}
+
 		this.thread.interrupt();
 	}
 
@@ -157,11 +173,11 @@ public class SimpleProcessorManager implements ProcessorManager, ProcessorListen
 						logger.error(e.getMessage());
 					}
 				}
-				
-				if(processor.getDevice() == null) {
+
+				if (processor.getDevice() == null) {
 					processor.setDevice(device);
 				}
-				
+
 				if (result != null && thing != null) {
 					processor.setResult(result);
 					processorExecutor.submit(processor);
@@ -181,19 +197,22 @@ public class SimpleProcessorManager implements ProcessorManager, ProcessorListen
 
 	public void autoSubscribe() {
 		List<String> filter = new ArrayList<>();
+		List<Integer> filterQos = new ArrayList<>();
 
 		for (Processor<?> processor : registeredProcessors) {
 
 			if (processor.getThing() instanceof PlantItem) {
 				String topic = ((PlantItem) processor.getThing()).getPath();
 				filter.add(topic);
+				filterQos.add(2);
 				subscribedTopics.put(topic, processor.getThing());
 			}
 		}
 
 		try {
 			System.out.println(Arrays.toString(filter.toArray(new String[] {})));
-			this.clientProcessor.subscribe(filter.toArray(new String[] {}));
+			this.clientProcessor.subscribe(filter.toArray(new String[] {}),
+					ArrayUtils.toPrimitive(filterQos.toArray(new Integer[] {})));
 		} catch (MqttException e) {
 			logger.error(e.getMessage());
 		}

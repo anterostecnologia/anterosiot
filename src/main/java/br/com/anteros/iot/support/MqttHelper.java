@@ -20,12 +20,14 @@ public class MqttHelper {
 		client = new MqttClient(uri, name);
 		MqttConnectOptions connOpts = new MqttConnectOptions();
 		
-		if (!userName.isEmpty() && !password.isEmpty()) {
+		if (!StringUtils.isBlank(userName) && !StringUtils.isBlank(password)) {
 			connOpts.setUserName(userName);
 			connOpts.setPassword(password.toCharArray());
 		}
 		connOpts.setAutomaticReconnect(automaticReconnect);
 		connOpts.setCleanSession(cleanSession);
+		connOpts.setMqttVersion(MqttConnectOptions.MQTT_VERSION_3_1_1);
+		
 		client.connect(connOpts);
 		return client;
 	}

@@ -12,7 +12,6 @@ import br.com.anteros.core.utils.ObjectUtils;
 import br.com.anteros.iot.Collector;
 import br.com.anteros.iot.Part;
 import br.com.anteros.iot.Thing;
-import br.com.anteros.iot.protocol.modbus.ConnectionStatus;
 import br.com.anteros.iot.protocol.modbus.ModbusProtocolDevice;
 import br.com.anteros.iot.protocol.modbus.ModbusProtocolDeviceService;
 import br.com.anteros.iot.protocol.modbus.ModbusProtocolException;
@@ -25,8 +24,6 @@ public class PlcColletor extends Collector implements Runnable {
 	private static final Logger logger = LogManager.getLogger(PlcColletor.class);
 	protected Boolean running = false;
 	protected Thread thread;
-
-	private Properties modbusProperties;
 
 	public PlcColletor(CollectorListener listener, Thing thing) {
 		super(listener, thing);
@@ -65,13 +62,12 @@ public class PlcColletor extends Collector implements Runnable {
 		while (running) {
 
 			ModbusProtocolDeviceService protocolDevice = new ModbusProtocolDevice();
-			this.modbusProperties = getModbusProperties(plc);
-
+			
 			for (Part part : plc.getMemories()) {
 
 				MemoryPlc memory = (MemoryPlc) part;
 
-				Object valorResult = doModbusLoop(memory, protocolDevice);
+				Object valorResult = doModbusLoop(memory, protocolDevice, getModbusProperties(plc));
 
 				if (!ObjectUtils.isEmpty(valorResult)) {
 
@@ -90,13 +86,10 @@ public class PlcColletor extends Collector implements Runnable {
 		}
 	}
 
-	private Object doModbusLoop(MemoryPlc memory, ModbusProtocolDeviceService protocolDevice) {
+	private Object doModbusLoop(MemoryPlc memory, ModbusProtocolDeviceService protocolDevice, Properties modbusProperties) {
 		try {
+			protocolDevice.configureConnection(modbusProperties);
 
-
-				protocolDevice.configureConnection(this.modbusProperties);
-
-			
 			if (memory.getCollectType().equals(CollectType.COIL)) {
 				boolean[] readCoils = protocolDevice.readCoils(((Plc) memory.getOwner()).getSlaveAddress(),
 						memory.getRegisterAddress(), 1);
@@ -109,8 +102,9 @@ public class PlcColletor extends Collector implements Runnable {
 				return analogInputs[0];
 			}
 
-		} catch (ModbusProtocolException e) {
-			logger.error(e.getMessage());
+		} catch (Exception e) {
+			if (memory.getProcessors() != null && memory.getProcessors().length > 0)
+				logger.error(e.getMessage());
 			return null;
 		}
 	}

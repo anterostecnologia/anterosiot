@@ -136,6 +136,7 @@ public abstract class AbstractDeviceController implements DeviceController, Mqtt
 			this.beforeStop();
 			this.running = false;
 		}
+
 	}
 
 	public void start() {
@@ -211,11 +212,11 @@ public abstract class AbstractDeviceController implements DeviceController, Mqtt
 		} catch (MqttException e1) {
 			e1.printStackTrace();
 		}
-
+		
+		ProcessorManager processorManager = null;
 		if (getProcessors() != null && !getProcessors().isEmpty()) {
 			System.out.println("Iniciando processador");
-			ProcessorManager processorManager = SimpleProcessorManager.of(clientMqtt, getProcessors(), username,
-					password, device);
+			processorManager = SimpleProcessorManager.of(clientMqtt, getProcessors(), username, password, device);
 			processorManager.start();
 		}
 
@@ -236,7 +237,19 @@ public abstract class AbstractDeviceController implements DeviceController, Mqtt
 			}
 		}
 		collectorManager.stop();
+		if (getProcessors() != null && !getProcessors().isEmpty()) {
+			processorManager.stop();
+		}
 		System.out.println("Parando controlador " + this.getThingID());
+		
+		try {
+			if (clientMqtt.isConnected())
+				clientMqtt.disconnect();
+		} catch (MqttException e) {
+			System.out.println("Ocorreu uma falha para reiniciar o serviço: " + e.getMessage());
+			e.printStackTrace();
+		}
+		
 		this.thread.interrupt();
 	}
 
@@ -336,7 +349,7 @@ public abstract class AbstractDeviceController implements DeviceController, Mqtt
 					JsonObject jsonMessage = Json.createObjectBuilder()
 							.add("thing", action.getPart().getThingID() != null ? action.getPart().getThingID()
 									: action.getThing().getThingID())
-							.add("message", e.getMessage()).build();
+							.add("message", ""+e.getMessage()).build();
 					MqttMessage msg = new MqttMessage(jsonMessage.toString().getBytes());
 					msg.setQos(1);
 					try {
