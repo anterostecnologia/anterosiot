@@ -39,6 +39,10 @@ class My_Panel extends JPanel{
 		image = ImageIO.read(new ByteArrayInputStream(bytes));
         return true;  
     }  
+    
+    public void setImage(BufferedImage image) {
+    	this.image = image;
+    }
     public void paintComponent(Graphics g){  
         super.paintComponent(g);   
         if (this.image==null) return;  

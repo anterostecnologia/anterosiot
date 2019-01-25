@@ -24,6 +24,15 @@ public class CameraQRCodeReader extends PlantItem implements Thing, Publishable 
 	protected String[] topics;
 	protected Set<Trigger> triggers = new HashSet<>();
 	protected List<Processor<?>> processors = new ArrayList<>();
+	protected int intervalToReadSameQrCode = 3000;
+
+	public int getIntervalToReadSameQrCode() {
+		return intervalToReadSameQrCode;
+	}
+
+	public void setIntervalToReadSameQrCode(int intervalToReadSameQrCode) {
+		this.intervalToReadSameQrCode = intervalToReadSameQrCode;
+	}
 
 	public CameraQRCodeReader(PlantItemNode node) {
 		this.loadConfiguration(node);
@@ -61,6 +70,7 @@ public class CameraQRCodeReader extends PlantItem implements Thing, Publishable 
 	public Thing loadConfiguration(PlantItemNode node) {
 		this.itemId = node.getItemName();
 		this.description = node.getDescription();
+		this.intervalToReadSameQrCode = ((CameraQRCodeReaderNode) node).getIntervalToReadSameQrCode();
 		this.topics = ((CameraQRCodeReaderNode) node).getTopics();
 		return this;
 	}

@@ -1,6 +1,11 @@
 package br.com.anteros.iot.actuators.collectors;
 
 import java.awt.Font;
+import java.awt.KeyEventDispatcher;
+import java.awt.KeyboardFocusManager;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -10,7 +15,9 @@ import java.util.List;
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import javax.swing.JTextArea;
+import javax.swing.KeyStroke;
 
+import org.apache.commons.lang3.StringUtils;
 import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
@@ -40,15 +47,19 @@ import br.com.anteros.iot.Thing;
 import br.com.anteros.iot.things.CameraQRCodeReader;
 
 public class CameraQRCodeCollector extends Collector implements Runnable {
-	
+
 	public static int CV_QR_NORTH = 0;
 	public static int CV_QR_EAST = 1;
 	public static int CV_QR_SOUTH = 2;
 	public static int CV_QR_WEST = 3;
 
-
 	protected Boolean running = false;
 	protected Thread thread;
+	protected String lastValue;
+
+	public static void main(String[] args) {
+		new Thread(new CameraQRCodeCollector()).start();
+	}
 
 	public CameraQRCodeCollector(CollectorListener listener, Thing thing) {
 		super(listener, thing);
@@ -85,13 +96,8 @@ public class CameraQRCodeCollector extends Collector implements Runnable {
 		VideoCapture webcam = new VideoCapture(0);
 
 		// Tamanho do display LCD
-		int largura = 480;
-		int altura = 320;
-
-		System.out.println(webcam.set(Videoio.CAP_PROP_FRAME_WIDTH, largura));
-		System.out.println(webcam.set(Videoio.CAP_PROP_FRAME_HEIGHT, altura));
-		System.out.println(webcam.get(Videoio.CAP_PROP_FRAME_WIDTH));
-		System.out.println(webcam.get(Videoio.CAP_PROP_FRAME_HEIGHT));
+		int largura = 800;
+		int altura = 480;
 
 		if (webcam.isOpened()) {
 			System.out.println("Video is captured");
@@ -102,6 +108,9 @@ public class CameraQRCodeCollector extends Collector implements Runnable {
 		JFrame frame1 = new JFrame();
 		frame1.setBounds(0, 0, largura, altura);
 		frame1.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		
+		
+		
 
 		JTextArea textArea = new JTextArea();
 		textArea.setFont(new Font("Serif", Font.ITALIC, 30));
@@ -111,12 +120,42 @@ public class CameraQRCodeCollector extends Collector implements Runnable {
 
 		My_Panel my_panel = new My_Panel();
 		frame1.setContentPane(my_panel);
-		frame1.add(textArea);
+//		frame1.add(textArea);
 		frame1.setVisible(true);
+		
+		
+		my_panel.addKeyListener(new KeyListener() {
+			
+			@Override
+			public void keyTyped(KeyEvent e) {
+				if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+					running = false;
+				}
+				
+			}
+			
+			@Override
+			public void keyReleased(KeyEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void keyPressed(KeyEvent e) {
+				if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+					running = false;
+				}
+				
+			}
+		});
+		
+
 
 		int DBG = 0;
 
-		while (webcam.isOpened()) {
+		long startTime = System.currentTimeMillis();
+
+		while (webcam.isOpened() && running) {
 			Mat image = new Mat();
 			webcam.read(image);
 			boolean foundQrCode = false;
@@ -179,15 +218,16 @@ public class CameraQRCodeCollector extends Collector implements Runnable {
 					}
 				}
 
-				if (mark >= 3) { // Ensure we have (atleast 3; namely A,B,C)
-									// 'Alignment Markers' discovered
-					// We have found the 3 markers for the QR code; Now we need
-					// to determine which of them are 'top', 'right' and
-					// 'bottom' markers
+				if (mark >= 3) {
+					// Certifique-se de que temos (pelo menos 3; ou seja, A, B, C)
+					// 'Marcadores de Alinhamento' encontrados
+					// Encontramos os 3 marcadores para o código QR; Agora precisamos
+					// determinar quais deles são 'top', 'right' e
+					// marcadores "bottom"
 
-					// Determining the 'top' marker
-					// Vertex of the triangle NOT involved in the longest side
-					// is the 'outlier'
+					// Determinando o marcador 'top'
+					// Vértice do triângulo NÃO envolvido no lado mais longo
+					// é o 'outlier'
 
 					double AB = distance(mc[A], mc[B]);
 					double BC = distance(mc[B], mc[C]);
@@ -229,10 +269,10 @@ public class CameraQRCodeCollector extends Collector implements Runnable {
 																		// longest
 																		// side
 
-					// Now that we have the orientation of the line formed
-					// median1 & median2 and we also have the position of the
-					// outlier w.r.t. the line
-					// Determine the 'right' and 'bottom' markers
+					// Agora que temos a orientação da linha formada
+					// median1 & median2 e também temos a posição do
+					// outlier w.r.t. a linha
+					// Determinar os marcadores 'right' e 'bottom'
 
 					if (align.getValue() == 0) {
 						bottom = median1;
@@ -261,8 +301,9 @@ public class CameraQRCodeCollector extends Collector implements Runnable {
 						orientation = CV_QR_WEST;
 					}
 
-					// To ensure any unintended values do not sneak up when QR
-					// code is not present
+					// Para garantir que quaisquer valores não intencionais não se desloquem quando
+					// QR
+					// código não está presente
 
 					if (top < contours.size() && right < contours.size() && bottom < contours.size()
 							&& Imgproc.contourArea(contours.get(top)) > 10
@@ -325,9 +366,9 @@ public class CameraQRCodeCollector extends Collector implements Runnable {
 						Imgproc.cvtColor(qr, qr_gray, Imgproc.COLOR_RGB2GRAY);
 						Imgproc.threshold(qr_gray, qr_thres, 127, 255, Imgproc.THRESH_BINARY);
 
-						Imgproc.drawContours(image, contours, top, new Scalar(255, 200, 0), 2);
-						Imgproc.drawContours(image, contours, right, new Scalar(0, 0, 255), 2);
-						Imgproc.drawContours(image, contours, bottom, new Scalar(255, 0, 100), 2);
+						Imgproc.drawContours(image, contours, top, new Scalar(255, 200, 0), 4);
+						Imgproc.drawContours(image, contours, right, new Scalar(0, 0, 255), 4);
+						Imgproc.drawContours(image, contours, bottom, new Scalar(255, 0, 100), 4);
 
 						if (DBG == 1) {
 							// Debug Prints
@@ -394,7 +435,7 @@ public class CameraQRCodeCollector extends Collector implements Runnable {
 
 				if (!qr_thres.empty() && foundQrCode) {
 					MatOfByte mob = new MatOfByte();
-					Imgcodecs.imencode(".png", qr_thres, mob);				
+					Imgcodecs.imencode(".png", qr_thres, mob);
 
 					try {
 						BufferedImage qrCodeimage = ImageIO.read(new ByteArrayInputStream(mob.toArray()));
@@ -402,10 +443,23 @@ public class CameraQRCodeCollector extends Collector implements Runnable {
 						BinaryBitmap bitmap = new BinaryBitmap(new HybridBinarizer(source));
 
 						Result result = new MultiFormatReader().decode(bitmap);
-						System.out.println(result.getText());
-						textArea.setText(result.getText());
+
 						
-						listener.onCollect(new SimpleResult(result.getText()), thing);
+						long difference = System.currentTimeMillis() - startTime;
+						
+						textArea.setText((difference/1000)+"");
+
+						if (difference >= ((CameraQRCodeReader) thing).getIntervalToReadSameQrCode() || (!result.getText().equals(lastValue))){
+
+							
+							lastValue = result.getText();
+							
+							textArea.setText(lastValue);
+							
+							listener.onCollect(new SimpleResult(lastValue), thing);
+
+							startTime = System.nanoTime();
+						}
 
 					} catch (Exception e) {
 						System.out.println(e);
@@ -415,7 +469,6 @@ public class CameraQRCodeCollector extends Collector implements Runnable {
 				try {
 					my_panel.MatToBufferedImage(image);
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 				my_panel.repaint();
@@ -424,7 +477,7 @@ public class CameraQRCodeCollector extends Collector implements Runnable {
 		}
 
 	}
-	
+
 	/**
 	 * Retorna a distâ¢ncia entre dois pontos
 	 * 
