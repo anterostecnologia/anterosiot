@@ -182,4 +182,11 @@ public class MemoryPlc extends PlantItem implements Part, Publishable {
 	public Processor<?>[] getProcessors() {
 		return processors.toArray(new Processor[] {});
 	}
+
+	@Override
+	public String toString() {
+		return "MemoryPlc [itemOwner=" + itemOwner + ", itemId=" + itemId + ", description=" + description + "]";
+	}
+	
+	
 }

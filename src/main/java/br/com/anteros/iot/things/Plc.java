@@ -232,4 +232,9 @@ public class Plc extends PlantItem implements Thing {
 	public Processor<?>[] getProcessors() {
 		return processors.toArray(new Processor[] {});
 	}
+
+	@Override
+	public String toString() {
+		return "Plc [itemOwner=" + itemOwner + ", itemId=" + itemId + ", description=" + description + "]";
+	}
 }

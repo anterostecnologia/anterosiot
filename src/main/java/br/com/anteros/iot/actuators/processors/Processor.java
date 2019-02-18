@@ -58,4 +58,11 @@ public abstract class Processor<T extends CollectResult> implements Runnable {
 	public Device getDevice() {
 		return device;
 	}
+
+	@Override
+	public String toString() {
+		return "Processor [thing=" + thing + ", device=" + device + "]";
+	}
+	
+	
 }
