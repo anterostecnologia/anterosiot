@@ -10,6 +10,7 @@ public abstract class Processor<T extends CollectResult> implements Runnable {
 	protected Class<? extends CollectResult> collectResult;
 	protected T result;
 	protected Device device;
+	protected Thread thread;
 
 	public Processor() {
 	}

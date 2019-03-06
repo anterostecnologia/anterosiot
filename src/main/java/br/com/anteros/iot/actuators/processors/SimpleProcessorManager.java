@@ -36,7 +36,7 @@ public class SimpleProcessorManager implements ProcessorManager, ProcessorListen
 	private MqttClient clientProcessor;
 	private ObjectMapper mapper = new ObjectMapper();
 	private Map<String, Thing> subscribedTopics = new HashMap<>();
-	private ThreadPoolTaskExecutor processorExecutor;
+//	private ThreadPoolTaskExecutor processorExecutor;
 	protected String username;
 	protected String password;
 	protected Device device;
@@ -50,11 +50,12 @@ public class SimpleProcessorManager implements ProcessorManager, ProcessorListen
 		this.password = password;
 		this.device = device;
 
-		processorExecutor = new ThreadPoolTaskExecutor();
-		processorExecutor.setCorePoolSize(10);
-		processorExecutor.setMaxPoolSize(10);
-		processorExecutor.setWaitForTasksToCompleteOnShutdown(false);
-		processorExecutor.initialize();
+//		processorExecutor = new ThreadPoolTaskExecutor();
+//		processorExecutor.setCorePoolSize(10);
+//		processorExecutor.setMaxPoolSize(10);
+//		processorExecutor.setWaitForTasksToCompleteOnShutdown(false);
+//		processorExecutor.initialize();
+//		processorExecutor.setThreadNamePrefix("processorExecutor");
 	}
 
 	public static SimpleProcessorManager of(MqttClient mqttClient, List<Processor<?>> processors, String username,
@@ -106,11 +107,11 @@ public class SimpleProcessorManager implements ProcessorManager, ProcessorListen
 		}
 		logger.debug("Parando processador de dados.");
 
-		processorExecutor.shutdown();
-
-		while (processorExecutor.getActiveCount() > 0) {
-		}
-		logger.debug("THREADS ATIVAS > " + processorExecutor.getActiveCount());
+//		processorExecutor.shutdown();
+//
+//		while (processorExecutor.getActiveCount() > 0) {
+//		}
+//		logger.debug("THREADS ATIVAS > " + processorExecutor.getActiveCount());
 
 		try {
 			if (clientProcessor.isConnected())
@@ -180,7 +181,14 @@ public class SimpleProcessorManager implements ProcessorManager, ProcessorListen
 
 				if (result != null && thing != null) {
 					processor.setResult(result);
-					processorExecutor.submit(processor);
+					if (processor.thread == null) {
+						processor.thread = new Thread(processor);
+						processor.thread.setName("threadProcessorThing" + processor.getThing().getThingID());
+						
+					}
+					processor.run();
+					//processorExecutor.submit(processor);
+//					processorExecutor.submit(processor.thread);
 				}
 			}
 		}

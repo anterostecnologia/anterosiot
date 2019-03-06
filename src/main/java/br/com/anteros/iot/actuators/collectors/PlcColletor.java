@@ -62,7 +62,7 @@ public class PlcColletor extends Collector implements Runnable {
 		while (running) {
 
 			ModbusProtocolDeviceService protocolDevice = new ModbusProtocolDevice();
-			
+
 			for (Part part : plc.getMemories()) {
 
 				MemoryPlc memory = (MemoryPlc) part;
@@ -86,7 +86,8 @@ public class PlcColletor extends Collector implements Runnable {
 		}
 	}
 
-	private Object doModbusLoop(MemoryPlc memory, ModbusProtocolDeviceService protocolDevice, Properties modbusProperties) {
+	private Object doModbusLoop(MemoryPlc memory, ModbusProtocolDeviceService protocolDevice,
+			Properties modbusProperties) {
 		try {
 			protocolDevice.configureConnection(modbusProperties);
 
@@ -96,7 +97,7 @@ public class PlcColletor extends Collector implements Runnable {
 				protocolDevice.disconnect();
 				return readCoils[0];
 			} else {
-				int[] analogInputs = protocolDevice.readInputRegisters(((Plc) memory.getOwner()).getSlaveAddress(),
+				int[] analogInputs = protocolDevice.readHoldingRegisters(((Plc) memory.getOwner()).getSlaveAddress(),
 						memory.getRegisterAddress(), 1);
 				protocolDevice.disconnect();
 				return analogInputs[0];
