@@ -30,6 +30,7 @@ public class MemoryPlc extends PlantItem implements Part, Publishable {
 	protected DeviceController deviceController;
 	protected Set<Trigger> triggers = new HashSet<>();
 	protected List<Processor<?>> processors = new ArrayList<>();
+	protected int multiple;
 
 	public MemoryPlc(MemoryPlcNode node) {
 		this.itemId = node.getItemName();
@@ -38,7 +39,10 @@ public class MemoryPlc extends PlantItem implements Part, Publishable {
 		this.collectType = node.getCollectType();
 		this.value = node.getValue();
 		this.modifyType = node.getModifyType();
+		this.multiple = node.getMultiple();
 	}
+
+	
 
 	@Override
 	public String getThingID() {
@@ -164,6 +168,14 @@ public class MemoryPlc extends PlantItem implements Part, Publishable {
 
 	public void setCollectType(CollectType collectType) {
 		this.collectType = collectType;
+	}
+	
+	public int getMultiple() {
+		return multiple;
+	}
+
+	public void setMultiple(int multiple) {
+		this.multiple = multiple;
 	}
 
 	@Override

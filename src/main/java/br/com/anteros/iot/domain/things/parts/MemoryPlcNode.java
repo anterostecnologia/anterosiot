@@ -16,13 +16,16 @@ public class MemoryPlcNode extends PartNode {
 	private CollectType collectType;
 	private Object value;
 	private ModifyType modifyType;
+	private int multiple;
+
 
 	public MemoryPlcNode(String itemName, String description, int registerAddress, CollectType type,
-			ModifyType modifyType) {
+			ModifyType modifyType, int multiple) {
 		super(itemName, description);
 		this.registerAddress = registerAddress;
 		this.collectType = type;
 		this.modifyType = modifyType;
+		this.multiple = multiple;
 	}
 
 	@Override
@@ -65,5 +68,14 @@ public class MemoryPlcNode extends PartNode {
 	public void setCollectType(CollectType collectType) {
 		this.collectType = collectType;
 	}
+
+	public int getMultiple() {
+		return multiple;
+	}
+
+	public void setMultiple(int multiple) {
+		this.multiple = multiple;
+	}
+	
 
 }
