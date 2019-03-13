@@ -350,14 +350,14 @@ public abstract class AbstractDeviceController implements DeviceController, Mqtt
 							.add("thing", action.getPart().getThingID() != null ? action.getPart().getThingID()
 									: action.getThing().getThingID())
 							.add("message", ""+e.getMessage()).build();
-					MqttMessage msg = new MqttMessage(jsonMessage.toString().getBytes());
-					msg.setQos(1);
+//					MqttMessage msg = new MqttMessage(jsonMessage.toString().getBytes());
+//					msg.setQos(1);
 					try {
 						System.out.println(device.getPathError());
 						System.out.println("==> Erro: " + e.getMessage());
-						this.clientMqtt.publish(device.getPathError(), msg);
+						this.clientMqtt.publish(device.getPathError(), jsonMessage.toString().getBytes(), 0, false);
 					} catch (MqttException e1) {
-						e1.printStackTrace();
+						System.out.println(e1.getMessage());
 					}
 				}
 			}

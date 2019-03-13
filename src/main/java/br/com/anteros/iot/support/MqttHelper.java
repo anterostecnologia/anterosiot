@@ -27,6 +27,7 @@ public class MqttHelper {
 		connOpts.setAutomaticReconnect(automaticReconnect);
 		connOpts.setCleanSession(cleanSession);
 		connOpts.setMqttVersion(MqttConnectOptions.MQTT_VERSION_3_1_1);
+		client.setTimeToWait(2000);
 		
 		client.connect(connOpts);
 		return client;

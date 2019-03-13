@@ -16,17 +16,17 @@ public class ModbusProtocolDevice implements ModbusProtocolDeviceService {
 	private static final Logger s_logger = LogManager.getLogger(ModbusProtocolDevice.class);
 
 	static final String PROTOCOL_NAME = "modbus";
-	
+
 	public static final String PROTOCOL_CONNECTION_TYPE_ETHER_RTU = "TCP-RTU";
 	public static final String PROTOCOL_CONNECTION_TYPE_ETHER_TCP = "TCP/IP";
-	
+
 	private static final String INVALID_CONFIGURATION = "Configuração inválida.";
 	private static final String INVALID_DATA_TYPE = "Tipo de dado inválido.";
 	private static final String METHOD_NOT_SUPPORTED = "Método não suportado.";
 	private static final String TRANSACTION_FAILURE = "Transação falhou.";
 	private static final String NOT_CONNECTED = "Não conectado.";
 	private static final String INVALID_DATA_ADDRESS = "Endereço de dado inválido.";
-	
+
 	private int m_respTout;
 	private int m_txMode;
 	private boolean m_connConfigd = false;
@@ -212,7 +212,7 @@ public class ModbusProtocolDevice implements ModbusProtocolDeviceService {
 		boolean connected = false;
 
 		public EthernetCommunicate(Properties connectionConfig) throws ModbusProtocolException {
-			s_logger.debug("Configure TCP connection");
+			s_logger.debug("Configurando conexão TCP");
 			String sPort;
 			this.connType = connectionConfig.getProperty("connectionType");
 
@@ -228,7 +228,7 @@ public class ModbusProtocolDevice implements ModbusProtocolDeviceService {
 		@Override
 		public void connect() throws ModbusProtocolException {
 			if (!ModbusProtocolDevice.this.m_connConfigd) {
-				throw new ModbusProtocolException("Can't connect, port not configured");
+				throw new ModbusProtocolException("Não conectado, porta não configurada.");
 			} else {
 				if (!this.connected) {
 					try {
@@ -239,14 +239,15 @@ public class ModbusProtocolDevice implements ModbusProtocolDeviceService {
 							this.inputStream = this.socket.getInputStream();
 							this.outputStream = this.socket.getOutputStream();
 							this.connected = true;
-							s_logger.debug("TCP connected");
+							s_logger.debug("TCP conectado");
 						} catch (IOException e) {
 							disconnect();
 							throw new ModbusProtocolException("Failed to get socket streams: " + e);
 						}
 					} catch (IOException e) {
 						this.socket = null;
-						throw new ModbusProtocolException("Failed to connect to remote: " + e);
+						throw new ModbusProtocolException(
+								"Falha ao comunicar com o CLP, verifique se o equipamento esta ligado, cabo de rede está conectado.");
 					}
 				}
 			}
@@ -268,7 +269,7 @@ public class ModbusProtocolDevice implements ModbusProtocolDeviceService {
 						}
 						this.socket.close();
 					} catch (IOException eClose) {
-						s_logger.error("Error closing TCP: " + eClose);
+						s_logger.error("Erro ao fechar TCP: " + eClose);
 					}
 					this.inputStream = null;
 					this.outputStream = null;
@@ -323,14 +324,14 @@ public class ModbusProtocolDevice implements ModbusProtocolDeviceService {
 					cmd[msg.length + 1] = (byte) (crc >> 8);
 				}
 			} else {
-				throw new ModbusProtocolException(METHOD_NOT_SUPPORTED + 
-						": Apenas RTU ou TCP/IP suportado");
+				throw new ModbusProtocolException(METHOD_NOT_SUPPORTED + ": Apenas RTU ou TCP/IP suportado");
 			}
 
 			// Check connection status and connect
 			connect();
 			if (!this.connected) {
-				throw new ModbusProtocolException(TRANSACTION_FAILURE + ": não é possível executar a transação em um socket fechado.");
+				throw new ModbusProtocolException(
+						TRANSACTION_FAILURE + ": não é possível executar a transação em um socket fechado.");
 			}
 
 			// Send the message
@@ -370,17 +371,20 @@ public class ModbusProtocolDevice implements ModbusProtocolDeviceService {
 							if (respIndex == 7) {
 								// test modbus id
 								if (response[6] != msg[0]) {
-									throw new ModbusProtocolException(TRANSACTION_FAILURE + ": incorreto modbus id " + String.format("%02X", response[6]));
+									throw new ModbusProtocolException(TRANSACTION_FAILURE + ": incorreto modbus id "
+											+ String.format("%02X", response[6]));
 								}
 							} else if (respIndex == 8) {
 								// test function number
 								if ((response[7] & 0x7f) != msg[1]) {
-									throw new ModbusProtocolException(TRANSACTION_FAILURE +	" : função numérica incorreta " + String.format("%02X", response[7]));
+									throw new ModbusProtocolException(TRANSACTION_FAILURE
+											+ " : função numérica incorreta " + String.format("%02X", response[7]));
 								}
 							} else if (respIndex == 9) {
 								// Check first for an Exception response
 								if ((response[7] & 0x80) == 0x80) {
-									throw new ModbusProtocolException(TRANSACTION_FAILURE +	"Modbus responds an error = " + String.format("%02X", response[8]));
+									throw new ModbusProtocolException(TRANSACTION_FAILURE
+											+ "Modbus responds an error = " + String.format("%02X", response[8]));
 								} else {
 									if (response[7] == ModbusFunctionCodes.FORCE_SINGLE_COIL
 											|| response[7] == ModbusFunctionCodes.PRESET_SINGLE_REG
