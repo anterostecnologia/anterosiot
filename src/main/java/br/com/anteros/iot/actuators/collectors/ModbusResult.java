@@ -53,4 +53,9 @@ public class ModbusResult implements CollectResult {
 			return "";
 		return newValue.toString();
 	}
+
+	public void setValue(Object oldValue, Object newValue) {
+		this.oldValue = oldValue;
+		this.newValue = newValue;
+	}
 }

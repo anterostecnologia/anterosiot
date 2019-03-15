@@ -35,6 +35,8 @@ public class ModbusProtocolDevice implements ModbusProtocolDeviceService {
 	private Communicate m_comm;
 	private static int transactionIndex = 0;
 
+	private EthernetCommunicate ethernetCommunicate = new EthernetCommunicate();
+
 	/**
 	 * two connection types are available:
 	 * <ul>
@@ -139,7 +141,8 @@ public class ModbusProtocolDevice implements ModbusProtocolDeviceService {
 
 		if (PROTOCOL_CONNECTION_TYPE_ETHER_TCP.equals(this.m_connType)
 				|| PROTOCOL_CONNECTION_TYPE_ETHER_RTU.equals(this.m_connType)) {
-			this.m_comm = new EthernetCommunicate(connectionConfig);
+			this.m_comm = ethernetCommunicate;
+			this.m_comm.configureCommunicate(connectionConfig);
 		} else {
 			throw new ModbusProtocolException(INVALID_CONFIGURATION);
 		}
@@ -189,6 +192,8 @@ public class ModbusProtocolDevice implements ModbusProtocolDeviceService {
 	 */
 	abstract private class Communicate {
 
+		abstract public void configureCommunicate(Properties connectionConfig) throws ModbusProtocolException;
+
 		abstract public void connect() throws ModbusProtocolException;
 
 		abstract public void disconnect() throws ModbusProtocolException;
@@ -211,7 +216,7 @@ public class ModbusProtocolDevice implements ModbusProtocolDeviceService {
 		String connType;
 		boolean connected = false;
 
-		public EthernetCommunicate(Properties connectionConfig) throws ModbusProtocolException {
+		public void configureCommunicate(Properties connectionConfig) throws ModbusProtocolException {
 			s_logger.debug("Configurando conexão TCP");
 			String sPort;
 			this.connType = connectionConfig.getProperty("connectionType");

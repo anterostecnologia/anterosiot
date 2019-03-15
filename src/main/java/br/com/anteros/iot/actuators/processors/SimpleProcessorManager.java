@@ -73,7 +73,7 @@ public class SimpleProcessorManager implements ProcessorManager, ProcessorListen
 
 		try {
 			clientProcessor = MqttHelper.createAndConnectMqttClient(mqttClient.getServerURI(),
-					SimpleProcessorManager.class.getSimpleName() + "_processor", username, password, true, true);
+					device.getThingID() + "_simpleProcessor", username, password, true, true);
 		} catch (Exception e) {
 			logger.error(e.getMessage());
 		}
@@ -157,9 +157,9 @@ public class SimpleProcessorManager implements ProcessorManager, ProcessorListen
 
 				try {
 					byte[] payload = message.getPayload();
-					Class<? extends CollectResult> collectResult = processor.getCollectResult();
+					//Class<? extends CollectResult> collectResult = processor.getCollectResult();
 
-					result = mapper.readValue(payload, collectResult);
+					result = (CollectResult) mapper.readValue(payload, processor.getCollectResult());
 				} catch (Exception e) {
 					logger.error("JSon não é do tipo " + processor.getCollectResult().getSimpleName());
 					return;
@@ -168,8 +168,10 @@ public class SimpleProcessorManager implements ProcessorManager, ProcessorListen
 				if (processor instanceof MqttProcessor && ((MqttProcessor) processor).getMqttClient() == null) {
 
 					try {
-						((MqttProcessor) processor).setMqttClient(MqttHelper.createAndConnectMqttClient(
-								mqttClient.getServerURI(), null, username, password, true, true));
+						((MqttProcessor) processor)
+								.setMqttClient(MqttHelper.createAndConnectMqttClient(mqttClient.getServerURI(),
+										device.getThingID() + "_" + thing.getThingID() + "_processor", username,
+										password, true, true));
 					} catch (Exception e) {
 						logger.error(e.getMessage());
 					}
@@ -184,10 +186,10 @@ public class SimpleProcessorManager implements ProcessorManager, ProcessorListen
 					if (processor.thread == null) {
 						processor.thread = new Thread(processor);
 						processor.thread.setName("threadProcessorThing" + processor.getThing().getThingID());
-						
+
 					}
-					//processor.run();
-					//processorExecutor.submit(processor);
+					// processor.run();
+					// processorExecutor.submit(processor);
 					processorExecutor.submit(processor.thread);
 				}
 			}

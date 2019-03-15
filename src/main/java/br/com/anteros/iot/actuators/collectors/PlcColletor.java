@@ -24,6 +24,8 @@ public class PlcColletor extends Collector implements Runnable {
 	private static final Logger logger = LogManager.getLogger(PlcColletor.class);
 	protected Boolean running = false;
 	protected Thread thread;
+	private ModbusProtocolDeviceService protocolDevice = new ModbusProtocolDevice();
+	private ModbusResult modbusResult = new ModbusResult();
 
 	public PlcColletor(CollectorListener listener, Thing thing) {
 		super(listener, thing);
@@ -61,8 +63,6 @@ public class PlcColletor extends Collector implements Runnable {
 
 		while (running) {
 
-			ModbusProtocolDeviceService protocolDevice = new ModbusProtocolDevice();
-
 			for (Part part : plc.getMemories()) {
 
 				MemoryPlc memory = (MemoryPlc) part;
@@ -77,7 +77,8 @@ public class PlcColletor extends Collector implements Runnable {
 						memory.setValue(valorResult);
 
 						if (listener != null) {
-							listener.onCollect(ModbusResult.of(oldValue, memory.getValue()), memory);
+							modbusResult.setValue(oldValue, memory.getValue());
+							listener.onCollect(modbusResult, memory);
 						}
 					}
 				}
@@ -104,8 +105,10 @@ public class PlcColletor extends Collector implements Runnable {
 			}
 
 		} catch (Exception e) {
-			if (memory.getProcessors() != null && memory.getProcessors().length > 0)
+			if (memory.getProcessors() != null && memory.getProcessors().length > 0) {
 				logger.error(e.getMessage());
+				e.printStackTrace();
+			}
 			return null;
 		}
 	}
