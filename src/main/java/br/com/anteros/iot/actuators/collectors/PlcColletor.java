@@ -14,7 +14,6 @@ import br.com.anteros.iot.Part;
 import br.com.anteros.iot.Thing;
 import br.com.anteros.iot.protocol.modbus.ModbusProtocolDevice;
 import br.com.anteros.iot.protocol.modbus.ModbusProtocolDeviceService;
-import br.com.anteros.iot.protocol.modbus.ModbusProtocolException;
 import br.com.anteros.iot.protocol.modbus.type.CollectType;
 import br.com.anteros.iot.things.Plc;
 import br.com.anteros.iot.things.parts.MemoryPlc;
@@ -24,7 +23,6 @@ public class PlcColletor extends Collector implements Runnable {
 	private static final Logger logger = LogManager.getLogger(PlcColletor.class);
 	protected Boolean running = false;
 	protected Thread thread;
-	private ModbusProtocolDeviceService protocolDevice = new ModbusProtocolDevice();
 	private ModbusResult modbusResult = new ModbusResult();
 
 	public PlcColletor(CollectorListener listener, Thing thing) {
@@ -62,7 +60,9 @@ public class PlcColletor extends Collector implements Runnable {
 		logger.info("Iniciando coletor do PLC " + plc.getItemId() + " - " + plc.getDescription());
 
 		while (running) {
-
+			
+			ModbusProtocolDeviceService protocolDevice = new ModbusProtocolDevice();
+			
 			for (Part part : plc.getMemories()) {
 
 				MemoryPlc memory = (MemoryPlc) part;
@@ -107,7 +107,7 @@ public class PlcColletor extends Collector implements Runnable {
 		} catch (Exception e) {
 			if (memory.getProcessors() != null && memory.getProcessors().length > 0) {
 				logger.error(e.getMessage());
-				e.printStackTrace();
+				//e.printStackTrace();
 			}
 			return null;
 		}
