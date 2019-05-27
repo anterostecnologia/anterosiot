@@ -127,7 +127,7 @@ public class SlaveControllerComputer extends AbstractDeviceController implements
 
 	@Override
 	protected Device doCreateDevice(String deviceName, IpAddress ipAddress, String description, String pathError) {
-		return Computer.of(deviceName, ipAddress, description, pathError);
+		return Computer.of(deviceName, ipAddress, description, pathError, this);
 	}
 
 	@Override

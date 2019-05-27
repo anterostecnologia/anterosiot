@@ -11,6 +11,7 @@ import br.com.anteros.iot.Part;
 import br.com.anteros.iot.Thing;
 import br.com.anteros.iot.ThingStatus;
 import br.com.anteros.iot.actuators.processors.Processor;
+import br.com.anteros.iot.controllers.AbstractDeviceController;
 import br.com.anteros.iot.domain.PlantItemNode;
 import br.com.anteros.iot.plant.PlantItem;
 import br.com.anteros.iot.things.devices.telemetry.TelemetryStrategy;
@@ -23,11 +24,12 @@ public class Computer extends PlantItem implements Device {
 	
 	protected DeviceController deviceController;
 
-	private Computer(String id, IpAddress ipAddress, String description, String pathError) {
+	private Computer(String id, IpAddress ipAddress, String description, String pathError, AbstractDeviceController controller) {
 		this.itemId = id;
 		this.ipAddress = ipAddress;
 		this.description = description;
 		this.pathError = pathError == null ? "": pathError;
+		this.deviceController = controller;
 	}
 
 	public String getThingID() {
@@ -120,8 +122,8 @@ public class Computer extends PlantItem implements Device {
 		return pathError;
 	}
 
-	public static Device of(String deviceName, IpAddress ipAddress, String description, String pathError) {
-		return new Computer(deviceName, ipAddress, description, pathError);
+	public static Device of(String deviceName, IpAddress ipAddress, String description, String pathError, AbstractDeviceController controller) {
+		return new Computer(deviceName, ipAddress, description, pathError, controller);
 	}
 
 	public void setPathError(String pathError) {

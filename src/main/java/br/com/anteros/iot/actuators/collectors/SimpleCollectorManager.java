@@ -81,23 +81,6 @@ public class SimpleCollectorManager implements CollectorManager, CollectorListen
 	}
 
 	@Override
-	public void connectionLost(Throwable cause) {
-
-	}
-
-	@Override
-	public void messageArrived(String topic, MqttMessage message) throws Exception {
-		if (!paused) {
-
-		}
-	}
-
-	@Override
-	public void deliveryComplete(IMqttDeliveryToken token) {
-
-	}
-
-	@Override
 	public void run() {
 		running = true;
 		boolean first = true;
@@ -120,7 +103,8 @@ public class SimpleCollectorManager implements CollectorManager, CollectorListen
 					MqttClient clientCollector = null;
 					try {
 						clientCollector = MqttHelper.createAndConnectMqttClient(mqttClient.getServerURI(),
-								thing.getThingID() + "_collector", username, password, true, true);
+								device.getThingID() + "-" + thing.getThingID() + "_collector", username, password, true,
+								true);
 					} catch (MqttException e1) {
 						e1.printStackTrace();
 					}
@@ -201,6 +185,24 @@ public class SimpleCollectorManager implements CollectorManager, CollectorListen
 				}
 			}
 		}
+	}
+
+	@Override
+	public void connectionLost(Throwable cause) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void messageArrived(String topic, MqttMessage message) throws Exception {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void deliveryComplete(IMqttDeliveryToken token) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

@@ -5,12 +5,13 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -36,7 +37,7 @@ public class SimpleProcessorManager implements ProcessorManager, ProcessorListen
 	private MqttClient clientProcessor;
 	private ObjectMapper mapper = new ObjectMapper();
 	private Map<String, Thing> subscribedTopics = new HashMap<>();
-	private ThreadPoolTaskExecutor processorExecutor;
+	private ExecutorService processorExecutor;
 	protected String username;
 	protected String password;
 	protected Device device;
@@ -50,12 +51,12 @@ public class SimpleProcessorManager implements ProcessorManager, ProcessorListen
 		this.password = password;
 		this.device = device;
 
-		processorExecutor = new ThreadPoolTaskExecutor();
-		processorExecutor.setCorePoolSize(10);
-		processorExecutor.setMaxPoolSize(10);
-		processorExecutor.setWaitForTasksToCompleteOnShutdown(false);
-		processorExecutor.initialize();
-		processorExecutor.setThreadNamePrefix("processorExecutor");
+		processorExecutor = Executors.newSingleThreadExecutor();
+//		processorExecutor.setCorePoolSize(10);
+//		processorExecutor.setMaxPoolSize(10);
+//		processorExecutor.setWaitForTasksToCompleteOnShutdown(false);
+//		processorExecutor.initialize();
+//		processorExecutor.setThreadNamePrefix("processorExecutor");
 	}
 
 	public static SimpleProcessorManager of(MqttClient mqttClient, List<Processor<?>> processors, String username,
@@ -108,20 +109,23 @@ public class SimpleProcessorManager implements ProcessorManager, ProcessorListen
 		logger.debug("Parando processador de dados.");
 
 		processorExecutor.shutdown();
-
-		while (processorExecutor.getActiveCount() > 0) {
-		}
-		logger.debug("THREADS ATIVAS > " + processorExecutor.getActiveCount());
+//		TODO:
+//		while (processorExecutor.getActiveCount() > 0) {
+//		}
+//		logger.debug("THREADS ATIVAS > " + processorExecutor.getActiveCount());
 
 		try {
-			if (clientProcessor.isConnected())
-				clientProcessor.disconnect();
-
 			for (Processor<?> processor : registeredProcessors) {
 				if (processor instanceof MqttProcessor && ((MqttProcessor<?>) processor).getMqttClient() != null) {
 					if (((MqttProcessor<?>) processor).getMqttClient().isConnected())
 						((MqttProcessor<?>) processor).getMqttClient().disconnect();
 				}
+			}
+			
+			unSubscribe();
+			
+			if (clientProcessor.isConnected()) {
+				clientProcessor.disconnect();
 			}
 		} catch (MqttException e) {
 			System.out.println("Ocorreu uma falha ao parar o ProcessorManager : " + e.getMessage());
@@ -129,6 +133,21 @@ public class SimpleProcessorManager implements ProcessorManager, ProcessorListen
 		}
 
 		this.thread.interrupt();
+	}
+
+	private void unSubscribe() {
+		List<String> filter = new ArrayList<>();
+		
+		for (Map.Entry<String, Thing> entry : subscribedTopics.entrySet()) {
+		    filter.add(entry.getKey());
+		}
+
+		try {
+			System.out.println(Arrays.toString(filter.toArray(new String[] {})));
+			this.clientProcessor.unsubscribe(filter.toArray(new String[] {}));
+		} catch (MqttException e) {
+			logger.error(e.getMessage());
+		}
 	}
 
 	@Override
@@ -157,7 +176,7 @@ public class SimpleProcessorManager implements ProcessorManager, ProcessorListen
 
 				try {
 					byte[] payload = message.getPayload();
-					//Class<? extends CollectResult> collectResult = processor.getCollectResult();
+					// Class<? extends CollectResult> collectResult = processor.getCollectResult();
 
 					result = (CollectResult) mapper.readValue(payload, processor.getCollectResult());
 				} catch (Exception e) {
@@ -183,14 +202,14 @@ public class SimpleProcessorManager implements ProcessorManager, ProcessorListen
 
 				if (result != null && thing != null) {
 					processor.setResult(result);
-					if (processor.thread == null) {
-						processor.thread = new Thread(processor);
-						processor.thread.setName("threadProcessorThing" + processor.getThing().getThingID());
-
-					}
+//					if (processor.thread == null) {
+//						processor.thread = new Thread(processor);
+//						processor.thread.setName("threadProcessorThing" + processor.getThing().getThingID());
+//
+//					}
 					// processor.run();
-					// processorExecutor.submit(processor);
-					processorExecutor.submit(processor.thread);
+					processorExecutor.submit(processor);
+					// processorExecutor.submit(processor.thread);
 				}
 			}
 		}

@@ -17,6 +17,7 @@ import org.eclipse.paho.client.mqttv3.MqttCallback;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
+import org.eclipse.paho.client.mqttv3.MqttSecurityException;
 
 import com.diozero.util.SleepUtil;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
@@ -123,11 +124,11 @@ public class AnterosIOTService implements Runnable, MqttCallback {
 		try {
 			client = MqttHelper.createAndConnectMqttClient(broker, clientId, username, password, true, true);
 		} catch (MqttException e1) {
-			// TODO Auto-generated catch block
+			System.out.println("Ocorreu uma falha ao criar um cliente mqtt. O Sistema não continuará a inicialização.");
 			e1.printStackTrace();
 		}
 
-		if (fileConfig != null || streamConfig != null) {
+		if ((fileConfig != null || streamConfig != null) && client != null && client.isConnected()) {
 			try {
 				ObjectMapper mapper = new ObjectMapper();
 				mapper.setSerializationInclusion(Include.NON_NULL);
@@ -155,13 +156,6 @@ public class AnterosIOTService implements Runnable, MqttCallback {
 			deviceController.start();
 		}
 
-//		this.client.setCallback(this);
-//		try {
-//			this.client.subscribe(((PlantItem) deviceController.getDevice()).getPath());
-//		} catch (MqttException e) {
-//			e.printStackTrace();
-//		}
-		
 		while (true) {
 			SleepUtil.sleepMillis(2000);
 		}
@@ -171,52 +165,14 @@ public class AnterosIOTService implements Runnable, MqttCallback {
 	@Override
 	public void connectionLost(Throwable cause) {
 		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void messageArrived(String topic, MqttMessage message) throws Exception {
-//		byte[] payload = message.getPayload();
-//		JsonObject receivedPayload = null;
-//		try {
-//			InputStream stream = new ByteArrayInputStream(payload);
-//
-//			JsonReader jsonReader = Json.createReader(stream);
-//			receivedPayload = jsonReader.readObject();
-//			jsonReader.close();
-//
-//		} catch (Exception e) {
-//			System.out.println("Mensagem recebida não é do tipo JSON, verifique");
-//		}
-//
-//		if (receivedPayload != null && receivedPayload.containsKey("action")
-//				&& ((PlantItem) deviceController.getDevice()).getPath().equals(topic)) {
-//			System.out.println("=> Mensagem recebida: \"" + message.toString() + "\" no tópico \"" + topic.toString());
-//
-//			System.out.println(receivedPayload);
-//			System.out.println(topic.toString());
-//
-//			restart();
-//		}
-
 	}
-
-//	private void restart() {
-//		try {
-//			deviceController.stop();
-//			if (client.isConnected())
-//				client.disconnect();
-//		} catch (MqttException e) {
-//			System.out.println("Ocorreu uma falha para reiniciar o serviço: " + e.getMessage());
-//			e.printStackTrace();
-//		}
-//		this.run();
-//	}
 
 	@Override
 	public void deliveryComplete(IMqttDeliveryToken token) {
 		// TODO Auto-generated method stub
-
 	}
-
 }

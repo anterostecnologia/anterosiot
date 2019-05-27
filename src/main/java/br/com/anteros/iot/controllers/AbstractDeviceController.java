@@ -79,6 +79,7 @@ public abstract class AbstractDeviceController implements DeviceController, Mqtt
 
 	protected AbstractDeviceController(Device device, Actuators actuators) {
 		this.device = device;
+		this.device.setDeviceController(this);
 		this.thread = new Thread(this);
 		this.actuators = actuators;
 	}
@@ -204,15 +205,6 @@ public abstract class AbstractDeviceController implements DeviceController, Mqtt
 		this.running = true;
 		System.out.println("Iniciando controlador " + this.getThingID());
 
-		MqttClient clientCollector = null;
-
-		try {
-			clientCollector = MqttHelper.createAndConnectMqttClient(clientMqtt.getServerURI(),
-					this.device.getThingID() + "_collector", username, password, true, true);
-		} catch (MqttException e1) {
-			e1.printStackTrace();
-		}
-		
 		ProcessorManager processorManager = null;
 		if (getProcessors() != null && !getProcessors().isEmpty()) {
 			System.out.println("Iniciando processador");
@@ -220,7 +212,7 @@ public abstract class AbstractDeviceController implements DeviceController, Mqtt
 			processorManager.start();
 		}
 
-		CollectorManager collectorManager = SimpleCollectorManager.of(clientCollector, things.toArray(new Thing[] {}),
+		CollectorManager collectorManager = SimpleCollectorManager.of(clientMqtt, things.toArray(new Thing[] {}),
 				actuators, device, username, password);
 		collectorManager.start();
 
@@ -236,20 +228,27 @@ public abstract class AbstractDeviceController implements DeviceController, Mqtt
 				e.printStackTrace();
 			}
 		}
+
+		System.out.println("Parando Coletores de dados.");
 		collectorManager.stop();
+
 		if (getProcessors() != null && !getProcessors().isEmpty()) {
+			System.out.println("Parando processadores.");
 			processorManager.stop();
 		}
+
 		System.out.println("Parando controlador " + this.getThingID());
-		
+
 		try {
-			if (clientMqtt.isConnected())
+			unSubscribe();
+			if (clientMqtt.isConnected()) {
 				clientMqtt.disconnect();
+			}
 		} catch (MqttException e) {
-			System.out.println("Ocorreu uma falha para reiniciar o serviço: " + e.getMessage());
+			System.out.println("Ocorreu uma falha ao deconectar: " + e.getMessage());
 			e.printStackTrace();
 		}
-		
+
 		this.thread.interrupt();
 	}
 
@@ -347,9 +346,10 @@ public abstract class AbstractDeviceController implements DeviceController, Mqtt
 							action.getPart() != null ? action.getPart() : action.getThing());
 				} catch (Exception e) {
 					JsonObject jsonMessage = Json.createObjectBuilder()
-							.add("thing", action.getPart().getThingID() != null ? action.getPart().getThingID()
-									: action.getThing().getThingID())
-							.add("message", ""+e.getMessage()).build();
+							.add("thing",
+									action.getPart().getThingID() != null ? action.getPart().getThingID()
+											: action.getThing().getThingID())
+							.add("message", "" + e.getMessage()).build();
 //					MqttMessage msg = new MqttMessage(jsonMessage.toString().getBytes());
 //					msg.setQos(1);
 					try {
@@ -412,6 +412,21 @@ public abstract class AbstractDeviceController implements DeviceController, Mqtt
 		try {
 			System.out.println(Arrays.toString(filter.toArray(new String[] {})));
 			this.clientMqtt.subscribe(filter.toArray(new String[] {}));
+		} catch (MqttException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public void unSubscribe() {
+
+		List<String> filter = new ArrayList<>();
+		
+		for (Map.Entry<String, Thing> entry : subscribedTopics.entrySet()) {
+		    filter.add(entry.getKey());
+		}
+		
+		try {
+			this.clientMqtt.unsubscribe(filter.toArray(new String[] {}));
 		} catch (MqttException e) {
 			e.printStackTrace();
 		}

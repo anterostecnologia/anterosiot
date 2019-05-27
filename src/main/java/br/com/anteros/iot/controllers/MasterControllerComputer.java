@@ -16,6 +16,7 @@ import br.com.anteros.iot.SlaveDeviceController;
 import br.com.anteros.iot.app.listeners.AnterosIOTServiceListener;
 import br.com.anteros.iot.domain.DeviceNode;
 import br.com.anteros.iot.plant.Plant;
+import br.com.anteros.iot.support.MqttHelper;
 import br.com.anteros.iot.things.devices.Computer;
 import br.com.anteros.iot.things.devices.IpAddress;
 
@@ -118,6 +119,29 @@ public class MasterControllerComputer extends AbstractDeviceController implement
 				+ "\" Reason code " + ((MqttException) cause).getReasonCode() + "\" Cause \""
 				+ ((MqttException) cause).getCause() + "\"");
 		cause.printStackTrace();
+		
+//		try {
+//			clientMqtt = MqttHelper.createAndConnectMqttClient(clientMqtt.getServerURI(),
+//					device.getThingID() + "_controller", username, password, true, true);
+//		} catch (MqttException e1) {
+//			e1.printStackTrace();
+//		}
+//
+//		this.clientMqtt.setCallback(this);
+//		this.autoSubscribe();
+		
+//		device.getDeviceController().stop();
+
+//		try {
+//			clientMqtt = MqttHelper.createAndConnectMqttClient(clientMqtt.getServerURI(),
+//					device.getThingID() + "_controller", username, password, true, true);
+//		} catch (MqttException e1) {
+//			e1.printStackTrace();
+//		}
+//		
+//		this.clientMqtt.setCallback(this);
+//		
+//		device.getDeviceController().start();
 	}
 
 	public void deliveryComplete(IMqttDeliveryToken token) {
@@ -141,7 +165,7 @@ public class MasterControllerComputer extends AbstractDeviceController implement
 
 	@Override
 	protected Device doCreateDevice(String deviceName, IpAddress ipAddress, String description, String pathError) {
-		return Computer.of(deviceName, ipAddress, description, pathError);
+		return Computer.of(deviceName, ipAddress, description, pathError, this);
 	}
 
 	@Override
