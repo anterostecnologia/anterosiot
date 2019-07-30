@@ -23,19 +23,16 @@ import br.com.anteros.iot.Part;
 import br.com.anteros.iot.RemoteMasterDeviceController;
 import br.com.anteros.iot.SlaveDeviceController;
 import br.com.anteros.iot.Thing;
-import br.com.anteros.iot.actuators.processors.Processor;
 import br.com.anteros.iot.app.listeners.AnterosIOTServiceListener;
 import br.com.anteros.iot.controllers.AbstractDeviceController;
 import br.com.anteros.iot.controllers.remote.RemoteDeviceControllerFactory;
 import br.com.anteros.iot.domain.DeviceMasterNode;
 import br.com.anteros.iot.domain.DeviceNode;
 import br.com.anteros.iot.domain.DeviceSlaveNode;
-import br.com.anteros.iot.domain.PartNode;
 import br.com.anteros.iot.domain.PlantItemNode;
 import br.com.anteros.iot.domain.ThingNode;
 import br.com.anteros.iot.domain.actions.ActionNode;
 import br.com.anteros.iot.domain.plant.PlantNode;
-import br.com.anteros.iot.domain.processors.ProcessorNode;
 import br.com.anteros.iot.domain.triggers.TriggerNode;
 import br.com.anteros.iot.plant.Place;
 import br.com.anteros.iot.plant.Plant;
@@ -99,6 +96,9 @@ public class AnterosIOTConfiguration {
 	}
 
 	public AbstractDeviceController buildDevice() throws JsonParseException, JsonMappingException, IOException {
+		
+		serviceListener.onBeforeBuildDeviceController();
+		
 		if (fileConfig != null) {
 			node = mapper.readValue(fileConfig, PlantItemNode.class);
 		}
@@ -130,16 +130,24 @@ public class AnterosIOTConfiguration {
 			String clientId = deviceName + "_controller";
 
 			System.out.println("Conectando servidor broker MQTT..." + broker);
+			
+			serviceListener.onConnectingMqttServer();
 
 			MqttClient clientMqtt = null;
 			try {
 				clientMqtt = MqttHelper.createAndConnectMqttClient(broker, clientId, username, password, true, true);
 			} catch (MqttException e1) {
+				serviceListener.onErrorConnectingMqttServer(e1.getMessage());
 				e1.printStackTrace();
 			}
 
 			DefaultActuators defaultActuators = new DefaultActuators();
 			defaultActuators.registerActuators(actuators);
+			
+			Set<Class<? extends Actuable>> newActuatorsToRegister = serviceListener.getNewActuatorsToRegister();
+			if (newActuatorsToRegister!=null) {
+				defaultActuators.registerActuators(newActuatorsToRegister);
+			}
 
 			deviceResult = ((DeviceNode) deviceNode).getInstanceOfDeviceController(clientMqtt, currentPlant,
 					defaultActuators, serviceListener, username, password);
@@ -150,12 +158,15 @@ public class AnterosIOTConfiguration {
 
 				for (PlantItemNode slave : slaves) {
 					if (slave instanceof DeviceSlaveNode) {
+						
+						serviceListener.onConnectingMqttServer();
 
 						MqttClient remoteClientMqtt = null;
 						try {
 							remoteClientMqtt = MqttHelper.createAndConnectMqttClient(broker,
 									deviceName + "_remoteController", username, password, true, true);
 						} catch (MqttException e1) {
+							serviceListener.onErrorConnectingMqttServer(e1.getMessage());
 							e1.printStackTrace();
 						}
 						((MasterDeviceController) deviceResult).addChildDeviceController(
@@ -172,12 +183,14 @@ public class AnterosIOTConfiguration {
 				}
 
 				DeviceMasterNode master = (DeviceMasterNode) masters.iterator().next();
+				serviceListener.onConnectingMqttServer();
 
 				MqttClient remoteClientMqtt = null;
 				try {
 					remoteClientMqtt = MqttHelper.createAndConnectMqttClient(broker, deviceName + "_remoteController",
 							"", "", true, true);
 				} catch (MqttException e1) {
+					serviceListener.onErrorConnectingMqttServer(e1.getMessage());
 					e1.printStackTrace();
 				}
 
@@ -234,57 +247,32 @@ public class AnterosIOTConfiguration {
 						}
 
 						// Ação de exceção
-						Action exceptionAction = null;
-						if (triggerNode.getExceptionAction() != null) {
+						List<Action> exceptionActions = new ArrayList<>();
+						if (triggerNode.getExceptionActions() != null) {
+							for (ActionNode exceptionAction :  triggerNode.getExceptionActions()) {
 							Thing exceptionActionThing = deviceResult
-									.getThingById(triggerNode.getExceptionAction().getThing().getItemName());
+									.getThingById(exceptionAction.getThing().getItemName());
 							Part exceptionActionPart = null;
-							if (triggerNode.getExceptionAction().getPart() != null) {
+							if (exceptionAction.getPart() != null) {
 								exceptionActionPart = exceptionActionThing
-										.getPartById(triggerNode.getExceptionAction().getPart().getItemName());
+										.getPartById(exceptionAction.getPart().getItemName());
 							}
 
-							exceptionAction = Action.of(exceptionActionThing, exceptionActionPart,
-									triggerNode.getExceptionAction().getAction(),
-									triggerNode.getExceptionAction().getMessage(),
-									triggerNode.getExceptionAction().getTopics());
+							exceptionActions.add(Action.of(exceptionActionThing, exceptionActionPart,
+									exceptionAction.getAction(),
+									exceptionAction.getMessage(),
+									exceptionAction.getTopics()));
+							}
 						}
 
 						sourceThing.addTrigger(Trigger.of(triggerNode.getName(), triggerNode.getType(), whenCondition,
-								targetActions.toArray(new Action[] {}), exceptionAction));
+								targetActions.toArray(new Action[] {}), exceptionActions.toArray(new Action[] {})));
 					}
 				}
 
 			}
 
-			for (ThingNode thingNode : deviceNode.getThings()) {
-				Thing sourceThing = deviceResult.getThingById(thingNode.getItemName());
-				if (thingNode.getProcessors() != null && !thingNode.getProcessors().isEmpty()) {
-					for (ProcessorNode<?> processorNode : thingNode.getProcessors()) {
-						Processor<?> processor = processorNode.getInstanceOfProcessor(); 
-						processor.setThings(sourceThing);
-						sourceThing.addProcessor(processor);
-					}
-				}
-				
-				if (thingNode.getItems() != null && !thingNode.getItems().isEmpty()) {
-					for (PlantItemNode node : thingNode.getItems()) {
-						
-						if(node instanceof PartNode) {
-							Part sourcePart = sourceThing.getPartById(node.getItemName());
-							if (((PartNode) node).getProcessors() != null && !((PartNode)node).getProcessors().isEmpty()) {
-								for (ProcessorNode<?> processorNode : ((PartNode) node).getProcessors()) {
-									Processor<?> processor = processorNode.getInstanceOfProcessor(); 
-									processor.setThings(sourcePart);
-									sourcePart.addProcessor(processor);
-								}
-							}	
-						}
-					}
-				}
-
-			}
-
+			
 			/**
 			 * Ouvindo mensagens MQTT para todas as coisas sendo contraladas e mais o
 			 * próprio contralador
@@ -292,6 +280,7 @@ public class AnterosIOTConfiguration {
 			deviceResult.autoSubscribe();
 		}
 
+		serviceListener.onAfterBuildDeviceController();
 		return deviceResult;
 	}
 

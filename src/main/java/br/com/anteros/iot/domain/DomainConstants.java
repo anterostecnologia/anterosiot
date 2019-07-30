@@ -12,6 +12,7 @@ public class DomainConstants {
 	public static final String PLACE = "place";
 	public static final String MASTER_ODROID_C2 = "masterOdroidC2";
 	public static final String BARRIER_GATE = "barrierGate";
+	public static final String BARRIER_SENSOR = "barrierSensor";
 	public static final String GREEN_LED_SEMAPHORE = "greenLedSemaphore";
 	public static final String LAMP = "lamp";
 	public static final String CAMERA_QR_CODE = "cameraQRCode";
@@ -28,4 +29,5 @@ public class DomainConstants {
 	public static final String MASTER_COMPUTER = "masterComputer";
 	public static final String RING_STRIP_LED12 = "ringStripLed12";
 	public static final String SLAVE_COMPUTER = "slaveComputer";
+	public static final String BEACON = "beacon";
 }

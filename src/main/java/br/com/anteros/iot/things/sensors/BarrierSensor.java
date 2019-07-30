@@ -1,62 +1,110 @@
-package br.com.anteros.iot.things;
+package br.com.anteros.iot.things.sensors;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
 import br.com.anteros.iot.DeviceController;
 import br.com.anteros.iot.Part;
+import br.com.anteros.iot.Sensor;
+import br.com.anteros.iot.SensorCollectionType;
 import br.com.anteros.iot.Thing;
 import br.com.anteros.iot.ThingStatus;
+import br.com.anteros.iot.actuators.collectors.CollectResult;
 import br.com.anteros.iot.domain.PlantItemNode;
+import br.com.anteros.iot.domain.things.BarrierSensorNode;
 import br.com.anteros.iot.plant.PlantItem;
 import br.com.anteros.iot.triggers.Trigger;
 
-public class CameraALPR extends PlantItem implements Thing {
-	
+public class BarrierSensor extends PlantItem implements Sensor {
+
+	protected int pin;
+	protected String[] topics;
 	protected DeviceController deviceController;
 	protected Set<Trigger> triggers = new HashSet<>();
-	
-	public CameraALPR() {
+
+	public BarrierSensor(String itemId, int pin, String[] topics) {
+		super();
+		this.itemId = itemId;
+		this.pin = pin;
+		this.topics = topics;
 	}
 
+	public BarrierSensor(BarrierSensorNode node) {
+		this.itemId = node.getItemName();
+		this.description = node.getDescription();
+		this.pin = node.getPin();
+		this.topics = node.getTopics();
+	}
+
+	@Override
 	public String getThingID() {
 		return itemId;
 	}
 
+	@Override
 	public ThingStatus getStatus() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
+	@Override
 	public Set<Part> getParts() {
-		// TODO Auto-generated method stub
-		return null;
+		return Collections.unmodifiableSet(new HashSet<>());
 	}
 
+	@Override
 	public boolean hasParts() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
+	@Override
 	public Thing addPart(Part part) {
-		// TODO Auto-generated method stub
-		return null;
+		return this;
 	}
 
+	@Override
 	public Thing removePart(Part part) {
-		// TODO Auto-generated method stub
-		return null;
+		return this;
 	}
 
+	@Override
 	public Part getPartById(String part) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public Thing loadConfiguration(PlantItemNode node) {
-		// TODO Auto-generated method stub
-		return null;
+		return this;
+	}
+
+	@Override
+	public long getTimeIntervalForCollect() {
+		return 0;
+	}
+
+	@Override
+	public SensorCollectionType getCollectionType() {
+		return SensorCollectionType.EVENT;
+	}
+
+	@Override
+	public String[] getTopicsToPublishValue(CollectResult collectedData) {
+		if (topics == null || topics.length == 0) {
+			return new String[] { this.getPath() };
+		}
+		return topics;
+	}
+
+	public String getThingId() {
+		return itemId;
+	}
+
+	public int getPin() {
+		return pin;
+	}
+
+	public String[] getTopics() {
+		return topics;
 	}
 
 	@Override
@@ -72,12 +120,11 @@ public class CameraALPR extends PlantItem implements Thing {
 	public void setDeviceController(DeviceController deviceController) {
 		this.deviceController = deviceController;
 	}
-	
+
 	@Override
 	public Trigger[] getTriggers() {
 		return triggers.toArray(new Trigger[] {});
 	}
-
 
 	@Override
 	public Thing addTrigger(Trigger trigger) {
@@ -95,6 +142,6 @@ public class CameraALPR extends PlantItem implements Thing {
 	public String[] getActions() {
 		// TODO Auto-generated method stub
 		return null;
-	}	
-	
+	}
+
 }

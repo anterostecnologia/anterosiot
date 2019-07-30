@@ -15,7 +15,6 @@ import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonReader;
 
-import org.apache.commons.logging.Log;
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.MqttCallback;
 import org.eclipse.paho.client.mqttv3.MqttClient;
@@ -36,15 +35,11 @@ import br.com.anteros.iot.Part;
 import br.com.anteros.iot.Thing;
 import br.com.anteros.iot.actuators.collectors.CollectorManager;
 import br.com.anteros.iot.actuators.collectors.SimpleCollectorManager;
-import br.com.anteros.iot.actuators.processors.Processor;
-import br.com.anteros.iot.actuators.processors.ProcessorManager;
-import br.com.anteros.iot.actuators.processors.SimpleProcessorManager;
 import br.com.anteros.iot.app.listeners.AnterosIOTServiceListener;
 import br.com.anteros.iot.domain.DeviceNode;
 import br.com.anteros.iot.plant.Place;
 import br.com.anteros.iot.plant.Plant;
 import br.com.anteros.iot.plant.PlantItem;
-import br.com.anteros.iot.support.MqttHelper;
 import br.com.anteros.iot.things.devices.IpAddress;
 
 public abstract class AbstractDeviceController implements DeviceController, MqttCallback, Runnable {
@@ -204,13 +199,8 @@ public abstract class AbstractDeviceController implements DeviceController, Mqtt
 	public void run() {
 		this.running = true;
 		System.out.println("Iniciando controlador " + this.getThingID());
-
-		ProcessorManager processorManager = null;
-		if (getProcessors() != null && !getProcessors().isEmpty()) {
-			System.out.println("Iniciando processador");
-			processorManager = SimpleProcessorManager.of(clientMqtt, getProcessors(), username, password, device);
-			processorManager.start();
-		}
+		
+		serviceListener.onStartCollectors(this);
 
 		CollectorManager collectorManager = SimpleCollectorManager.of(clientMqtt, things.toArray(new Thing[] {}),
 				actuators, device, username, password);
@@ -229,13 +219,10 @@ public abstract class AbstractDeviceController implements DeviceController, Mqtt
 			}
 		}
 
+		serviceListener.onStopCollectors(this);
 		System.out.println("Parando Coletores de dados.");
 		collectorManager.stop();
 
-		if (getProcessors() != null && !getProcessors().isEmpty()) {
-			System.out.println("Parando processadores.");
-			processorManager.stop();
-		}
 
 		System.out.println("Parando controlador " + this.getThingID());
 
@@ -252,21 +239,6 @@ public abstract class AbstractDeviceController implements DeviceController, Mqtt
 		this.thread.interrupt();
 	}
 
-	private List<Processor<?>> getProcessors() {
-		List<Processor<?>> processors = new ArrayList<>();
-		for (Thing thing : things) {
-			if (thing.hasProcessor()) {
-				processors.addAll(Arrays.asList(thing.getProcessors()));
-			}
-
-			for (Thing part : thing.getParts()) {
-				if (part.hasProcessor()) {
-					processors.addAll(Arrays.asList(part.getProcessors()));
-				}
-			}
-		}
-		return processors;
-	}
 
 	@Override
 	public void restartOS() {

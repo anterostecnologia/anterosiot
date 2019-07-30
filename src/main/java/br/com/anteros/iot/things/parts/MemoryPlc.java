@@ -1,9 +1,7 @@
 package br.com.anteros.iot.things.parts;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import br.com.anteros.iot.DeviceController;
@@ -11,7 +9,6 @@ import br.com.anteros.iot.Part;
 import br.com.anteros.iot.Thing;
 import br.com.anteros.iot.ThingStatus;
 import br.com.anteros.iot.actuators.collectors.CollectResult;
-import br.com.anteros.iot.actuators.processors.Processor;
 import br.com.anteros.iot.domain.PlantItemNode;
 import br.com.anteros.iot.domain.things.parts.MemoryPlcNode;
 import br.com.anteros.iot.parts.exception.IllegalPartException;
@@ -29,7 +26,6 @@ public class MemoryPlc extends PlantItem implements Part, Publishable {
 	protected ModifyType modifyType;
 	protected DeviceController deviceController;
 	protected Set<Trigger> triggers = new HashSet<>();
-	protected List<Processor<?>> processors = new ArrayList<>();
 	protected int multiple;
 
 	public MemoryPlc(MemoryPlcNode node) {
@@ -176,23 +172,6 @@ public class MemoryPlc extends PlantItem implements Part, Publishable {
 
 	public void setMultiple(int multiple) {
 		this.multiple = multiple;
-	}
-
-	@Override
-	public Thing addProcessor(Processor<?> processor) {
-		processors.add(processor);
-		return this;
-	}
-
-	@Override
-	public Thing removeProcessor(Processor<?> processor) {
-		processors.remove(processor);
-		return this;
-	}
-
-	@Override
-	public Processor<?>[] getProcessors() {
-		return processors.toArray(new Processor[] {});
 	}
 
 	@Override

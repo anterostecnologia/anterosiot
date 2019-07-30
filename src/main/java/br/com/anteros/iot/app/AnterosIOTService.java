@@ -115,6 +115,8 @@ public class AnterosIOTService implements Runnable, MqttCallback {
 
 	@Override
 	public void run() {
+		
+		serviceListener.onConnectingMqttServer();
 
 		String broker = "tcp://" + hostMqtt + ":" + (port == null ? 1883 : port);
 		String clientId = deviceName + "_guardian";
@@ -124,7 +126,7 @@ public class AnterosIOTService implements Runnable, MqttCallback {
 		try {
 			client = MqttHelper.createAndConnectMqttClient(broker, clientId, username, password, true, true);
 		} catch (MqttException e1) {
-			System.out.println("Ocorreu uma falha ao criar um cliente mqtt. O Sistema não continuará a inicialização.");
+			serviceListener.onErrorConnectingMqttServer("Ocorreu uma falha ao criar um cliente mqtt. O Sistema não continuará a inicialização.");
 			e1.printStackTrace();
 		}
 
@@ -141,30 +143,33 @@ public class AnterosIOTService implements Runnable, MqttCallback {
 						.username(username).password(password).serviceListener(serviceListener).configure(streamConfig)
 						.configure(fileConfig).buildDevice();
 			} catch (JsonParseException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (JsonMappingException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
 
 		if (deviceController != null) {
+			serviceListener.onStartDeviceController();
 			deviceController.start();
 		}
 
 		while (true) {
 			SleepUtil.sleepMillis(2000);
 		}
-
+		
+	}
+	
+	@Override
+	protected void finalize() throws Throwable {
+		serviceListener.onStopDeviceController();
+		super.finalize();
 	}
 
 	@Override
 	public void connectionLost(Throwable cause) {
-		// TODO Auto-generated method stub
 	}
 
 	@Override

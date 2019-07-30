@@ -105,10 +105,7 @@ public class PlcColletor extends Collector implements Runnable {
 			}
 
 		} catch (Exception e) {
-			if (memory.getProcessors() != null && memory.getProcessors().length > 0) {
-				logger.error(e.getMessage());
-				//e.printStackTrace();
-			}
+			logger.error(e.getMessage());
 			return null;
 		}
 	}

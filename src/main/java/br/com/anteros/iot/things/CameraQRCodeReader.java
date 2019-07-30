@@ -1,9 +1,7 @@
 package br.com.anteros.iot.things;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import br.com.anteros.core.utils.ArrayUtils;
@@ -12,7 +10,6 @@ import br.com.anteros.iot.Part;
 import br.com.anteros.iot.Thing;
 import br.com.anteros.iot.ThingStatus;
 import br.com.anteros.iot.actuators.collectors.CollectResult;
-import br.com.anteros.iot.actuators.processors.Processor;
 import br.com.anteros.iot.domain.PlantItemNode;
 import br.com.anteros.iot.domain.things.CameraQRCodeReaderNode;
 import br.com.anteros.iot.plant.PlantItem;
@@ -23,7 +20,6 @@ public class CameraQRCodeReader extends PlantItem implements Thing, Publishable 
 	protected DeviceController deviceController;
 	protected String[] topics;
 	protected Set<Trigger> triggers = new HashSet<>();
-	protected List<Processor<?>> processors = new ArrayList<>();
 	protected int intervalToReadSameQrCode = 3000;
 
 	public int getIntervalToReadSameQrCode() {
@@ -120,20 +116,4 @@ public class CameraQRCodeReader extends PlantItem implements Thing, Publishable 
 		return null;
 	}
 
-	@Override
-	public Thing addProcessor(Processor<?> processor) {
-		processors.add(processor);
-		return this;
-	}
-
-	@Override
-	public Thing removeProcessor(Processor<?> processor) {
-		processors.remove(processor);
-		return this;
-	}
-
-	@Override
-	public Processor<?>[] getProcessors() {
-		return processors.toArray(new Processor[] {});
-	}
 }

@@ -1,9 +1,7 @@
 package br.com.anteros.iot.things.sensors;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import com.pi4j.temperature.TemperatureScale;
@@ -16,7 +14,6 @@ import br.com.anteros.iot.SensorCollectionType;
 import br.com.anteros.iot.Thing;
 import br.com.anteros.iot.ThingStatus;
 import br.com.anteros.iot.actuators.collectors.CollectResult;
-import br.com.anteros.iot.actuators.processors.Processor;
 import br.com.anteros.iot.domain.PlantItemNode;
 import br.com.anteros.iot.domain.things.TemperatureOneWireNode;
 import br.com.anteros.iot.plant.PlantItem;
@@ -29,7 +26,6 @@ public class TemperatureSensorOneWire extends PlantItem implements Sensor {
 	protected TemperatureScale scale;
 	protected DeviceController deviceController;
 	protected Set<Trigger> triggers = new HashSet<>();
-	protected List<Processor<?>> processors = new ArrayList<>();
 
 	protected TemperatureSensorOneWire(String id, String sensorId, String[] topics,
 			TemperatureScale scale) {
@@ -146,20 +142,5 @@ public class TemperatureSensorOneWire extends PlantItem implements Sensor {
 		return null;
 	}
 	
-	@Override
-	public Thing addProcessor(Processor<?> processor) {
-		processors.add(processor);
-		return this;
-	}
-
-	@Override
-	public Thing removeProcessor(Processor<?> processor) {
-		processors.remove(processor);
-		return this;
-	}
-
-	@Override
-	public Processor<?>[] getProcessors() {
-		return processors.toArray(new Processor[] {});
-	}
+	
 }

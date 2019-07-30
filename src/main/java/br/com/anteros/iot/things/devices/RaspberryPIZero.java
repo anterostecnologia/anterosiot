@@ -13,7 +13,6 @@ import br.com.anteros.iot.Part;
 import br.com.anteros.iot.Thing;
 import br.com.anteros.iot.ThingStatus;
 import br.com.anteros.iot.actuators.collectors.CollectResult;
-import br.com.anteros.iot.actuators.processors.Processor;
 import br.com.anteros.iot.domain.PlantItemNode;
 import br.com.anteros.iot.plant.PlantItem;
 import br.com.anteros.iot.things.Publishable;
@@ -171,21 +170,4 @@ public class RaspberryPIZero extends PlantItem implements Device, Publishable  {
 		return result.toArray(new TelemetryStrategy[] {});
 	}
 
-	@Override
-	public Thing addProcessor(Processor<?> processor) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Thing removeProcessor(Processor<?> processor) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Processor<?>[] getProcessors() {
-		// TODO Auto-generated method stub
-		return null;
-	}
 }

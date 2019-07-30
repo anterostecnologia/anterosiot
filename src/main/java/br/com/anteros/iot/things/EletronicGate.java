@@ -1,26 +1,30 @@
 package br.com.anteros.iot.things;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import br.com.anteros.iot.DeviceController;
 import br.com.anteros.iot.Part;
 import br.com.anteros.iot.Thing;
 import br.com.anteros.iot.ThingStatus;
-import br.com.anteros.iot.actuators.processors.Processor;
 import br.com.anteros.iot.domain.PlantItemNode;
+import br.com.anteros.iot.domain.things.EletronicGateNode;
 import br.com.anteros.iot.plant.PlantItem;
 import br.com.anteros.iot.triggers.Trigger;
 
-public class Gate extends PlantItem implements Thing {
+public class EletronicGate extends PlantItem implements Thing {
 	
 	protected DeviceController deviceController;
 	protected Set<Trigger> triggers = new HashSet<>();
-	protected List<Processor<?>> processors = new ArrayList<>();
-	
-	public Gate() {
+	protected int pin;
+
+	public EletronicGate() {
+	}
+
+	public EletronicGate(EletronicGateNode node) {
+		this.itemId = node.getItemName();
+		this.description = node.getDescription();
+		this.pin = node.getPin();
 	}
 
 	public String getThingID() {
@@ -59,13 +63,11 @@ public class Gate extends PlantItem implements Thing {
 
 	@Override
 	public Thing loadConfiguration(PlantItemNode node) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	protected boolean acceptThisTypeOfPlantItem(Class<?> child) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
@@ -76,7 +78,13 @@ public class Gate extends PlantItem implements Thing {
 	public void setDeviceController(DeviceController deviceController) {
 		this.deviceController = deviceController;
 	}
-	
+
+	@Override
+	public String[] getActions() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 	@Override
 	public Trigger[] getTriggers() {
 		return triggers.toArray(new Trigger[] {});
@@ -95,26 +103,16 @@ public class Gate extends PlantItem implements Thing {
 		return this;
 	}
 
-	@Override
-	public String[] getActions() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	
-	@Override
-	public Thing addProcessor(Processor<?> processor) {
-		processors.add(processor);
-		return this;
+	public int getPin() {
+		return pin;
 	}
 
-	@Override
-	public Thing removeProcessor(Processor<?> processor) {
-		processors.remove(processor);
-		return this;
+	public void setPin(int pin) {
+		this.pin = pin;
 	}
 
-	@Override
-	public Processor<?>[] getProcessors() {
-		return processors.toArray(new Processor[] {});
-	}	
+	public void setTriggers(Set<Trigger> triggers) {
+		this.triggers = triggers;
+	}
+
 }

@@ -15,15 +15,15 @@ public class Trigger {
 	private TriggerType type;
 	private WhenCondition whenCondition;
 	private Action[] targetActions;
-	private Action exceptionAction;
+	private Action[] exceptionActions;
 
 	private Trigger(String name, TriggerType type, WhenCondition whenCondition, Action[] targetActions,
-			Action exceptionAction) {
+			Action[] exceptionActions) {
 		this.name = name;
 		this.type = type;
 		this.whenCondition = whenCondition;
 		this.targetActions = targetActions;
-		this.exceptionAction = exceptionAction;
+		this.exceptionActions = exceptionActions;
 	}
 
 	public void fire(CollectResult value) {
@@ -33,11 +33,13 @@ public class Trigger {
 				serviceListener.onFireTrigger(this, value);
 			} catch (Exception e) {
 				e.printStackTrace();
-				if (exceptionAction != null) {					
-					if (exceptionAction.getThing() instanceof PlantItem) {
-						internalDispatchMessage(value, exceptionAction);
-					}					
-					whenCondition.getThing().getDeviceController().dispatchAction(exceptionAction, null);
+				if (exceptionActions != null) {		
+					for (Action exceptionAction : exceptionActions) {
+						if (exceptionAction.getThing() instanceof PlantItem) {
+							internalDispatchMessage(value, exceptionAction);
+						}					
+						whenCondition.getThing().getDeviceController().dispatchAction(exceptionAction, null);
+					}
 				}
 				return;
 			}
@@ -70,8 +72,8 @@ public class Trigger {
 	}
 
 	public static Trigger of(String name, TriggerType type, WhenCondition whenCondition, Action[] targetActions,
-			Action exceptionAction) {
-		return new Trigger(name, type, whenCondition, targetActions, exceptionAction);
+			Action[] exceptionActions) {
+		return new Trigger(name, type, whenCondition, targetActions, exceptionActions);
 	}
 
 	public String getName() {
@@ -98,12 +100,12 @@ public class Trigger {
 		this.targetActions = targetActions;
 	}
 
-	public Action getExceptionAction() {
-		return exceptionAction;
+	public Action[] getExceptionActions() {
+		return exceptionActions;
 	}
 
-	public void setExceptionAction(Action exceptionAction) {
-		this.exceptionAction = exceptionAction;
+	public void setExceptionAction(Action[] exceptionActions) {
+		this.exceptionActions = exceptionActions;
 	}
 
 	public WhenCondition getWhenCondition() {

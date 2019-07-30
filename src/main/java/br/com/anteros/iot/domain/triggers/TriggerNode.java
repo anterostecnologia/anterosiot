@@ -10,7 +10,7 @@ public class TriggerNode extends PlantItemNode {
 	private String name;
 	private TriggerType type;
 	private WhenConditionNode whenConditionNode;
-	private ActionNode exceptionAction;
+	private ActionNode[] exceptionActions;
 	private ActionNode[] targetActions;
 	
 	
@@ -18,12 +18,12 @@ public class TriggerNode extends PlantItemNode {
 		
 	}
 
-	public TriggerNode(String name, TriggerType type, WhenConditionNode whenConditionNode, ActionNode[] targetActions, ActionNode exceptionAction) {
+	public TriggerNode(String name, TriggerType type, WhenConditionNode whenConditionNode, ActionNode[] targetActions, ActionNode[] exceptionActions) {
 		this.name = name;
 		this.type = type;
 		this.whenConditionNode = whenConditionNode;
 		this.targetActions = targetActions;
-		this.exceptionAction = exceptionAction;
+		this.exceptionActions = exceptionActions;
 	}
 
 
@@ -54,12 +54,12 @@ public class TriggerNode extends PlantItemNode {
 	}
 
 
-	public ActionNode getExceptionAction() {
-		return exceptionAction;
+	public ActionNode[] getExceptionActions() {
+		return exceptionActions;
 	}
 
-	public void setExceptionAction(ActionNode exceptionAction) {
-		this.exceptionAction = exceptionAction;
+	public void setExceptionActions(ActionNode[] exceptionActions) {
+		this.exceptionActions = exceptionActions;
 	}
 
 	public ActionNode[] getTargetActions() {

@@ -1,16 +1,13 @@
 package br.com.anteros.iot.things;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Set;
 
 import br.com.anteros.iot.DeviceController;
 import br.com.anteros.iot.Part;
 import br.com.anteros.iot.Thing;
 import br.com.anteros.iot.ThingStatus;
-import br.com.anteros.iot.actuators.processors.Processor;
 import br.com.anteros.iot.domain.PlantItemNode;
 import br.com.anteros.iot.domain.ThingNode;
 import br.com.anteros.iot.plant.PlantItem;
@@ -26,7 +23,6 @@ public class Semaphore extends PlantItem implements Thing {
 	protected DeviceController deviceController;
 	protected Set<Part> leds = new LinkedHashSet<Part>();
 	protected Set<Trigger> triggers = new HashSet<>();
-	protected List<Processor<?>> processors = new ArrayList<>();
 
 	public Semaphore(String id) {
 		this.itemId = id;
@@ -138,20 +134,4 @@ public class Semaphore extends PlantItem implements Thing {
 		return null;
 	}
 
-	@Override
-	public Thing addProcessor(Processor<?> processor) {
-		processors.add(processor);
-		return this;
-	}
-
-	@Override
-	public Thing removeProcessor(Processor<?> processor) {
-		processors.remove(processor);
-		return this;
-	}
-
-	@Override
-	public Processor<?>[] getProcessors() {
-		return processors.toArray(new Processor[] {});
-	}
 }
