@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
+import org.eclipse.paho.client.mqttv3.MqttAsyncClient;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttException;
 
@@ -28,17 +29,17 @@ public class MasterControllerComputer extends AbstractDeviceController implement
 		super(device, actuators);
 	}
 
-	protected MasterControllerComputer(MqttClient clientMqtt, Device device, Actuators actuators, String username, String password) {
+	protected MasterControllerComputer(MqttAsyncClient clientMqtt, Device device, Actuators actuators, String username, String password) {
 		super(clientMqtt, device, actuators, username, password);
 	}
 
-	protected MasterControllerComputer(MqttClient clientMqtt, Device device, Actuators actuators,
+	protected MasterControllerComputer(MqttAsyncClient clientMqtt, Device device, Actuators actuators,
 			Set<DeviceController> slaves, String username, String password) {
 		super(clientMqtt, device, actuators, username, password);
 		this.devices.addAll(slaves);
 	}
 
-	public MasterControllerComputer(MqttClient clientMqtt, DeviceNode node, Plant plant, Actuators actuators,
+	public MasterControllerComputer(MqttAsyncClient clientMqtt, DeviceNode node, Plant plant, Actuators actuators,
 			AnterosIOTServiceListener serviceListener, String username, String password) {
 		super(clientMqtt, node, actuators, serviceListener, username, password);
 		loadConfiguration(node, plant);
@@ -58,7 +59,7 @@ public class MasterControllerComputer extends AbstractDeviceController implement
 		private Device device;
 		private Actuators actuators;
 		private Set<DeviceController> slaves = new HashSet<>();
-		private MqttClient clientMqtt;
+		private MqttAsyncClient clientMqtt;
 		private String username; 
 		private String password;
 
@@ -88,14 +89,14 @@ public class MasterControllerComputer extends AbstractDeviceController implement
 			return MasterControllerComputer.of(clientMqtt, device, actuators, slaves, username, password);
 		}
 
-		public Builder clientMqtt(MqttClient clientMqtt) {
+		public Builder clientMqtt(MqttAsyncClient clientMqtt) {
 			this.clientMqtt = clientMqtt;
 			return this;
 		}
 
 	}
 
-	public static MasterDeviceController of(MqttClient clientMqtt, Device device, Actuators actuators,
+	public static MasterDeviceController of(MqttAsyncClient clientMqtt, Device device, Actuators actuators,
 			Set<DeviceController> slaves, String username, String password) {
 		return new MasterControllerComputer(clientMqtt, device, actuators, slaves, username, password);
 	}
@@ -158,7 +159,7 @@ public class MasterControllerComputer extends AbstractDeviceController implement
 		super.loadConfiguration(itemNode, plant);
 	}
 
-	public static MasterControllerComputer of(MqttClient clientMqtt, DeviceNode node, Plant plant, Actuators actuators,
+	public static MasterControllerComputer of(MqttAsyncClient clientMqtt, DeviceNode node, Plant plant, Actuators actuators,
 			AnterosIOTServiceListener serviceListener, String username, String password) {
 		return new MasterControllerComputer(clientMqtt, node, plant, actuators, serviceListener, username, password);
 	}

@@ -15,6 +15,7 @@ import javax.json.JsonWriterFactory;
 import javax.json.stream.JsonGenerator;
 
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
+import org.eclipse.paho.client.mqttv3.MqttAsyncClient;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
@@ -29,7 +30,7 @@ import br.com.anteros.iot.things.Publishable;
 
 public class SimpleCollectorManager implements CollectorManager, CollectorListener {
 
-	private MqttClient mqttClient;
+	private MqttAsyncClient mqttClient;
 	private Thread thread;
 	private Thing[] things;
 	private Boolean running = false;
@@ -40,9 +41,9 @@ public class SimpleCollectorManager implements CollectorManager, CollectorListen
 	protected String username;
 	protected String password;
 
-	protected SimpleCollectorManager(MqttClient mqttClient, Thing[] things, Actuators actuators, Device device,
+	protected SimpleCollectorManager(MqttAsyncClient clientMqtt, Thing[] things, Actuators actuators, Device device,
 			String username, String password) {
-		this.mqttClient = mqttClient;
+		this.mqttClient = clientMqtt;
 		this.thread = new Thread(this);
 		this.things = things;
 		this.actuators = actuators;
@@ -75,9 +76,9 @@ public class SimpleCollectorManager implements CollectorManager, CollectorListen
 		}
 	}
 
-	public static SimpleCollectorManager of(MqttClient mqttClient, Thing[] things, Actuators actuators, Device device,
+	public static SimpleCollectorManager of(MqttAsyncClient clientMqtt, Thing[] things, Actuators actuators, Device device,
 			String username, String password) {
-		return new SimpleCollectorManager(mqttClient, things, actuators, device, username, password);
+		return new SimpleCollectorManager(clientMqtt, things, actuators, device, username, password);
 	}
 
 	@Override
@@ -100,7 +101,7 @@ public class SimpleCollectorManager implements CollectorManager, CollectorListen
 				collector.setListener(this);
 
 				if (collector instanceof MqttCollector) {
-					MqttClient clientCollector = null;
+					MqttAsyncClient clientCollector = null;
 					try {
 						clientCollector = MqttHelper.createAndConnectMqttClient(mqttClient.getServerURI(),
 								device.getThingID() + "-" + thing.getThingID() + "_collector", username, password, true,

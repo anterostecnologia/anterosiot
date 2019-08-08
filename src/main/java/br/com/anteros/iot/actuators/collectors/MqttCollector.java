@@ -1,5 +1,6 @@
 package br.com.anteros.iot.actuators.collectors;
 
+import org.eclipse.paho.client.mqttv3.MqttAsyncClient;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 
 import br.com.anteros.iot.Collector;
@@ -15,6 +16,6 @@ public abstract class MqttCollector extends Collector {
 		super(listener, thing);
 	}
 
-	public abstract Collector setMqttClient(MqttClient client);
+	protected abstract Collector setMqttClient(MqttAsyncClient clientCollector);
 
 }

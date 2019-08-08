@@ -1,5 +1,6 @@
 package br.com.anteros.iot.controllers.remote;
 
+import org.eclipse.paho.client.mqttv3.MqttAsyncClient;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 
@@ -16,8 +17,8 @@ public class RemoteMasterControllerRPi extends MasterControllerRPi implements Re
 		super(device,null);
 	}
 	
-	public RemoteMasterControllerRPi(MqttClient clientMqtt,DeviceNode node, Plant plant, String username, String password) {
-		super(clientMqtt,node, plant,null, null, username, password);
+	public RemoteMasterControllerRPi(MqttAsyncClient remoteClientMqtt,DeviceNode node, Plant plant, String username, String password) {
+		super(remoteClientMqtt,node, plant,null, null, username, password);
 	}
 	
 	
@@ -52,8 +53,8 @@ public class RemoteMasterControllerRPi extends MasterControllerRPi implements Re
 	}
 	
 
-	public static RemoteMasterControllerRPi of(MqttClient clientMqtt, DeviceNode node, Plant plant, String username, String password) {
-		return new RemoteMasterControllerRPi(clientMqtt,node, plant, username, password);
+	public static RemoteMasterControllerRPi of(MqttAsyncClient remoteClientMqtt, DeviceNode node, Plant plant, String username, String password) {
+		return new RemoteMasterControllerRPi(remoteClientMqtt,node, plant, username, password);
 	}
 	
 	

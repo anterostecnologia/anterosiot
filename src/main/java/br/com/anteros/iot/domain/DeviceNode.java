@@ -3,6 +3,7 @@ package br.com.anteros.iot.domain;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.eclipse.paho.client.mqttv3.MqttAsyncClient;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
@@ -47,7 +48,7 @@ public abstract class DeviceNode extends PlantItemNode {
 		}
 	}
 
-	public abstract AbstractDeviceController getInstanceOfDeviceController(MqttClient clientMqtt, Plant currentPlant,
+	public abstract AbstractDeviceController getInstanceOfDeviceController(MqttAsyncClient clientMqtt, Plant currentPlant,
 			Actuators actuators, AnterosIOTServiceListener serviceListener, String username, String password);
 
 	public Set<ThingNode> getThings() {

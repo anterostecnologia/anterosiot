@@ -1,5 +1,6 @@
 package br.com.anteros.iot.controllers.remote;
 
+import org.eclipse.paho.client.mqttv3.MqttAsyncClient;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 
 import br.com.anteros.iot.MasterDeviceController;
@@ -13,17 +14,17 @@ import br.com.anteros.iot.plant.Plant;
 
 public class RemoteDeviceControllerFactory {
 
-	public static RemoteSlaveDeviceController createSlaveFrom(MqttClient clientMqtt, MasterDeviceController master,
+	public static RemoteSlaveDeviceController createSlaveFrom(MqttAsyncClient remoteClientMqtt, MasterDeviceController master,
 			final DeviceNode node, Plant plant, String username, String password) {
 		if (node.getClass() == SlaveRPiNode.class)
-			return RemoteSlaveControllerRpi.of(clientMqtt, node, master, plant, username, password);
+			return RemoteSlaveControllerRpi.of(remoteClientMqtt, node, master, plant, username, password);
 		return null;
 	}
 
-	public static RemoteMasterDeviceController createMasterFrom(MqttClient clientMqtt, final DeviceMasterNode node,
+	public static RemoteMasterDeviceController createMasterFrom(MqttAsyncClient remoteClientMqtt, final DeviceMasterNode node,
 			Plant plant, String username, String password) {
 		if (node.getClass() == MasterDeviceRPiNode.class)
-			return RemoteMasterControllerRPi.of(clientMqtt, node, plant, username, password);
+			return RemoteMasterControllerRPi.of(remoteClientMqtt, node, plant, username, password);
 		return null;
 	}
 

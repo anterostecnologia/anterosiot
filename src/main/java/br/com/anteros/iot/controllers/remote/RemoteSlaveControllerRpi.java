@@ -1,5 +1,6 @@
 package br.com.anteros.iot.controllers.remote;
 
+import org.eclipse.paho.client.mqttv3.MqttAsyncClient;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 
@@ -20,9 +21,9 @@ public class RemoteSlaveControllerRpi extends SlaveControllerRPi implements Remo
 		super(master, device,null);
 	}
 
-	public RemoteSlaveControllerRpi(MqttClient clientMqtt, DeviceNode node, MasterDeviceController master,
+	public RemoteSlaveControllerRpi(MqttAsyncClient remoteClientMqtt, DeviceNode node, MasterDeviceController master,
 			Plant plant, String username, String password) {
-		super(clientMqtt, node, master, plant,null, null, username, password);
+		super(remoteClientMqtt, node, master, plant,null, null, username, password);
 	}
 
 	@Override
@@ -69,9 +70,9 @@ public class RemoteSlaveControllerRpi extends SlaveControllerRPi implements Remo
 		return new RemoteSlaveControllerRpi(master, device);
 	}
 
-	public static RemoteSlaveControllerRpi of(MqttClient clientMqtt, DeviceNode node, MasterDeviceController master,
+	public static RemoteSlaveControllerRpi of(MqttAsyncClient remoteClientMqtt, DeviceNode node, MasterDeviceController master,
 			Plant plant, String username, String password) {
-		return new RemoteSlaveControllerRpi(clientMqtt, node, master, plant, username, password);
+		return new RemoteSlaveControllerRpi(remoteClientMqtt, node, master, plant, username, password);
 	}
 
 	@Override

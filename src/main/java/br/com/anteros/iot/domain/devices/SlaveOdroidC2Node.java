@@ -1,5 +1,6 @@
 package br.com.anteros.iot.domain.devices;
 
+import org.eclipse.paho.client.mqttv3.MqttAsyncClient;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
@@ -29,7 +30,7 @@ public class SlaveOdroidC2Node extends DeviceSlaveNode {
 	}
 
 	@Override
-	public AbstractDeviceController getInstanceOfDeviceController(MqttClient clientMqtt, Plant plant,
+	public AbstractDeviceController getInstanceOfDeviceController(MqttAsyncClient clientMqtt, Plant plant,
 			Actuators actuators, AnterosIOTServiceListener serviceListener, String username, String password) {
 		return null;
 	}

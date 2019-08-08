@@ -1,5 +1,6 @@
 package br.com.anteros.iot;
 
+import org.eclipse.paho.client.mqttv3.MqttAsyncClient;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
@@ -20,7 +21,7 @@ public interface DeviceController extends ThingController {
 	
 	public void restartOS();
 	
-	public MqttClient getClientMqtt();
+	public MqttAsyncClient getClientMqtt();
 	
 	public void setServiceListener(AnterosIOTServiceListener listener);
 	

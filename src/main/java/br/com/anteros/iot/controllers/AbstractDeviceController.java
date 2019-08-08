@@ -16,6 +16,7 @@ import javax.json.JsonObject;
 import javax.json.JsonReader;
 
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
+import org.eclipse.paho.client.mqttv3.MqttAsyncClient;
 import org.eclipse.paho.client.mqttv3.MqttCallback;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttException;
@@ -46,7 +47,7 @@ public abstract class AbstractDeviceController implements DeviceController, Mqtt
 
 	protected Device device;
 	protected Set<Thing> things = new HashSet<Thing>();
-	protected MqttClient clientMqtt;
+	protected MqttAsyncClient clientMqtt;
 	protected String username;
 	protected String password;
 	protected Boolean running = false;
@@ -61,9 +62,9 @@ public abstract class AbstractDeviceController implements DeviceController, Mqtt
 
 	}
 
-	public AbstractDeviceController(MqttClient clientMqtt, DeviceNode node, Actuators actuators,
+	public AbstractDeviceController(MqttAsyncClient remoteClientMqtt, DeviceNode node, Actuators actuators,
 			AnterosIOTServiceListener serviceListener, String username, String password) {
-		this.clientMqtt = clientMqtt;
+		this.clientMqtt = remoteClientMqtt;
 		this.username = username;
 		this.password = password;
 		this.clientMqtt.setCallback(this);
@@ -79,7 +80,7 @@ public abstract class AbstractDeviceController implements DeviceController, Mqtt
 		this.actuators = actuators;
 	}
 
-	protected AbstractDeviceController(MqttClient clientMqtt, Device device, Actuators actuators, String username,
+	protected AbstractDeviceController(MqttAsyncClient clientMqtt, Device device, Actuators actuators, String username,
 			String password) {
 		this(device, actuators);
 		this.clientMqtt = clientMqtt;
@@ -383,7 +384,10 @@ public abstract class AbstractDeviceController implements DeviceController, Mqtt
 
 		try {
 			System.out.println(Arrays.toString(filter.toArray(new String[] {})));
-			this.clientMqtt.subscribe(filter.toArray(new String[] {}));
+			String[] filterArray = filter.toArray(new String[] {});
+			int[] qosArray = new int[filterArray.length];
+			Arrays.fill(qosArray, 1);
+			this.clientMqtt.subscribe(filterArray, qosArray);
 		} catch (MqttException e) {
 			e.printStackTrace();
 		}
@@ -404,7 +408,7 @@ public abstract class AbstractDeviceController implements DeviceController, Mqtt
 		}
 	}
 
-	public MqttClient getClientMqtt() {
+	public MqttAsyncClient getClientMqtt() {
 		return clientMqtt;
 	}
 
@@ -482,7 +486,7 @@ public abstract class AbstractDeviceController implements DeviceController, Mqtt
 		this.subscribedTopics = subscribedTopics;
 	}
 
-	public void setClientMqtt(MqttClient clientMqtt) {
+	public void setClientMqtt(MqttAsyncClient clientMqtt) {
 		this.clientMqtt = clientMqtt;
 	}
 

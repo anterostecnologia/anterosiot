@@ -13,6 +13,7 @@ import javax.json.JsonObject;
 import javax.json.JsonReader;
 
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
+import org.eclipse.paho.client.mqttv3.MqttAsyncClient;
 import org.eclipse.paho.client.mqttv3.MqttCallback;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttException;
@@ -23,9 +24,12 @@ import com.diozero.util.SleepUtil;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
+import br.com.anteros.core.log.Logger;
+import br.com.anteros.core.log.LoggerProvider;
 import br.com.anteros.core.utils.Assert;
 import br.com.anteros.core.utils.StringUtils;
 import br.com.anteros.iot.Action;
@@ -40,6 +44,8 @@ import br.com.anteros.iot.plant.PlantItem;
 import br.com.anteros.iot.support.MqttHelper;
 
 public class AnterosIOTService implements Runnable, MqttCallback {
+	
+	private static final Logger LOG = LoggerProvider.getInstance().getLogger(AnterosIOTService.class.getName());
 
 	private String deviceName;
 	private File fileConfig;
@@ -48,7 +54,7 @@ public class AnterosIOTService implements Runnable, MqttCallback {
 	private String port;
 	private String username;
 	private String password;
-	private MqttClient client;
+	private MqttAsyncClient client;
 	private AnterosIOTServiceListener serviceListener;
 	private InputStream streamConfig;
 	private Set<Class<? extends Actuable>> actuators = new HashSet<>();
@@ -115,21 +121,49 @@ public class AnterosIOTService implements Runnable, MqttCallback {
 
 	@Override
 	public void run() {
-		
+
 		serviceListener.onConnectingMqttServer();
 
 		String broker = "tcp://" + hostMqtt + ":" + (port == null ? 1883 : port);
 		String clientId = deviceName + "_guardian";
+		String actionsTopic = clientId + "_actions";
 
 		System.out.println("Conectando servidor broker MQTT...");
 
 		try {
 			client = MqttHelper.createAndConnectMqttClient(broker, clientId, username, password, true, true);
+			client.setCallback(this);
+			client.subscribe(actionsTopic, 1);
 		} catch (MqttException e1) {
-			serviceListener.onErrorConnectingMqttServer("Ocorreu uma falha ao criar um cliente mqtt. O Sistema não continuará a inicialização.");
+			serviceListener.onErrorConnectingMqttServer(
+					"Ocorreu uma falha ao criar um cliente mqtt. O Sistema não continuará a inicialização.");
 			e1.printStackTrace();
 		}
 
+		startService();
+
+		while (true) {
+			try {
+				String newTopic = deviceName + "_brocker";
+				Boolean controllerRunning = deviceController != null ? deviceController.getRunning() : false;
+				String status = "alive";
+				String message = "{status:" + status + ", controller:" + controllerRunning + "}";
+				MqttMessage res = new MqttMessage(message.getBytes());
+				res.setQos(1);
+				client.publish(newTopic, res);
+				LOG.debug("Mensagem de status publicada");
+			} catch (MqttException e) {
+				LOG.error("Falha ao publicar mensagem de status");
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			SleepUtil.sleepMillis(5000);
+		}
+
+	}
+
+	private void startService() {
 		if ((fileConfig != null || streamConfig != null) && client != null && client.isConnected()) {
 			try {
 				ObjectMapper mapper = new ObjectMapper();
@@ -155,13 +189,8 @@ public class AnterosIOTService implements Runnable, MqttCallback {
 			serviceListener.onStartDeviceController();
 			deviceController.start();
 		}
-
-		while (true) {
-			SleepUtil.sleepMillis(2000);
-		}
-		
 	}
-	
+
 	@Override
 	protected void finalize() throws Throwable {
 		serviceListener.onStopDeviceController();
@@ -174,6 +203,47 @@ public class AnterosIOTService implements Runnable, MqttCallback {
 
 	@Override
 	public void messageArrived(String topic, MqttMessage message) throws Exception {
+		
+		LOG.info("Mensagem recebida no device guardian");
+		
+		ObjectMapper mapper = new ObjectMapper();
+		JsonNode jsonMessage = mapper.readTree(message.getPayload());
+		
+		LOG.debug("Mensagem recebida: " + jsonMessage);
+		
+		String actionsTopic = deviceName + "_guardian_actions";
+		
+		if (topic.equals(actionsTopic)) {
+			LOG.debug("Ação recebida no guardian");
+			
+			String action = jsonMessage.has("action") ? jsonMessage.get("action").toString().replace("\"", "") : null;
+
+			if (action != null && action.equals("updateConfig")) {
+				
+				ByteArrayInputStream newConfig = jsonMessage.has("config")
+						? new ByteArrayInputStream(jsonMessage.get("config").toString().replace("\"", "").getBytes())
+						: null;
+						
+				if (newConfig != null) {
+					LOG.info("Atualizando configuração no device " + deviceName);
+					this.streamConfig = newConfig;
+					serviceListener.onStopDeviceController();
+					deviceController.stop();
+					SleepUtil.sleepMillis(5000);
+					startService();
+				}
+
+			} else if (action != null && action.equals("restartService")) {
+				LOG.info("Reiniciando controller do device " + deviceName);
+				deviceController.stop();
+				SleepUtil.sleepMillis(5000);
+				startService();
+			} else {
+				LOG.debug("Ação '" + action + "' inválida");
+			}
+		}
+		
+		
 	}
 
 	@Override

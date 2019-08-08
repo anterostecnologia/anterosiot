@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
+import org.eclipse.paho.client.mqttv3.MqttAsyncClient;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttException;
 
@@ -29,9 +30,9 @@ public class SlaveControllerRPi extends AbstractDeviceController implements Slav
 		super(device, actuators);
 	}
 
-	public SlaveControllerRPi(MqttClient clientMqtt, DeviceNode node, MasterDeviceController master, Plant plant,
+	public SlaveControllerRPi(MqttAsyncClient remoteClientMqtt, DeviceNode node, MasterDeviceController master, Plant plant,
 			Actuators actuators, AnterosIOTServiceListener serviceListener, String username, String password) {
-		super(clientMqtt, node, actuators, serviceListener, username, password);
+		super(remoteClientMqtt, node, actuators, serviceListener, username, password);
 		this.master = master;
 		loadConfiguration(node, plant);
 	}
@@ -41,7 +42,7 @@ public class SlaveControllerRPi extends AbstractDeviceController implements Slav
 		this.master = master;
 	}
 
-	public SlaveControllerRPi(MqttClient clientMqtt, MasterDeviceController master, Device device, Actuators actuators,
+	public SlaveControllerRPi(MqttAsyncClient clientMqtt, MasterDeviceController master, Device device, Actuators actuators,
 			String username, String password) {
 		super(clientMqtt, device, actuators, username, password);
 		this.master = master;
@@ -75,7 +76,7 @@ public class SlaveControllerRPi extends AbstractDeviceController implements Slav
 
 		private Device device;
 		private Actuators actuators;
-		private MqttClient clientMqtt;
+		private MqttAsyncClient clientMqtt;
 		private RemoteMasterDeviceController master;
 		private String username;
 		private String password;
@@ -106,21 +107,21 @@ public class SlaveControllerRPi extends AbstractDeviceController implements Slav
 			return SlaveControllerRPi.of(clientMqtt, master, device, actuators, username, password);
 		}
 
-		public Builder clientMqtt(MqttClient clientMqtt) {
+		public Builder clientMqtt(MqttAsyncClient clientMqtt) {
 			this.clientMqtt = clientMqtt;
 			return this;
 		}
 
 	}
 
-	public static SlaveControllerRPi of(MqttClient clientMqtt, DeviceNode itemNode, MasterDeviceController master,
+	public static SlaveControllerRPi of(MqttAsyncClient clientMqtt, DeviceNode itemNode, MasterDeviceController master,
 			Plant plant, Actuators actuators, AnterosIOTServiceListener serviceListener, String username,
 			String password) {
 		return new SlaveControllerRPi(clientMqtt, itemNode, master, plant, actuators, serviceListener, username,
 				password);
 	}
 
-	public static SlaveControllerRPi of(MqttClient clientMqtt, MasterDeviceController master, Device device,
+	public static SlaveControllerRPi of(MqttAsyncClient clientMqtt, MasterDeviceController master, Device device,
 			Actuators actuators, String username, String password) {
 		return new SlaveControllerRPi(clientMqtt, master, device, actuators, username, password);
 	}

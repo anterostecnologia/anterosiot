@@ -8,6 +8,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipse.paho.client.mqttv3.MqttAsyncClient;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttException;
 
@@ -133,7 +134,7 @@ public class AnterosIOTConfiguration {
 			
 			serviceListener.onConnectingMqttServer();
 
-			MqttClient clientMqtt = null;
+			MqttAsyncClient clientMqtt = null;
 			try {
 				clientMqtt = MqttHelper.createAndConnectMqttClient(broker, clientId, username, password, true, true);
 			} catch (MqttException e1) {
@@ -161,7 +162,7 @@ public class AnterosIOTConfiguration {
 						
 						serviceListener.onConnectingMqttServer();
 
-						MqttClient remoteClientMqtt = null;
+						MqttAsyncClient remoteClientMqtt = null;
 						try {
 							remoteClientMqtt = MqttHelper.createAndConnectMqttClient(broker,
 									deviceName + "_remoteController", username, password, true, true);
@@ -185,7 +186,7 @@ public class AnterosIOTConfiguration {
 				DeviceMasterNode master = (DeviceMasterNode) masters.iterator().next();
 				serviceListener.onConnectingMqttServer();
 
-				MqttClient remoteClientMqtt = null;
+				MqttAsyncClient remoteClientMqtt = null;
 				try {
 					remoteClientMqtt = MqttHelper.createAndConnectMqttClient(broker, deviceName + "_remoteController",
 							"", "", true, true);

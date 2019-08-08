@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
+import org.eclipse.paho.client.mqttv3.MqttAsyncClient;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttException;
 
@@ -27,19 +28,19 @@ public class MasterControllerRPi extends AbstractDeviceController implements Mas
 		super(device, actuators);
 	}
 
-	protected MasterControllerRPi(MqttClient clientMqtt, Device device, Actuators actuators, String username, String password) {
+	protected MasterControllerRPi(MqttAsyncClient clientMqtt, Device device, Actuators actuators, String username, String password) {
 		super(clientMqtt, device, actuators, username, password);
 	}
 
-	protected MasterControllerRPi(MqttClient clientMqtt, Device device, Actuators actuators,
+	protected MasterControllerRPi(MqttAsyncClient clientMqtt, Device device, Actuators actuators,
 			Set<DeviceController> slaves, String username, String password) {
 		super(clientMqtt, device, actuators, username, password);
 		this.devices.addAll(slaves);
 	}
 
-	public MasterControllerRPi(MqttClient clientMqtt, DeviceNode node, Plant plant, Actuators actuators,
+	public MasterControllerRPi(MqttAsyncClient remoteClientMqtt, DeviceNode node, Plant plant, Actuators actuators,
 			AnterosIOTServiceListener serviceListener, String username, String password) {
-		super(clientMqtt, node, actuators, serviceListener, username, password);
+		super(remoteClientMqtt, node, actuators, serviceListener, username, password);
 		loadConfiguration(node, plant);
 	}
 
@@ -57,7 +58,7 @@ public class MasterControllerRPi extends AbstractDeviceController implements Mas
 		private Device device;
 		private Actuators actuators;
 		private Set<DeviceController> slaves = new HashSet<>();
-		private MqttClient clientMqtt;
+		private MqttAsyncClient clientMqtt;
 		private String username; 
 		private String password;
 
@@ -87,14 +88,14 @@ public class MasterControllerRPi extends AbstractDeviceController implements Mas
 			return MasterControllerRPi.of(clientMqtt, device, actuators, slaves, username, password);
 		}
 
-		public Builder clientMqtt(MqttClient clientMqtt) {
+		public Builder clientMqtt(MqttAsyncClient clientMqtt) {
 			this.clientMqtt = clientMqtt;
 			return this;
 		}
 
 	}
 
-	public static MasterDeviceController of(MqttClient clientMqtt, Device device, Actuators actuators,
+	public static MasterDeviceController of(MqttAsyncClient clientMqtt, Device device, Actuators actuators,
 			Set<DeviceController> slaves, String username, String password) {
 		return new MasterControllerRPi(clientMqtt, device, actuators, slaves, username, password);
 	}
@@ -134,7 +135,7 @@ public class MasterControllerRPi extends AbstractDeviceController implements Mas
 		super.loadConfiguration(itemNode, plant);
 	}
 
-	public static MasterControllerRPi of(MqttClient clientMqtt, DeviceNode node, Plant plant, Actuators actuators,
+	public static MasterControllerRPi of(MqttAsyncClient clientMqtt, DeviceNode node, Plant plant, Actuators actuators,
 			AnterosIOTServiceListener serviceListener, String username, String password) {
 		return new MasterControllerRPi(clientMqtt, node, plant, actuators, serviceListener, username, password);
 	}

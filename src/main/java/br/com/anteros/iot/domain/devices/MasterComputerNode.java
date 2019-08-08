@@ -1,5 +1,6 @@
 package br.com.anteros.iot.domain.devices;
 
+import org.eclipse.paho.client.mqttv3.MqttAsyncClient;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
@@ -25,7 +26,7 @@ public class MasterComputerNode extends DeviceMasterNode {
 	}
 
 	@Override
-	public AbstractDeviceController getInstanceOfDeviceController(MqttClient clientMqtt, Plant plant,
+	public AbstractDeviceController getInstanceOfDeviceController(MqttAsyncClient clientMqtt, Plant plant,
 			Actuators actuators, AnterosIOTServiceListener serviceListener, String username, String password) {
 		return MasterControllerComputer.of(clientMqtt, this, plant, actuators, serviceListener, username, password);
 	}
