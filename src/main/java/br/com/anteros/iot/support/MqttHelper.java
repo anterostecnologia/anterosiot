@@ -1,12 +1,10 @@
 package br.com.anteros.iot.support;
 
-import java.io.EOFException;
-
 import org.eclipse.paho.client.mqttv3.MqttAsyncClient;
-import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttSecurityException;
+import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 
 import com.diozero.util.SleepUtil;
 
@@ -22,9 +20,13 @@ public class MqttHelper {
 			name = MqttAsyncClient.generateClientId();
 		}
 
-		client = new MqttAsyncClient(uri, name);
+		MemoryPersistence memoryPersistence = new MemoryPersistence();
+		client = new MqttAsyncClient(uri, name, memoryPersistence);
 		
 		MqttConnectOptions connOpts = new MqttConnectOptions();
+		
+		
+		
 
 		if (!StringUtils.isBlank(userName) && !StringUtils.isBlank(password)) {
 			connOpts.setUserName(userName);

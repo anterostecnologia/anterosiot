@@ -16,7 +16,7 @@ public class Trigger {
 	private WhenCondition whenCondition;
 	private Action[] targetActions;
 	private Action[] exceptionActions;
-	private boolean exigePermissao;
+	private boolean requiresPermission;
 
 	private Trigger(String name, TriggerType type, WhenCondition whenCondition, Action[] targetActions,
 			Action[] exceptionActions) {
@@ -117,12 +117,16 @@ public class Trigger {
 		this.whenCondition = whenCondition;
 	}
 
-	public boolean isExigePermissao() {
-		return exigePermissao;
+	public boolean isRequiresPermission() {
+		return requiresPermission;
 	}
 
-	public void setExigePermissao(boolean exigePermissao) {
-		this.exigePermissao = exigePermissao;
+	public void setRequiresPermission(boolean requiresPermission) {
+		this.requiresPermission = requiresPermission;
+	}
+
+	public void setExceptionActions(Action[] exceptionActions) {
+		this.exceptionActions = exceptionActions;
 	}
 
 }
