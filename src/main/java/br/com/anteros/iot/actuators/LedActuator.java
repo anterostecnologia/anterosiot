@@ -11,6 +11,7 @@ import com.pi4j.io.gpio.GpioPinDigitalOutput;
 import br.com.anteros.iot.Actuator;
 import br.com.anteros.iot.Thing;
 import br.com.anteros.iot.support.Pi4JHelper;
+import br.com.anteros.iot.things.Led;
 import br.com.anteros.iot.things.Semaphore;
 import br.com.anteros.iot.things.parts.LedSemaphore;
 
@@ -31,7 +32,7 @@ public class LedActuator implements Actuator<Boolean> {
 
 	public Boolean executeAction(JsonObject recivedPayload, Thing thing) {
 		String action = recivedPayload.getString("action");
-		if (thing instanceof LedSemaphore) {
+		if (thing instanceof LedSemaphore || thing instanceof Led) {
 			if (action.equals(ON)) {
 				GpioController gpio = Pi4JHelper.getGpioController();
 				final GpioPinDigitalOutput pin = getOutputPinFromThing(gpio, thing);

@@ -7,7 +7,7 @@ import br.com.anteros.iot.domain.DomainConstants;
 import br.com.anteros.iot.domain.ThingNode;
 import br.com.anteros.iot.things.EletronicLock;
 
-@JsonTypeName(DomainConstants.BARRIER_GATE)
+@JsonTypeName(DomainConstants.ELETRONIC_LOCK)
 public class EletronicLockNode extends ThingNode {
 	
 	protected int pin;

@@ -16,6 +16,7 @@ import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import br.com.anteros.core.utils.ReflectionUtils;
 import br.com.anteros.iot.Thing;
+import br.com.anteros.iot.domain.actions.ActionNode;
 import br.com.anteros.iot.domain.devices.MasterAsusTinkerNode;
 import br.com.anteros.iot.domain.devices.MasterComputerNode;
 import br.com.anteros.iot.domain.devices.MasterDeviceRPiNode;
@@ -25,8 +26,13 @@ import br.com.anteros.iot.domain.devices.SlaveRPiNode;
 import br.com.anteros.iot.domain.plant.PlaceNode;
 import br.com.anteros.iot.domain.plant.PlantNode;
 import br.com.anteros.iot.domain.things.BarrierGateNode;
+import br.com.anteros.iot.domain.things.BarrierSensorNode;
+import br.com.anteros.iot.domain.things.BeaconNode;
 import br.com.anteros.iot.domain.things.CameraMotionDetectorNode;
 import br.com.anteros.iot.domain.things.CameraQRCodeReaderNode;
+import br.com.anteros.iot.domain.things.EletronicGateNode;
+import br.com.anteros.iot.domain.things.EletronicLockNode;
+import br.com.anteros.iot.domain.things.GenericRelayNode;
 import br.com.anteros.iot.domain.things.LampOrBulbNode;
 import br.com.anteros.iot.domain.things.MagneticLockNode;
 import br.com.anteros.iot.domain.things.PlcNode;
@@ -38,11 +44,17 @@ import br.com.anteros.iot.domain.things.TemperatureOneWireNode;
 import br.com.anteros.iot.domain.things.parts.GreenLEDSemaphorePartNode;
 import br.com.anteros.iot.domain.things.parts.MemoryPlcNode;
 import br.com.anteros.iot.domain.things.parts.RedLEDSemaphorePartNode;
+import br.com.anteros.iot.things.GenericRelay;
+import br.com.anteros.iot.things.sensors.BarrierSensor;
 
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = As.PROPERTY, property = "type")
 @JsonIdentityInfo(generator = ObjectIdGenerators.UUIDGenerator.class, property = "@id")
 @JsonSubTypes(value = { @Type(value = PlantNode.class, name = "plant"),
 		@Type(value = BarrierGateNode.class, name = "barrierGate"),
+		@Type(value = EletronicGateNode.class, name = "eletronicGate"),
+		@Type(value = EletronicLockNode.class, name = "eletronicLock"),
+		@Type(value = BeaconNode.class, name = "beacon"),
+		@Type(value = BarrierSensorNode.class, name = "barrierSensor"),
 		@Type(value = GreenLEDSemaphorePartNode.class, name = "greenLedSemaphore"),
 		@Type(value = RedLEDSemaphorePartNode.class, name = "redLedSemaphore"),
 		@Type(value = LampOrBulbNode.class, name = "lamp"),
@@ -60,6 +72,8 @@ import br.com.anteros.iot.domain.things.parts.RedLEDSemaphorePartNode;
 		@Type(value = MasterComputerNode.class, name = "masterComputer"),
 		@Type(value = SlaveComputerNode.class, name = "slaveComputer"),
 		@Type(value = CameraMotionDetectorNode.class, name = "cameraMotionDetector"),
+		@Type(value = GenericRelayNode.class, name = "genericRelay"),
+		@Type(value = ActionNode.class, name = "action"),
 		@Type(value = RingStripLED12Node.class, name = DomainConstants.RING_STRIP_LED12)})
 public abstract class PlantItemNode {
 

@@ -5,12 +5,11 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
 import br.com.anteros.iot.Thing;
 import br.com.anteros.iot.domain.DomainConstants;
 import br.com.anteros.iot.domain.ThingNode;
-import br.com.anteros.iot.things.EletronicGate;
+import br.com.anteros.iot.things.PlateReader;
 
-@JsonTypeName(DomainConstants.ELETRONIC_GATE)
-public class EletronicGateNode extends ThingNode {
+@JsonTypeName(DomainConstants.PLATE_READER)
+public class PlateReaderNode extends ThingNode {
 	
-	protected int pin;
 
 	@Override
 	protected boolean acceptThisTypeOfChild(Class<?> child) {
@@ -19,15 +18,8 @@ public class EletronicGateNode extends ThingNode {
 
 	@Override
 	public Thing getInstanceOfThing() {
-		return new EletronicGate(this);		
+		return new PlateReader(this);		
 	}
 
-	public int getPin() {
-		return pin;
-	}
-
-	public void setPin(int pin) {
-		this.pin = pin;
-	}
 
 }

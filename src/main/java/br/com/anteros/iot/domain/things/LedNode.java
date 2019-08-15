@@ -5,10 +5,10 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
 import br.com.anteros.iot.Thing;
 import br.com.anteros.iot.domain.DomainConstants;
 import br.com.anteros.iot.domain.ThingNode;
-import br.com.anteros.iot.things.EletronicGate;
+import br.com.anteros.iot.things.Led;
 
-@JsonTypeName(DomainConstants.ELETRONIC_GATE)
-public class EletronicGateNode extends ThingNode {
+@JsonTypeName(DomainConstants.LED)
+public class LedNode extends ThingNode {
 	
 	protected int pin;
 
@@ -19,7 +19,7 @@ public class EletronicGateNode extends ThingNode {
 
 	@Override
 	public Thing getInstanceOfThing() {
-		return new EletronicGate(this);		
+		return new Led(this);		
 	}
 
 	public int getPin() {

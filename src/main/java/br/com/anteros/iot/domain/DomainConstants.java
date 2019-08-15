@@ -30,4 +30,9 @@ public class DomainConstants {
 	public static final String RING_STRIP_LED12 = "ringStripLed12";
 	public static final String SLAVE_COMPUTER = "slaveComputer";
 	public static final String BEACON = "beacon";
+	public static final String ELETRONIC_GATE = "eletronicGate";
+	public static final String ELETRONIC_LOCK = "eletronicLock";
+	public static final String GENERIC_RELAY = "genericRelay";
+	public static final String LED = "led";
+	public static final String PLATE_READER = "plateReader";
 }
