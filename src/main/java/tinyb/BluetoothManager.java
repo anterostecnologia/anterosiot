@@ -50,7 +50,7 @@ public class BluetoothManager
      */
     private Thread nearbyThread = null;
     
-    static {
+    static {        
     	try {
 			Path path1 = Files.createTempFile("lib" + LIB_NAME1, ".so");
 			path1.toFile().deleteOnExit();
@@ -58,12 +58,12 @@ public class BluetoothManager
 					StandardCopyOption.REPLACE_EXISTING);
 			System.load(path1.toString());
 			
-			Path path2 = Files.createTempFile("lib" + LIB_NAME2, ".so");
+			Path path2 = Files.createTempFile("lib" + LIB_NAME1, ".so");
 			path2.toFile().deleteOnExit();
 			Files.copy(ResourceUtils.getResourceAsStream("lib" + LIB_NAME2 + ".so"), path2,
 					StandardCopyOption.REPLACE_EXISTING);
 			System.load(path2.toString());
-		} catch (IOException e) {
+		} catch (Exception e) {
 			System.out.println("Error loading library from classpath: " + e);
 			e.printStackTrace();
 
