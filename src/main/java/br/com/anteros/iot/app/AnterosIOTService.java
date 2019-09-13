@@ -18,6 +18,7 @@ import org.eclipse.paho.client.mqttv3.MqttCallback;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
+import org.eclipse.paho.client.mqttv3.MqttPersistenceException;
 import org.eclipse.paho.client.mqttv3.MqttSecurityException;
 
 import com.diozero.util.SleepUtil;
@@ -44,7 +45,7 @@ import br.com.anteros.iot.plant.PlantItem;
 import br.com.anteros.iot.support.MqttHelper;
 
 public class AnterosIOTService implements Runnable, MqttCallback {
-	
+
 	private static final Logger LOG = LoggerProvider.getInstance().getLogger(AnterosIOTService.class.getName());
 
 	private String deviceName;
@@ -140,14 +141,19 @@ public class AnterosIOTService implements Runnable, MqttCallback {
 			e1.printStackTrace();
 		}
 
-		startService();
+		try {
+			startService();
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 
 		while (true) {
 			try {
 				String newTopic = deviceName + "_brocker";
 				Boolean controllerRunning = deviceController != null ? deviceController.getRunning() : false;
 				String status = "alive";
-				String message = "{status:" + status + ", controller:" + controllerRunning + "}";
+				String message = "{status:" + status + ", isControllerRunning:" + controllerRunning + "}";
 				MqttMessage res = new MqttMessage(message.getBytes());
 				res.setQos(1);
 				client.publish(newTopic, res);
@@ -157,32 +163,26 @@ public class AnterosIOTService implements Runnable, MqttCallback {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			
+
 			SleepUtil.sleepMillis(5000);
 		}
 
 	}
 
-	private void startService() {
+	private void startService() throws JsonParseException, JsonMappingException, IOException {
 		if ((fileConfig != null || streamConfig != null) && client != null && client.isConnected()) {
-			try {
-				ObjectMapper mapper = new ObjectMapper();
-				mapper.setSerializationInclusion(Include.NON_NULL);
-				mapper.enable(SerializationFeature.INDENT_OUTPUT);
-				if (serviceListener != null) {
-					serviceListener.onAddSubTypeNames(mapper);
-				}
-				deviceController = AnterosIOTConfiguration.newConfiguration().objectMapper(mapper)
-						.registerActuators(actuators).deviceName(deviceName).hostMqtt(hostMqtt).port(port)
-						.username(username).password(password).serviceListener(serviceListener).configure(streamConfig)
-						.configure(fileConfig).buildDevice();
-			} catch (JsonParseException e) {
-				e.printStackTrace();
-			} catch (JsonMappingException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
-				e.printStackTrace();
+
+			ObjectMapper mapper = new ObjectMapper();
+			mapper.setSerializationInclusion(Include.NON_NULL);
+			mapper.enable(SerializationFeature.INDENT_OUTPUT);
+			if (serviceListener != null) {
+				serviceListener.onAddSubTypeNames(mapper);
 			}
+			deviceController = AnterosIOTConfiguration.newConfiguration().objectMapper(mapper)
+					.registerActuators(actuators).deviceName(deviceName).hostMqtt(hostMqtt).port(port)
+					.username(username).password(password).serviceListener(serviceListener).configure(streamConfig)
+					.configure(fileConfig).buildDevice();
+
 		}
 
 		if (deviceController != null) {
@@ -202,48 +202,100 @@ public class AnterosIOTService implements Runnable, MqttCallback {
 	}
 
 	@Override
-	public void messageArrived(String topic, MqttMessage message) throws Exception {
-		
+	public void messageArrived(String topic, MqttMessage message) throws MqttPersistenceException, MqttException {
+
 		LOG.info("Mensagem recebida no device guardian");
-		
+
 		ObjectMapper mapper = new ObjectMapper();
-		JsonNode jsonMessage = mapper.readTree(message.getPayload());
-		
+		JsonNode jsonMessage = null;
+		try {
+			jsonMessage = mapper.readTree(message.getPayload());
+		} catch (IOException e) {
+			String newTopic = deviceName + "_brocker/error";
+			String msg = "{IOException:"+ e.getMessage() +"}";
+			MqttMessage res = new MqttMessage(msg.getBytes());
+			res.setQos(1);
+			client.publish(newTopic, res);
+			e.printStackTrace();
+		}
+
 		LOG.debug("Mensagem recebida: " + jsonMessage);
-		
+
 		String actionsTopic = deviceName + "_guardian_actions";
-		
+
 		if (topic.equals(actionsTopic)) {
 			LOG.debug("Ação recebida no guardian");
-			
+
 			String action = jsonMessage.has("action") ? jsonMessage.get("action").toString().replace("\"", "") : null;
 
 			if (action != null && action.equals("updateConfig")) {
+
+				System.out.println(jsonMessage.toString());
+				System.out.println(jsonMessage.get("config").toString().replace("\"", ""));
+
+				LOG.info("Atualizando configuração no device " + deviceName);
+
+				ByteArrayInputStream newConfigStream = null;
+				File newConfigFile = null;
+
+				if (jsonMessage.has("type")) {
+					if (jsonMessage.get("type").toString().equals("stream")) {
+						newConfigStream = jsonMessage.has("config")
+								? new ByteArrayInputStream(
+										jsonMessage.get("config").toString().replace("\"", "").getBytes())
+								: null;
+					} else if (jsonMessage.get("type").toString().equals("file")) {
+						newConfigFile = jsonMessage.has("config")
+								? new File(jsonMessage.get("config").toString().replace("\"", ""))
+								: null;
+					}
+				}
+
+				if (newConfigStream != null) {
+					this.streamConfig = newConfigStream;
+				} else {
+					this.fileConfig = newConfigFile;
+				}
 				
-				ByteArrayInputStream newConfig = jsonMessage.has("config")
-						? new ByteArrayInputStream(jsonMessage.get("config").toString().replace("\"", "").getBytes())
-						: null;
-						
-				if (newConfig != null) {
-					LOG.info("Atualizando configuração no device " + deviceName);
-					this.streamConfig = newConfig;
-					serviceListener.onStopDeviceController();
-					deviceController.stop();
-					SleepUtil.sleepMillis(5000);
+				String newTopic = deviceName + "_brocker/info";
+				String msg = "{info:updating_configuration}";
+				MqttMessage res = new MqttMessage(msg.getBytes());
+				res.setQos(1);
+				client.publish(newTopic, res);
+
+				serviceListener.onStopDeviceController();
+				deviceController.stop();
+				SleepUtil.sleepMillis(1000);
+				try {
 					startService();
+				} catch (IOException e) {
+					String error_message = "{IOException:" + e.getMessage() + "}";
+					MqttMessage error = new MqttMessage(error_message.getBytes());
+					error.setQos(1);
+					client.publish(deviceName + "_brocker/error", error);
+					e.printStackTrace();
 				}
 
 			} else if (action != null && action.equals("restartService")) {
 				LOG.info("Reiniciando controller do device " + deviceName);
+				String newTopic = deviceName + "_brocker/info";
+				String msg = "{info:rebooting_service}";
+				MqttMessage res = new MqttMessage(msg.getBytes());
+				res.setQos(1);
+				client.publish(newTopic, res);
 				deviceController.stop();
 				SleepUtil.sleepMillis(5000);
-				startService();
+				try {
+					startService();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			} else {
 				LOG.debug("Ação '" + action + "' inválida");
 			}
 		}
-		
-		
+
 	}
 
 	@Override
