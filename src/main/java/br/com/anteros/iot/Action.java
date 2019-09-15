@@ -1,5 +1,7 @@
 package br.com.anteros.iot;
 
+import java.util.Arrays;
+
 import javax.json.JsonObject;
 
 public class Action {
@@ -75,5 +77,13 @@ public class Action {
 	public void setReceivedPayload(JsonObject receivedPayload) {
 		this.receivedPayload = receivedPayload;
 	}
+
+	@Override
+	public String toString() {
+		return "Action [thing=" + thing + ", part=" + part + ", action=" + action + ", message=" + message + ", topics="
+				+ Arrays.toString(topics) + ", receivedPayload=" + receivedPayload + "]";
+	}
+	
+	
 
 }

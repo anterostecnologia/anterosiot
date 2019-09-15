@@ -25,6 +25,8 @@ import org.eclipse.paho.client.mqttv3.MqttPersistenceException;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import br.com.anteros.core.log.Logger;
+import br.com.anteros.core.log.LoggerProvider;
 import br.com.anteros.core.utils.StringUtils;
 import br.com.anteros.iot.Action;
 import br.com.anteros.iot.Actuator;
@@ -36,6 +38,7 @@ import br.com.anteros.iot.Part;
 import br.com.anteros.iot.Thing;
 import br.com.anteros.iot.actuators.collectors.CollectorManager;
 import br.com.anteros.iot.actuators.collectors.SimpleCollectorManager;
+import br.com.anteros.iot.app.AnterosIOTService;
 import br.com.anteros.iot.app.listeners.AnterosIOTServiceListener;
 import br.com.anteros.iot.domain.DeviceNode;
 import br.com.anteros.iot.plant.Place;
@@ -57,6 +60,8 @@ public abstract class AbstractDeviceController implements DeviceController, Mqtt
 	protected Actuators actuators;
 	protected AnterosIOTServiceListener serviceListener;
 	protected Map<String, Thing> subscribedTopics = new HashMap<>();
+	
+	private static final Logger LOG = LoggerProvider.getInstance().getLogger(AbstractDeviceController.class.getName());
 
 	public AbstractDeviceController() {
 
@@ -69,6 +74,7 @@ public abstract class AbstractDeviceController implements DeviceController, Mqtt
 		this.password = password;
 		this.clientMqtt.setCallback(this);
 		this.thread = new Thread(this);
+		this.thread.setName("Device controller");
 		this.actuators = actuators;
 		this.serviceListener = serviceListener;
 	}
@@ -77,6 +83,7 @@ public abstract class AbstractDeviceController implements DeviceController, Mqtt
 		this.device = device;
 		this.device.setDeviceController(this);
 		this.thread = new Thread(this);
+		this.thread.setName("Device controller");
 		this.actuators = actuators;
 	}
 
@@ -199,10 +206,11 @@ public abstract class AbstractDeviceController implements DeviceController, Mqtt
 
 	public void run() {
 		this.running = true;
-		System.out.println("Iniciando controlador " + this.getThingID());
+		LOG.info("Iniciando device controller " + this.getThingID());
 		
 		serviceListener.onStartCollectors(this);
 
+		LOG.info("Criando coletores de dados...");
 		CollectorManager collectorManager = SimpleCollectorManager.of(clientMqtt, things.toArray(new Thing[] {}),
 				actuators, device, username, password);
 		collectorManager.start();
@@ -210,7 +218,7 @@ public abstract class AbstractDeviceController implements DeviceController, Mqtt
 		boolean first = true;
 		while (running) {
 			if (first) {
-				System.out.println("Servidor master " + this.getThingID() + " rodando.");
+				LOG.info("Device controller " + this.getThingID() + " rodando...");
 				first = false;
 			}
 			try {
@@ -221,11 +229,11 @@ public abstract class AbstractDeviceController implements DeviceController, Mqtt
 		}
 
 		serviceListener.onStopCollectors(this);
-		System.out.println("Parando Coletores de dados.");
+		LOG.info("Parando Coletores de dados...");
 		collectorManager.stop();
 
 
-		System.out.println("Parando controlador " + this.getThingID());
+		LOG.info("Parando device controller " + this.getThingID());
 
 		try {
 			unSubscribe();
@@ -233,7 +241,7 @@ public abstract class AbstractDeviceController implements DeviceController, Mqtt
 				clientMqtt.disconnect();
 			}
 		} catch (MqttException e) {
-			System.out.println("Ocorreu uma falha ao deconectar: " + e.getMessage());
+			LOG.error("Ocorreu uma falha ao deconectar: " + e.getMessage());
 			e.printStackTrace();
 		}
 
@@ -268,23 +276,24 @@ public abstract class AbstractDeviceController implements DeviceController, Mqtt
 			jsonReader.close();
 
 		} catch (Exception e) {
-			System.out.println("Mensagem recebida não é do tipo JSON, verifique");
+			LOG.error("Mensagem recebida não é do tipo JSON, por favor verifique.");
 		}
 
 		Thing thing = this.getThingByTopic(topic);
 
 		if (receivedPayload != null && thing != null && receivedPayload.containsKey("action")) {
-			System.out.println("=> Mensagem recebida: \"" + message.toString() + "\" no tópico \"" + topic.toString()
+			LOG.info("=> Mensagem recebida: \"" + message.toString() + "\" no tópico \"" + topic.toString()
 					+ "\" para instancia \"" + getThingID() + "\"");
 
-			System.out.println(receivedPayload);
-			System.out.println(thing);
+			LOG.info(receivedPayload);
+			LOG.info("Coisa "+thing+" responsável pelo tópico "+topic);
 
 			Part part = null;
 			if (thing instanceof Part) {
 				part = (Part) thing;
 				thing = part.getOwner();
 			}
+			LOG.info("Despachando ação para coisa "+thing+" parte "+part);
 			this.dispatchAction(Action.of(thing, part, receivedPayload), null);
 		}
 
@@ -293,11 +302,13 @@ public abstract class AbstractDeviceController implements DeviceController, Mqtt
 	public abstract void deliveryComplete(IMqttDeliveryToken token);
 
 	protected abstract Device doCreateDevice(String deviceName, IpAddress ipAddress, String description,
-			String pathError);
+			String topicError, Integer intervalPublishingTelemetry);
 
 	public void dispatchMessage(String topic, String message) {
 		if ((StringUtils.isNotEmpty(topic) || StringUtils.isNotEmpty(message))) {
 			try {
+				LOG.info("Publicando mensagem para "+topic);
+				LOG.info("Mensagem: "+message);
 				MqttMessage msg = new MqttMessage(message.getBytes());
 				msg.setQos(1);
 				this.clientMqtt.publish(topic, msg);
@@ -315,22 +326,22 @@ public abstract class AbstractDeviceController implements DeviceController, Mqtt
 					.discoverActuatorToThing(action.getPart() != null ? action.getPart() : action.getThing());
 			if (actuator != null) {
 				try {
+					LOG.info("Executando ação "+action);
 					actuator.executeAction(action.getReceivedPayload(),
 							action.getPart() != null ? action.getPart() : action.getThing());
 				} catch (Exception e) {
+					LOG.error("Ocorreu erro ao executar ação "+action);
 					JsonObject jsonMessage = Json.createObjectBuilder()
 							.add("thing",
 									action.getPart().getThingID() != null ? action.getPart().getThingID()
 											: action.getThing().getThingID())
 							.add("message", "" + e.getMessage()).build();
-//					MqttMessage msg = new MqttMessage(jsonMessage.toString().getBytes());
-//					msg.setQos(1);
 					try {
-						System.out.println(device.getPathError());
-						System.out.println("==> Erro: " + e.getMessage());
-						this.clientMqtt.publish(device.getPathError(), jsonMessage.toString().getBytes(), 0, false);
+						LOG.error("Enviando mensagem de erro para "+device.getTopicError());
+						LOG.error("Mensagem de Erro: " + e.getMessage());
+						this.clientMqtt.publish(device.getTopicError(), jsonMessage.toString().getBytes(), 0, false);
 					} catch (MqttException e1) {
-						System.out.println(e1.getMessage());
+						LOG.error(e1.getMessage());
 					}
 				}
 			}
@@ -347,8 +358,7 @@ public abstract class AbstractDeviceController implements DeviceController, Mqtt
 	public void loadConfiguration(DeviceNode itemNode, Plant plant) {
 		Place place = (Place) plant.getItemByName(itemNode.getItemNodeOwner().getItemName());
 		this.device = doCreateDevice(itemNode.getItemName(), itemNode.getIpAddress(), itemNode.getDescription(),
-				itemNode.getPathError());
-		System.out.println(device);
+				itemNode.getTopicError(), itemNode.getIntervalPublishingTelemetry());
 		if (!(this.device instanceof PlantItem)) {
 			throw new DeviceException("O device " + itemNode.getItemName() + " não é um item da planta.");
 		}
@@ -358,6 +368,7 @@ public abstract class AbstractDeviceController implements DeviceController, Mqtt
 	@Override
 	public void autoSubscribe() {
 
+		LOG.info("Subscrevendo nos tópicos: ");
 		List<String> filter = new ArrayList<>();
 
 		for (Thing thing : things) {
@@ -383,10 +394,10 @@ public abstract class AbstractDeviceController implements DeviceController, Mqtt
 		}
 
 		try {
-			System.out.println(Arrays.toString(filter.toArray(new String[] {})));
 			String[] filterArray = filter.toArray(new String[] {});
 			int[] qosArray = new int[filterArray.length];
 			Arrays.fill(qosArray, 1);
+			LOG.info(Arrays.toString(filter.toArray(new String[] {})));
 			this.clientMqtt.subscribe(filterArray, qosArray);
 		} catch (MqttException e) {
 			e.printStackTrace();
@@ -402,6 +413,8 @@ public abstract class AbstractDeviceController implements DeviceController, Mqtt
 		}
 		
 		try {
+			LOG.info("Removendo subscrição nos tópicos: ");
+			LOG.info(Arrays.toString(filter.toArray(new String[] {})));
 			this.clientMqtt.unsubscribe(filter.toArray(new String[] {}));
 		} catch (MqttException e) {
 			e.printStackTrace();

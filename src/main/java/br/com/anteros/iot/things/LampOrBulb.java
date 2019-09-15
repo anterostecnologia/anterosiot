@@ -110,5 +110,10 @@ public class LampOrBulb extends PlantItem implements Thing {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	@Override
+	public String toString() {
+		return "LampOrBulb [pin=" + pin + ", itemId=" + itemId + ", description=" + description + "]";
+	}
 	
 }

@@ -7,6 +7,8 @@ import org.opencv.videoio.VideoCapture;
 
 import com.diozero.util.SleepUtil;
 
+import br.com.anteros.core.log.Logger;
+import br.com.anteros.core.log.LoggerProvider;
 import br.com.anteros.core.utils.Assert;
 import br.com.anteros.iot.Collector;
 import br.com.anteros.iot.Thing;
@@ -16,6 +18,7 @@ public class CameraMotionDetectorCollector extends Collector implements Runnable
 
 	protected Boolean running = false;
 	protected Thread thread;
+	private static final Logger LOG = LoggerProvider.getInstance().getLogger(CameraMotionDetectorCollector.class.getName());
 	
 	public CameraMotionDetectorCollector(CollectorListener listener, Thing thing) {
 		super(listener, thing);
@@ -29,6 +32,7 @@ public class CameraMotionDetectorCollector extends Collector implements Runnable
 		Assert.notNull(listener);
 		this.running = true;
 		thread = new Thread(this);
+		thread.setName("Câmera movimento");
 		thread.start();
 	}
 
@@ -54,7 +58,7 @@ public class CameraMotionDetectorCollector extends Collector implements Runnable
 //	          BackgroundSubtractorMOG2 backgroundSubtractorMOG = new BackgroundSubtractorMOG2();
 
 			if (!camera.isOpened()) {
-				System.out.println("ERRO! Falha ao estabelecer uma conexão com a câmera. Verifique se o dispositivo já está em uso!");
+				LOG.error("ERRO! Falha ao estabelecer uma conexão com a câmera. Verifique se o dispositivo já está em uso!");
 			}
 			
 

@@ -32,25 +32,30 @@ import br.com.anteros.iot.triggers.Trigger;
 public class RaspberryPIZero extends PlantItem implements Device, Publishable  {
 	
 	protected IpAddress ipAddress;
-	private String pathError;
+	private String topicError;
+	private String ssid;
+	private String password;
+	private Integer intervalPublishingTelemetry;
+	
 	protected DeviceController deviceController;
+	
 	private TelemetryConfiguration telemetryConfiguration = TelemetryConfiguration.of(this);
 
 		
-	protected RaspberryPIZero(String id, IpAddress ipAddress, String pathError) {
+	protected RaspberryPIZero(String id, IpAddress ipAddress, String topicError, Integer intervalPublishingTelemetry) {
 		this.itemId = id;
 		this.ipAddress = ipAddress;
-		this.pathError = pathError;
+		this.topicError = topicError;
 		
-		telemetryConfiguration.addStrategy(new PlatformTelemetryStrategy(), 10000);
-		telemetryConfiguration.addStrategy(new HardwareTelemetryStrategy(), 10000);
-		telemetryConfiguration.addStrategy(new MemoryTelemetryStrategy(), 1000);
-		telemetryConfiguration.addStrategy(new JavaTelemetryStrategy(), 10000);
-		telemetryConfiguration.addStrategy(new NetworkTelemetryStrategy(), 5000);
-		telemetryConfiguration.addStrategy(new SOTelemetryStrategy(), 10000);
-		telemetryConfiguration.addStrategy(new ClockTelemetryStrategy(), 10000);
-		telemetryConfiguration.addStrategy(new CodecTelemetryStrategy(), 10000);
-		telemetryConfiguration.addStrategy(new TemperatureTelemetryStrategy(), 1000);
+		telemetryConfiguration.addStrategy(new PlatformTelemetryStrategy(), intervalPublishingTelemetry);
+		telemetryConfiguration.addStrategy(new HardwareTelemetryStrategy(), intervalPublishingTelemetry);
+		telemetryConfiguration.addStrategy(new MemoryTelemetryStrategy(), intervalPublishingTelemetry);
+		telemetryConfiguration.addStrategy(new JavaTelemetryStrategy(), intervalPublishingTelemetry);
+		telemetryConfiguration.addStrategy(new NetworkTelemetryStrategy(), intervalPublishingTelemetry);
+		telemetryConfiguration.addStrategy(new SOTelemetryStrategy(), intervalPublishingTelemetry);
+		telemetryConfiguration.addStrategy(new ClockTelemetryStrategy(), intervalPublishingTelemetry);
+		telemetryConfiguration.addStrategy(new CodecTelemetryStrategy(), intervalPublishingTelemetry);
+		telemetryConfiguration.addStrategy(new TemperatureTelemetryStrategy(), intervalPublishingTelemetry);
 	}
 
 	public String getThingID() {
@@ -137,8 +142,8 @@ public class RaspberryPIZero extends PlantItem implements Device, Publishable  {
 	}
 
 	@Override
-	public String getPathError() {
-		return pathError;
+	public String getTopicError() {
+		return topicError;
 	}
 	
 	@Override
@@ -169,5 +174,51 @@ public class RaspberryPIZero extends PlantItem implements Device, Publishable  {
 		}
 		return result.toArray(new TelemetryStrategy[] {});
 	}
+
+	public Integer getIntervalPublishingTelemetry() {
+		return intervalPublishingTelemetry;
+	}
+
+	public void setIntervalPublishingTelemetry(Integer intervalPublishingTelemetry) {
+		this.intervalPublishingTelemetry = intervalPublishingTelemetry;
+	}
+
+	public String getSsid() {
+		return ssid;
+	}
+
+	public void setSsid(String ssid) {
+		this.ssid = ssid;
+	}
+
+	public TelemetryConfiguration getTelemetryConfiguration() {
+		return telemetryConfiguration;
+	}
+
+	public void setTelemetryConfiguration(TelemetryConfiguration telemetryConfiguration) {
+		this.telemetryConfiguration = telemetryConfiguration;
+	}
+
+	public void setTopicError(String topicError) {
+		this.topicError = topicError;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
+	@Override
+	public String toString() {
+		return "RaspberryPIZero [ipAddress=" + ipAddress + ", topicError=" + topicError + ", ssid=" + ssid
+				+ ", password=" + password + ", intervalPublishingTelemetry=" + intervalPublishingTelemetry
+				+ ", itemId=" + itemId + ", description=" + description + "]";
+	}
+
+	
+	
 
 }

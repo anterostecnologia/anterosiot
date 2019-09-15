@@ -3,6 +3,8 @@ package br.com.anteros.iot.actuators.collectors;
 import com.diozero.util.Hex;
 import com.diozero.util.SleepUtil;
 
+import br.com.anteros.core.log.Logger;
+import br.com.anteros.core.log.LoggerProvider;
 import br.com.anteros.core.utils.Assert;
 import br.com.anteros.iot.Collector;
 import br.com.anteros.iot.Thing;
@@ -13,12 +15,15 @@ import br.com.anteros.iot.support.rfid.PN532;
 import br.com.anteros.iot.support.rfid.PN532I2C;
 import br.com.anteros.iot.things.RFIDReader;
 
+
 public class RFIDReaderCollector extends Collector implements Runnable {
 
 	static final byte PN532_MIFARE_ISO14443A = 0x00;
 
 	protected Boolean running = false;
 	protected Thread thread;
+	
+	private static final Logger LOG = LoggerProvider.getInstance().getLogger(RFIDReaderCollector.class.getName());
 
 	public RFIDReaderCollector(CollectorListener listener, Thing thing) {
 		super(listener, thing);
@@ -32,6 +37,7 @@ public class RFIDReaderCollector extends Collector implements Runnable {
 		Assert.notNull(listener);
 		this.running = true;
 		thread = new Thread(this);
+		thread.setName("Câmera movimento");
 		thread.start();
 	}
 
@@ -58,9 +64,9 @@ public class RFIDReaderCollector extends Collector implements Runnable {
 	private void readRC522() {
 		try (MFRC522 mfrc522 = new MFRC522(0, 0, 25)) {
 			mfrc522.setLogReadsAndWrites(false);
-			// Wait for a card
+
 			MFRC522.UID uid = null;
-			System.out.println("Waiting for a card");
+			LOG.info("Aguardando um cartão");
 			int i = 0;
 			while (true) {
 
@@ -68,10 +74,8 @@ public class RFIDReaderCollector extends Collector implements Runnable {
 				if (uid != null) {
 					listener.onCollect(new SimpleResult(Hex.encodeHexString(uid.getUidBytes())), thing);
 					i++;
-					System.out.println(i + "-> uid: " + uid);
-					System.out.println("");
-					System.out.println("");
-					System.out.println("Waiting for a card");
+					LOG.info(i + "-> uid: " + uid);
+					LOG.info("Aguardando um cartão");
 				}
 				SleepUtil.sleepMillis(500);
 			}
@@ -83,7 +87,7 @@ public class RFIDReaderCollector extends Collector implements Runnable {
 		if (!mfrc522.isNewCardPresent()) {
 			return null;
 		}
-		System.out.println("A card is present!");
+		LOG.info("Um cartão está presente");
 		// Since a PICC placed get Serial and continue
 		MFRC522.UID uid = mfrc522.readCardSerial();
 		if (uid == null) {
@@ -94,7 +98,7 @@ public class RFIDReaderCollector extends Collector implements Runnable {
 		// PICC
 		// I think we should assume every PICC as they have 4 byte UID
 		// Until we support 7 byte PICCs
-		System.out.println(("Scanned PICC's UID: " + Hex.encodeHexString(uid.getUidBytes())));
+		LOG.info(("Scanned PICC's UID: " + Hex.encodeHexString(uid.getUidBytes())));
 
 		mfrc522.haltA();
 
@@ -106,24 +110,19 @@ public class RFIDReaderCollector extends Collector implements Runnable {
 		PN532 nfc = new PN532(pn532Interface);
 
 		// Start
-		System.out.println("Starting up...");
+		LOG.info("Inicializando leitor RFID...");
 		try {
 			nfc.begin();
 			SleepUtil.sleepMillis(1000);
 
 			long versiondata = nfc.getFirmwareVersion();
 			if (versiondata == 0) {
-				System.out.println("Didn't find PN53x board");
+				LOG.info("Não foi possível localizar placa PN53x");
 				return;
 			}
 			// Got ok data, print it out!
-			System.out.print("Found chip PN5");
-			System.out.println(Long.toHexString((versiondata >> 24) & 0xFF));
-
-			System.out.print("Firmware ver. ");
-			System.out.print(Long.toHexString((versiondata >> 16) & 0xFF));
-			System.out.print('.');
-			System.out.println(Long.toHexString((versiondata >> 8) & 0xFF));
+			LOG.info("Found chip PN5"+Long.toHexString((versiondata >> 24) & 0xFF));
+			LOG.info("Firmware versão "+Long.toHexString((versiondata >> 16) & 0xFF)+"."+Long.toHexString((versiondata >> 8) & 0xFF));
 
 			// configure board to read RFID tags
 			nfc.SAMConfig();
@@ -133,7 +132,7 @@ public class RFIDReaderCollector extends Collector implements Runnable {
 			return;
 		}
 
-		System.out.println("Waiting for an ISO14443A Card ...");
+		LOG.info("Aguardando por um cartão ISO14443A...");
 
 		byte[] buffer = new byte[8];
 		while (running) {
@@ -141,24 +140,21 @@ public class RFIDReaderCollector extends Collector implements Runnable {
 			try {
 				readLength = nfc.readPassiveTargetID(PN532_MIFARE_ISO14443A, buffer);
 				if (readLength > 0) {
-					System.out.println("Found an ISO14443A card");
+					LOG.info("Encontrado um cartão ISO14443A");
 
-					System.out.print("  UID Length: ");
-					System.out.print(readLength);
-					System.out.println(" bytes");
+					LOG.info("UID tamanho: "+readLength+" bytes");
 
-					System.out.print("  UID Value: [");
+					
 					StringBuilder sb = new StringBuilder();
 					for (int i = 0; i < readLength; i++) {
 						sb.append(Integer.toHexString(buffer[i]));
-						System.out.print(Integer.toHexString(buffer[i]));
 					}
-					System.out.println("]");
+					
+					LOG.info("UID Valor: ["+sb.toString()+"]");
 					
 					listener.onCollect(new SimpleResult(sb.toString()), thing);
 				}
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 

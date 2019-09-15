@@ -130,8 +130,14 @@ public class Semaphore extends PlantItem implements Thing {
 
 	@Override
 	public String[] getActions() {
-		// TODO Auto-generated method stub
 		return null;
 	}
+
+	@Override
+	public String toString() {
+		return "Semaphore [leds=" + leds + ", itemId=" + itemId + ", description=" + description + "]";
+	}
+	
+	
 
 }

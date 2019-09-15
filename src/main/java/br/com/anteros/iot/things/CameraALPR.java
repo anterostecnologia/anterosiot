@@ -95,6 +95,11 @@ public class CameraALPR extends PlantItem implements Thing {
 	public String[] getActions() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public String toString() {
+		return "CameraALPR [itemId=" + itemId + ", description=" + description + "]";
 	}	
 	
 }

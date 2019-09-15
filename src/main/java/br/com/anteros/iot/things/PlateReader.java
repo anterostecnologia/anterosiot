@@ -106,4 +106,9 @@ public class PlateReader extends PlantItem implements Thing {
 		this.triggers = triggers;
 	}
 
+	@Override
+	public String toString() {
+		return "PlateReader [itemId=" + itemId + ", description=" + description + "]";
+	}
+
 }

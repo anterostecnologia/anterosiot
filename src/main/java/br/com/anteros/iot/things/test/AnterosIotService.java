@@ -54,7 +54,7 @@ public class AnterosIotService implements AnterosIOTServiceListener {
 
 		MasterComputerNode masterNode = new MasterComputerNode("master", "Central");
 		masterNode.setIpAddress(IpAddress.of("10.0.5.251"));
-		masterNode.setPathError("");
+		masterNode.setTopicError("");
 
 		PlcNode controladorTeste = new PlcNode("clp_inspecao_agua", "CLP Inspeção de água",
 				"TCP/IP", "10.0.6.240", 502, 50, 1500, 1);

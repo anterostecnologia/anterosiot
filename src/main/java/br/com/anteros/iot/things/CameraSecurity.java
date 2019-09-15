@@ -96,4 +96,9 @@ public class CameraSecurity extends PlantItem implements Thing {
 		return null;
 	}
 
+	@Override
+	public String toString() {
+		return "CameraSecurity [itemId=" + itemId + ", description=" + description + "]";
+	}
+
 }

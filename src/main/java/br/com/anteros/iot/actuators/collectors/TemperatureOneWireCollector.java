@@ -6,10 +6,13 @@ import com.pi4j.component.temperature.TemperatureSensor;
 import com.pi4j.io.w1.W1Master;
 import com.pi4j.temperature.TemperatureScale;
 
+import br.com.anteros.core.log.Logger;
+import br.com.anteros.core.log.LoggerProvider;
 import br.com.anteros.core.utils.Assert;
 import br.com.anteros.iot.Collector;
 import br.com.anteros.iot.Thing;
 import br.com.anteros.iot.things.sensors.TemperatureSensorOneWire;
+
 
 public class TemperatureOneWireCollector extends Collector implements Runnable {
 
@@ -18,6 +21,7 @@ public class TemperatureOneWireCollector extends Collector implements Runnable {
 	protected Thread thread;
 	protected Double oldTemperature;
 	protected Double newTemperature;
+	private static final Logger LOG = LoggerProvider.getInstance().getLogger(TemperatureOneWireCollector.class.getName());
 
 	public TemperatureOneWireCollector(CollectorListener listener, Thing thing) {
 		super(listener, thing);
@@ -37,6 +41,7 @@ public class TemperatureOneWireCollector extends Collector implements Runnable {
 		if (thing instanceof TemperatureSensorOneWire) {
 			this.running = true;
 			thread = new Thread(this);
+			thread.setName("Coletor temperature one wire");
 			thread.start();
 		}
 	}
@@ -48,7 +53,7 @@ public class TemperatureOneWireCollector extends Collector implements Runnable {
 
 	@Override
 	public void run() {
-		System.out.println("Iniciando coletor temperatura ");
+		LOG.info("Iniciando coletor temperatura one wire...");
 		while (running) {
 			TemperatureSensorOneWire oneWire = (TemperatureSensorOneWire) thing;
 			for (TemperatureSensor device : w1.getDevices(TemperatureSensor.class)) {

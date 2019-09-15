@@ -5,9 +5,10 @@ import java.util.Set;
 
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.MqttAsyncClient;
-import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttException;
 
+import br.com.anteros.core.log.Logger;
+import br.com.anteros.core.log.LoggerProvider;
 import br.com.anteros.core.utils.Assert;
 import br.com.anteros.iot.Actuators;
 import br.com.anteros.iot.Device;
@@ -23,6 +24,8 @@ import br.com.anteros.iot.things.devices.RaspberryPI;
 public class MasterControllerRPi extends AbstractDeviceController implements MasterDeviceController {
 
 	protected Set<DeviceController> devices = new HashSet<DeviceController>();
+	
+	private static final Logger LOG = LoggerProvider.getInstance().getLogger(MasterControllerRPi.class.getName());
 
 	protected MasterControllerRPi(Device device, Actuators actuators) {
 		super(device, actuators);
@@ -115,7 +118,7 @@ public class MasterControllerRPi extends AbstractDeviceController implements Mas
 	}
 
 	public void connectionLost(Throwable cause) {
-		System.out.println("Connection lost on instance \"" + getThingID() + "\" with cause \"" + cause.getMessage()
+		LOG.info("Connection lost on instance \"" + getThingID() + "\" with cause \"" + cause.getMessage()
 				+ "\" Reason code " + ((MqttException) cause).getReasonCode() + "\" Cause \""
 				+ ((MqttException) cause).getCause() + "\"");
 		cause.printStackTrace();
@@ -123,7 +126,7 @@ public class MasterControllerRPi extends AbstractDeviceController implements Mas
 
 	public void deliveryComplete(IMqttDeliveryToken token) {
 		try {
-			System.out.println(
+			LOG.info(
 					"Delivery token \"" + token.hashCode() + "\" received by instance \"" + getThingID() + "\"");
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -141,8 +144,8 @@ public class MasterControllerRPi extends AbstractDeviceController implements Mas
 	}
 
 	@Override
-	protected Device doCreateDevice(String deviceName, IpAddress ipAddress, String description, String pathError) {
-		return RaspberryPI.of(deviceName, ipAddress, description, pathError);
+	protected Device doCreateDevice(String deviceName, IpAddress ipAddress, String description, String topicError, Integer intervalPublishingTelemetry) {
+		return RaspberryPI.of(deviceName, ipAddress, description, topicError, intervalPublishingTelemetry);
 	}
 
 	@Override

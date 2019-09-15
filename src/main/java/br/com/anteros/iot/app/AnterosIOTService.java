@@ -46,6 +46,18 @@ import br.com.anteros.iot.support.MqttHelper;
 
 public class AnterosIOTService implements Runnable, MqttCallback {
 
+	private static final String UPDATE_CONFIG = "updateConfig";
+
+	private static final String FILE = "file";
+
+	private static final String STREAM = "stream";
+
+	private static final String ACTION = "action";
+
+	private static final String TYPE = "type";
+
+	private static final String CONFIG = "config";
+
 	private static final Logger LOG = LoggerProvider.getInstance().getLogger(AnterosIOTService.class.getName());
 
 	private String deviceName;
@@ -59,6 +71,9 @@ public class AnterosIOTService implements Runnable, MqttCallback {
 	private AnterosIOTServiceListener serviceListener;
 	private InputStream streamConfig;
 	private Set<Class<? extends Actuable>> actuators = new HashSet<>();
+	public static final String HEARTBEAT = "/heartbeat";
+	public static final String BOOT = "/boot";
+	public static final String ERRORS = "/errors";
 
 	public AnterosIOTService(String deviceName, String hostMqtt, String port, String username, String password,
 			File config, InputStream streamConfig, AnterosIOTServiceListener serviceListener,
@@ -98,8 +113,10 @@ public class AnterosIOTService implements Runnable, MqttCallback {
 			configFile = new File(config);
 		}
 
-		new Thread(new AnterosIOTService(deviceName, hostMqtt, port, username, password, configFile, null, null, null))
+		Thread thread = new Thread(new AnterosIOTService(deviceName, hostMqtt, port, username, password, configFile, null, null, null));
+		thread
 				.start();
+		thread.setName("Anteros IOT Service");
 	}
 
 	public static String getArgumentByName(String[] args, String name) {
@@ -122,45 +139,43 @@ public class AnterosIOTService implements Runnable, MqttCallback {
 
 	@Override
 	public void run() {
+		
+		LOG.debug("Iniciando Anteros IOT Service...");
 
 		serviceListener.onConnectingMqttServer();
 
 		String broker = "tcp://" + hostMqtt + ":" + (port == null ? 1883 : port);
-		String clientId = deviceName + "_guardian";
-		String actionsTopic = clientId + "_actions";
+		String clientId = deviceName;
+		String actionsTopic = "/"+deviceName;
 
-		System.out.println("Conectando servidor broker MQTT...");
+		LOG.info("Conectando servidor broker MQTT do device controller... "+broker);
 
 		try {
 			client = MqttHelper.createAndConnectMqttClient(broker, clientId, username, password, true, true);
 			client.setCallback(this);
 			client.subscribe(actionsTopic, 1);
+			LOG.info("Conectado ao "+broker);
 		} catch (MqttException e1) {
-			serviceListener.onErrorConnectingMqttServer(
-					"Ocorreu uma falha ao criar um cliente mqtt. O Sistema não continuará a inicialização.");
+			String msg ="Ocorreu uma falha ao criar um cliente mqtt. O Sistema não continuará a inicialização.";
+			LOG.error(msg);
+			serviceListener.onErrorConnectingMqttServer(msg);
 			e1.printStackTrace();
 		}
 
 		try {
 			startService();
 		} catch (IOException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 
+		LOG.debug("Serviço inicializado. Device running = "+deviceController.getRunning());
 		while (true) {
 			try {
-				String newTopic = deviceName + "_brocker";
 				Boolean controllerRunning = deviceController != null ? deviceController.getRunning() : false;
-				String status = "alive";
-				String message = "{status:" + status + ", isControllerRunning:" + controllerRunning + "}";
-				MqttMessage res = new MqttMessage(message.getBytes());
-				res.setQos(1);
-				client.publish(newTopic, res);
-				LOG.debug("Mensagem de status publicada");
+				MqttHelper.publishHeartBeat(deviceName,"alive",controllerRunning, client);				
+				LOG.debug("Mensagem de Heart Beat publicada");
 			} catch (MqttException e) {
-				LOG.error("Falha ao publicar mensagem de status");
-				// TODO Auto-generated catch block
+				LOG.error("Falha ao publicar mensagem Heart Beat");
 				e.printStackTrace();
 			}
 
@@ -171,7 +186,7 @@ public class AnterosIOTService implements Runnable, MqttCallback {
 
 	private void startService() throws JsonParseException, JsonMappingException, IOException {
 		if ((fileConfig != null || streamConfig != null) && client != null && client.isConnected()) {
-
+			LOG.info("Lendo configuração e criando device controller...");
 			ObjectMapper mapper = new ObjectMapper();
 			mapper.setSerializationInclusion(Include.NON_NULL);
 			mapper.enable(SerializationFeature.INDENT_OUTPUT);
@@ -183,6 +198,8 @@ public class AnterosIOTService implements Runnable, MqttCallback {
 					.username(username).password(password).serviceListener(serviceListener).configure(streamConfig)
 					.configure(fileConfig).buildDevice();
 
+		} else {
+			LOG.info("Nenhuma configuração foi encontrada para criar o device controller ou o client mqtt não está conectado.");
 		}
 
 		if (deviceController != null) {
@@ -204,49 +221,41 @@ public class AnterosIOTService implements Runnable, MqttCallback {
 	@Override
 	public void messageArrived(String topic, MqttMessage message) throws MqttPersistenceException, MqttException {
 
-		LOG.info("Mensagem recebida no device guardian");
-
 		ObjectMapper mapper = new ObjectMapper();
 		JsonNode jsonMessage = null;
 		try {
 			jsonMessage = mapper.readTree(message.getPayload());
 		} catch (IOException e) {
-			String newTopic = deviceName + "_brocker/error";
-			String msg = "{IOException:"+ e.getMessage() +"}";
-			MqttMessage res = new MqttMessage(msg.getBytes());
-			res.setQos(1);
-			client.publish(newTopic, res);
+			MqttHelper.publishError(e,deviceName,client);
 			e.printStackTrace();
 		}
 
-		LOG.debug("Mensagem recebida: " + jsonMessage);
+		LOG.info("Mensagem recebida: " + jsonMessage);
 
-		String actionsTopic = deviceName + "_guardian_actions";
+		if (topic.equals("/"+deviceName)) {
+			LOG.info("Ação recebida no guardian");
 
-		if (topic.equals(actionsTopic)) {
-			LOG.debug("Ação recebida no guardian");
+			String action = jsonMessage.has(ACTION) ? jsonMessage.get(ACTION).toString().replace("\"", "") : null;
 
-			String action = jsonMessage.has("action") ? jsonMessage.get("action").toString().replace("\"", "") : null;
+			if (action != null && action.equals(UPDATE_CONFIG)) {
 
-			if (action != null && action.equals("updateConfig")) {
-
-				System.out.println(jsonMessage.toString());
-				System.out.println(jsonMessage.get("config").toString().replace("\"", ""));
+				LOG.info(jsonMessage.toString());
+				LOG.info(jsonMessage.get(CONFIG).toString().replace("\"", ""));
 
 				LOG.info("Atualizando configuração no device " + deviceName);
 
 				ByteArrayInputStream newConfigStream = null;
 				File newConfigFile = null;
 
-				if (jsonMessage.has("type")) {
-					if (jsonMessage.get("type").toString().equals("stream")) {
-						newConfigStream = jsonMessage.has("config")
+				if (jsonMessage.has(TYPE)) {
+					if (jsonMessage.get(TYPE).toString().equals(STREAM)) {
+						newConfigStream = jsonMessage.has(CONFIG)
 								? new ByteArrayInputStream(
-										jsonMessage.get("config").toString().replace("\"", "").getBytes())
+										jsonMessage.get(CONFIG).toString().replace("\"", "").getBytes())
 								: null;
-					} else if (jsonMessage.get("type").toString().equals("file")) {
-						newConfigFile = jsonMessage.has("config")
-								? new File(jsonMessage.get("config").toString().replace("\"", ""))
+					} else if (jsonMessage.get(TYPE).toString().equals(FILE)) {
+						newConfigFile = jsonMessage.has(CONFIG)
+								? new File(jsonMessage.get(CONFIG).toString().replace("\"", ""))
 								: null;
 					}
 				}
@@ -256,12 +265,6 @@ public class AnterosIOTService implements Runnable, MqttCallback {
 				} else {
 					this.fileConfig = newConfigFile;
 				}
-				
-				String newTopic = deviceName + "_brocker/info";
-				String msg = "{info:updating_configuration}";
-				MqttMessage res = new MqttMessage(msg.getBytes());
-				res.setQos(1);
-				client.publish(newTopic, res);
 
 				serviceListener.onStopDeviceController();
 				deviceController.stop();
@@ -269,30 +272,22 @@ public class AnterosIOTService implements Runnable, MqttCallback {
 				try {
 					startService();
 				} catch (IOException e) {
-					String error_message = "{IOException:" + e.getMessage() + "}";
-					MqttMessage error = new MqttMessage(error_message.getBytes());
-					error.setQos(1);
-					client.publish(deviceName + "_brocker/error", error);
+					MqttHelper.publishError(e,deviceName,client);
 					e.printStackTrace();
 				}
 
 			} else if (action != null && action.equals("restartService")) {
 				LOG.info("Reiniciando controller do device " + deviceName);
-				String newTopic = deviceName + "_brocker/info";
-				String msg = "{info:rebooting_service}";
-				MqttMessage res = new MqttMessage(msg.getBytes());
-				res.setQos(1);
-				client.publish(newTopic, res);
+				MqttHelper.publishBoot(deviceName, client);
 				deviceController.stop();
 				SleepUtil.sleepMillis(5000);
 				try {
 					startService();
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					MqttHelper.publishError(e,deviceName,client);
 				}
 			} else {
-				LOG.debug("Ação '" + action + "' inválida");
+				LOG.info("Ação '" + action + "' inválida");
 			}
 		}
 
@@ -300,6 +295,5 @@ public class AnterosIOTService implements Runnable, MqttCallback {
 
 	@Override
 	public void deliveryComplete(IMqttDeliveryToken token) {
-		// TODO Auto-generated method stub
 	}
 }

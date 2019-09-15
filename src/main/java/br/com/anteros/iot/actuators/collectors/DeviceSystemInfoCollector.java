@@ -6,17 +6,22 @@ import org.apache.commons.lang3.time.StopWatch;
 
 import com.diozero.util.SleepUtil;
 
+import br.com.anteros.core.log.Logger;
+import br.com.anteros.core.log.LoggerProvider;
 import br.com.anteros.core.utils.Assert;
 import br.com.anteros.iot.Collector;
 import br.com.anteros.iot.Device;
 import br.com.anteros.iot.Thing;
 import br.com.anteros.iot.things.devices.telemetry.TelemetryStrategy;
 
+
 public class DeviceSystemInfoCollector extends Collector implements Runnable {
 
 	protected Boolean running = false;
 	protected Thread thread;
 
+	private static final Logger LOG = LoggerProvider.getInstance().getLogger(DeviceSystemInfoCollector.class.getName());
+	
 	public DeviceSystemInfoCollector(CollectorListener listener, Thing thing) {
 		super(listener, thing);
 	}
@@ -35,6 +40,7 @@ public class DeviceSystemInfoCollector extends Collector implements Runnable {
 		if (thing instanceof Device) {
 			this.running = true;
 			thread = new Thread(this);
+			thread.setName("Coletor info devices");
 			thread.start();
 		}
 	}
@@ -47,7 +53,7 @@ public class DeviceSystemInfoCollector extends Collector implements Runnable {
 	@Override
 	public void run() {
 		Device device = (Device) thing;
-		System.out.println("Iniciando coletor informações telemetria device " + thing.getThingID());
+		LOG.info("Iniciando coletor informações telemetria device " + thing.getThingID());
 		StopWatch watch = new StopWatch();
 		watch.start();
 		while (running) {

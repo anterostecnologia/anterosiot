@@ -105,4 +105,9 @@ public class LampSonoff extends PlantItem implements Thing {
 		return null;
 	}
 
+	@Override
+	public String toString() {
+		return "LampSonoff [topic=" + topic + ", itemId=" + itemId + ", description=" + description + "]";
+	}
+
 }

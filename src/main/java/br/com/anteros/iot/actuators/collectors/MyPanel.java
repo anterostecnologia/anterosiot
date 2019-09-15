@@ -3,6 +3,8 @@ package br.com.anteros.iot.actuators.collectors;
 
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
+import java.awt.image.DataBufferByte;
+import java.awt.image.WritableRaster;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 
@@ -28,17 +30,23 @@ class My_Panel extends JPanel{
      * @throws IOException 
      */  
     public boolean MatToBufferedImage(Mat matBGR) throws IOException{  
-//    	MatOfByte mob = new MatOfByte();
-//		Imgcodecs.imencode(".png", matBGR, mob);
-//		image = ImageIO.read(new ByteArrayInputStream(mob.toArray()));
-//        return true;      	
-    	MatOfByte mob = new MatOfByte();
-		Imgcodecs.imencode(".png", matBGR, mob);
-    	byte[] bytes = mob.toArray();
-    	ImageIO.setUseCache(false);
-		image = ImageIO.read(new ByteArrayInputStream(bytes));
+		image = matToBufferedImage(matBGR);
         return true;  
     }  
+    
+    public static BufferedImage matToBufferedImage(Mat mat) {
+
+        if (mat.height() > 0 && mat.width() > 0) {
+            BufferedImage image = new BufferedImage(mat.width(), mat.height(), BufferedImage.TYPE_3BYTE_BGR);
+            WritableRaster raster = image.getRaster();
+            DataBufferByte dataBuffer = (DataBufferByte) raster.getDataBuffer();
+            byte[] data = dataBuffer.getData();
+            mat.get(0, 0, data);
+            return image;
+        }
+
+        return null;
+    }
     
     public void setImage(BufferedImage image) {
     	this.image = image;

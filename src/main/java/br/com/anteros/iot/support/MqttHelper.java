@@ -3,12 +3,15 @@ package br.com.anteros.iot.support;
 import org.eclipse.paho.client.mqttv3.MqttAsyncClient;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
+import org.eclipse.paho.client.mqttv3.MqttMessage;
+import org.eclipse.paho.client.mqttv3.MqttPersistenceException;
 import org.eclipse.paho.client.mqttv3.MqttSecurityException;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 
 import com.diozero.util.SleepUtil;
 
 import br.com.anteros.core.utils.StringUtils;
+import br.com.anteros.iot.app.AnterosIOTService;
 
 public class MqttHelper {
 
@@ -33,7 +36,8 @@ public class MqttHelper {
 			connOpts.setPassword(password.toCharArray());
 		}
 		connOpts.setAutomaticReconnect(automaticReconnect);
-		connOpts.setCleanSession(cleanSession);
+		connOpts.setCleanSession(cleanSession);	
+		connOpts.setConnectionTimeout(20);
 		connOpts.setMqttVersion(MqttConnectOptions.MQTT_VERSION_3_1_1);
 		connOpts.setKeepAliveInterval(MqttConnectOptions.KEEP_ALIVE_INTERVAL_DEFAULT);
 
@@ -44,6 +48,31 @@ public class MqttHelper {
 		}
 
 		return client;
+	}
+	
+	
+	public static void publishError(Exception ex, String deviceName, MqttAsyncClient client) throws MqttPersistenceException, MqttException {
+		String payload = "{exception: "+ex.getMessage()+"}";
+		MqttMessage message = new MqttMessage(payload.getBytes());
+		message.setQos(1);
+		client.publish(AnterosIOTService.ERRORS+"/"+deviceName, message);
+	}
+	
+	public static void publishBoot(String deviceName, MqttAsyncClient client) throws MqttPersistenceException, MqttException {
+		String payload = "{boot: true}";
+		MqttMessage message = new MqttMessage(payload.getBytes());
+		message.setQos(1);
+		client.publish(AnterosIOTService.BOOT+"/"+deviceName, message);
+	}
+
+
+	public static void publishHeartBeat(String deviceName, String status, Boolean controllerRunning, MqttAsyncClient client) throws MqttPersistenceException, MqttException {
+		String heartBeatTopic = AnterosIOTService.HEARTBEAT+"/deviceName";
+		String message = "{ status:" + status + ", isControllerRunning:" + controllerRunning + "}";
+		MqttMessage res = new MqttMessage(message.getBytes());
+		res.setQos(1);
+		client.publish(heartBeatTopic, res);
+		
 	}
 
 }

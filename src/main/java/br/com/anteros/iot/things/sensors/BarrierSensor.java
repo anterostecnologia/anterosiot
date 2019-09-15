@@ -1,5 +1,6 @@
 package br.com.anteros.iot.things.sensors;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
@@ -140,8 +141,14 @@ public class BarrierSensor extends PlantItem implements Sensor {
 
 	@Override
 	public String[] getActions() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
+	@Override
+	public String toString() {
+		return "BarrierSensor [pin=" + pin + ", topics=" + Arrays.toString(topics) + ", itemId=" + itemId
+				+ ", description=" + description + "]";
+	}
+
+	
 }

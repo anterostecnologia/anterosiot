@@ -18,9 +18,11 @@ import br.com.anteros.iot.things.devices.IpAddress;
 public abstract class DeviceNode extends PlantItemNode {
 
 	protected IpAddress ipAddress;
-	protected String pathError;
+	protected String topicError;
 	protected boolean publishSystemInfo;
-	protected int publishSystemInfoInterval;
+	protected Integer intervalPublishingTelemetry;
+	protected String ssid;
+	protected String password;
 
 	@JsonIdentityInfo(generator = ObjectIdGenerators.UUIDGenerator.class, property = "@id")
 	protected Set<ThingNode> things = new HashSet<>();
@@ -59,12 +61,12 @@ public abstract class DeviceNode extends PlantItemNode {
 		this.things = things;
 	}
 
-	public String getPathError() {
-		return pathError;
+	public String getTopicError() {
+		return topicError;
 	}
 
-	public void setPathError(String pathError) {
-		this.pathError = pathError;
+	public void setTopicError(String topicError) {
+		this.topicError = topicError;
 	}
 
 	public boolean isPublishSystemInfo() {
@@ -75,12 +77,29 @@ public abstract class DeviceNode extends PlantItemNode {
 		this.publishSystemInfo = publishSystemInfo;
 	}
 
-	public int getPublishSystemInfoInterval() {
-		return publishSystemInfoInterval;
+	public Integer getIntervalPublishingTelemetry() {
+		return intervalPublishingTelemetry;
 	}
 
-	public void setPublishSystemInfoInterval(int publishSystemInfoInterval) {
-		this.publishSystemInfoInterval = publishSystemInfoInterval;
+	public void setIntervalPublishingTelemetry(Integer intervalPublishingTelemetry) {
+		this.intervalPublishingTelemetry = intervalPublishingTelemetry;
 	}
+
+	public String getSsid() {
+		return ssid;
+	}
+
+	public void setSsid(String ssid) {
+		this.ssid = ssid;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
 
 }

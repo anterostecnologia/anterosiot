@@ -115,4 +115,9 @@ public class GenericRelay extends PlantItem implements Thing {
 		this.triggers = triggers;
 	}
 
+	@Override
+	public String toString() {
+		return "GenericRelay [pin=" + pin + ", itemId=" + itemId + ", description=" + description + "]";
+	}
+
 }

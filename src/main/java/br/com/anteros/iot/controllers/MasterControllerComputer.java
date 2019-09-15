@@ -8,6 +8,8 @@ import org.eclipse.paho.client.mqttv3.MqttAsyncClient;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttException;
 
+import br.com.anteros.core.log.Logger;
+import br.com.anteros.core.log.LoggerProvider;
 import br.com.anteros.core.utils.Assert;
 import br.com.anteros.iot.Actuators;
 import br.com.anteros.iot.Device;
@@ -21,9 +23,12 @@ import br.com.anteros.iot.support.MqttHelper;
 import br.com.anteros.iot.things.devices.Computer;
 import br.com.anteros.iot.things.devices.IpAddress;
 
+
 public class MasterControllerComputer extends AbstractDeviceController implements MasterDeviceController {
 
 	protected Set<DeviceController> devices = new HashSet<DeviceController>();
+	
+	private static final Logger LOG = LoggerProvider.getInstance().getLogger(MasterControllerComputer.class.getName());
 
 	protected MasterControllerComputer(Device device, Actuators actuators) {
 		super(device, actuators);
@@ -116,7 +121,7 @@ public class MasterControllerComputer extends AbstractDeviceController implement
 	}
 
 	public void connectionLost(Throwable cause) {
-		System.out.println("Connection lost on instance \"" + getThingID() + "\" with cause \"" + cause.getMessage()
+		LOG.info("Connection lost on instance \"" + getThingID() + "\" with cause \"" + cause.getMessage()
 				+ "\" Reason code " + ((MqttException) cause).getReasonCode() + "\" Cause \""
 				+ ((MqttException) cause).getCause() + "\"");
 		cause.printStackTrace();
@@ -147,7 +152,7 @@ public class MasterControllerComputer extends AbstractDeviceController implement
 
 	public void deliveryComplete(IMqttDeliveryToken token) {
 		try {
-			System.out.println(
+			LOG.info(
 					"Delivery token \"" + token.hashCode() + "\" received by instance \"" + getThingID() + "\"");
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -165,8 +170,8 @@ public class MasterControllerComputer extends AbstractDeviceController implement
 	}
 
 	@Override
-	protected Device doCreateDevice(String deviceName, IpAddress ipAddress, String description, String pathError) {
-		return Computer.of(deviceName, ipAddress, description, pathError, this);
+	protected Device doCreateDevice(String deviceName, IpAddress ipAddress, String description, String topicError, Integer intervalPublishingTelemetry) {
+		return Computer.of(deviceName, ipAddress, description, topicError, this, intervalPublishingTelemetry);
 	}
 
 	@Override

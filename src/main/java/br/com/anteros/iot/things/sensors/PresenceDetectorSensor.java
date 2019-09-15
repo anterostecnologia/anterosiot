@@ -1,5 +1,6 @@
 package br.com.anteros.iot.things.sensors;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
@@ -143,5 +144,13 @@ public class PresenceDetectorSensor extends PlantItem implements Sensor {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	@Override
+	public String toString() {
+		return "PresenceDetectorSensor [pin=" + pin + ", topics=" + Arrays.toString(topics) + ", itemId=" + itemId
+				+ ", description=" + description + "]";
+	}
+	
+	
 
 }

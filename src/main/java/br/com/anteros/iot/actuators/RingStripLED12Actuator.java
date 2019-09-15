@@ -40,6 +40,7 @@ public class RingStripLED12Actuator implements Actuator<Boolean> {
 			if (thread != null)
 				thread.interrupt();
 			thread = new Thread(new ExecuteActionRunnable((RingStripLED12) thing));
+			thread.setName("Led ring strip");
 			thread.start();
 		} else if (action.equals(OFF)) {
 			running = Running.of(false);
@@ -85,8 +86,6 @@ public class RingStripLED12Actuator implements Actuator<Boolean> {
 	
 
 	protected void rainbowColours(LedDriverInterface ledDriver) {
-		System.out.println("rainbowColours - start");
-
 		int[] colours = PixelColour.RAINBOW;
 
 		for (int i = 0; i < 250; i++) {
@@ -103,8 +102,6 @@ public class RingStripLED12Actuator implements Actuator<Boolean> {
 			}
 			PixelAnimations.delay(50);
 		}
-
-		System.out.println("rainbowColours - end");
 	}
 
 	protected void hsb(LedDriverInterface ledDriver, int animatedMiliseconds) {

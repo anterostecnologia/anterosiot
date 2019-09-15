@@ -114,4 +114,11 @@ public class BarrierGate extends PlantItem implements Thing {
 		this.triggers = triggers;
 	}
 
+	@Override
+	public String toString() {
+		return "BarrierGate [pin=" + pin + ", itemId=" + itemId + ", description=" + description + "]";
+	}
+	
+	
+
 }

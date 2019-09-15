@@ -21,10 +21,13 @@ import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.eclipse.paho.client.mqttv3.MqttPersistenceException;
 
+import br.com.anteros.core.log.Logger;
+import br.com.anteros.core.log.LoggerProvider;
 import br.com.anteros.iot.Actuators;
 import br.com.anteros.iot.Collector;
 import br.com.anteros.iot.Device;
 import br.com.anteros.iot.Thing;
+import br.com.anteros.iot.controllers.AbstractDeviceController;
 import br.com.anteros.iot.support.MqttHelper;
 import br.com.anteros.iot.things.Publishable;
 
@@ -40,11 +43,14 @@ public class SimpleCollectorManager implements CollectorManager, CollectorListen
 	private Actuators actuators;
 	protected String username;
 	protected String password;
+	
+	private static final Logger LOG = LoggerProvider.getInstance().getLogger(SimpleCollectorManager.class.getName());
 
 	protected SimpleCollectorManager(MqttAsyncClient clientMqtt, Thing[] things, Actuators actuators, Device device,
 			String username, String password) {
 		this.mqttClient = clientMqtt;
 		this.thread = new Thread(this);
+		thread.setName("Coletor de dados");
 		this.things = things;
 		this.actuators = actuators;
 		this.device = device;
@@ -85,8 +91,11 @@ public class SimpleCollectorManager implements CollectorManager, CollectorListen
 	public void run() {
 		running = true;
 		boolean first = true;
+		
+		LOG.info("Iniciando gerenciador de coletores de dados...");
 
 		if (device.hasTelemetries()) {
+			LOG.info("Adicionando coletores de telemetria...");
 			Collector collector = actuators.discoverCollectorToThing(device);
 			if (collector != null) {
 				collector.setListener(this);
@@ -95,6 +104,7 @@ public class SimpleCollectorManager implements CollectorManager, CollectorListen
 			}
 		}
 
+		LOG.info("Adicionando coletores das coisas...");
 		for (Thing thing : things) {
 			Collector collector = actuators.discoverCollectorToThing(thing);
 			if (collector != null) {
@@ -119,7 +129,7 @@ public class SimpleCollectorManager implements CollectorManager, CollectorListen
 
 		while (running) {
 			if (first) {
-				System.out.println("Coletor de dados rodando...");
+				LOG.info("Coletor de dados rodando...");
 				first = false;
 			}
 			try {
@@ -128,7 +138,7 @@ public class SimpleCollectorManager implements CollectorManager, CollectorListen
 				e.printStackTrace();
 			}
 		}
-		System.out.println("Parando coletor dados.");
+		LOG.info("Parando coletor dados...");
 		for (Collector collector : collectorsRunning) {
 			collector.stopCollect();
 		}
@@ -137,7 +147,7 @@ public class SimpleCollectorManager implements CollectorManager, CollectorListen
 			if (mqttClient.isConnected())
 				mqttClient.disconnect();
 		} catch (MqttException e) {
-			System.out.println("Ocorreu uma falha ao parar o coletor: " + e.getMessage());
+			LOG.error("Ocorreu uma falha ao parar o coletor: " + e.getMessage());
 			e.printStackTrace();
 		}
 

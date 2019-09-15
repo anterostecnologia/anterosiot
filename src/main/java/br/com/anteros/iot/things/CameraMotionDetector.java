@@ -1,5 +1,6 @@
 package br.com.anteros.iot.things;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
@@ -113,6 +114,12 @@ public class CameraMotionDetector extends PlantItem implements Thing, Publishabl
 	@Override
 	public String[] getTopicsToPublishValue(CollectResult collectedData) {
 		return topics;
+	}
+
+	@Override
+	public String toString() {
+		return "CameraMotionDetector [topics=" + Arrays.toString(topics) + ", url=" + url + ", itemId=" + itemId
+				+ ", description=" + description + "]";
 	}
 	
 }

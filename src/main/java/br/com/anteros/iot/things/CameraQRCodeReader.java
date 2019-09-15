@@ -1,5 +1,6 @@
 package br.com.anteros.iot.things;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
@@ -20,7 +21,7 @@ public class CameraQRCodeReader extends PlantItem implements Thing, Publishable 
 	protected DeviceController deviceController;
 	protected String[] topics;
 	protected Set<Trigger> triggers = new HashSet<>();
-	protected int intervalToReadSameQrCode = 3000;
+	protected int intervalToReadSameQrCode = 5000;
 
 	public int getIntervalToReadSameQrCode() {
 		return intervalToReadSameQrCode;
@@ -86,7 +87,6 @@ public class CameraQRCodeReader extends PlantItem implements Thing, Publishable 
 
 	@Override
 	public String[] getTopicsToPublishValue(CollectResult collectedData) {
-		System.out.println(ArrayUtils.toString(new String[] { this.getPath() }));
 		if (topics == null || topics.length == 0) {
 			return new String[] { this.getPath() };
 		}
@@ -112,8 +112,15 @@ public class CameraQRCodeReader extends PlantItem implements Thing, Publishable 
 
 	@Override
 	public String[] getActions() {
-		// TODO Auto-generated method stub
 		return null;
 	}
+
+	@Override
+	public String toString() {
+		return "CameraQRCodeReader [topics=" + Arrays.toString(topics) + ", intervalToReadSameQrCode="
+				+ intervalToReadSameQrCode + ", itemId=" + itemId + ", description=" + description + "]";
+	}
+	
+	
 
 }

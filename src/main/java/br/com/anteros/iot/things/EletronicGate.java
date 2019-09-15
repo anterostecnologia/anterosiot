@@ -115,4 +115,9 @@ public class EletronicGate extends PlantItem implements Thing {
 		this.triggers = triggers;
 	}
 
+	@Override
+	public String toString() {
+		return "EletronicGate [pin=" + pin + ", itemId=" + itemId + ", description=" + description + "]";
+	}
+
 }

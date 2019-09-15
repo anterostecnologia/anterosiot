@@ -1,5 +1,6 @@
 package br.com.anteros.iot.things;
 
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -100,4 +101,11 @@ public class Beacon extends PlantItem implements Thing {
 		this.triggers = triggers;
 	}
 
+	@Override
+	public String toString() {
+		return "Beacon [topics=" + Arrays.toString(topics) + ", itemId=" + itemId + ", description=" + description
+				+ "]";
+	}
+
+	
 }

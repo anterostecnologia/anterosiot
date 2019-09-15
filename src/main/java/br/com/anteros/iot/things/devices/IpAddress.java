@@ -20,4 +20,11 @@ public class IpAddress {
 		return new IpAddress(ip);
 	}
 
+	@Override
+	public String toString() {
+		return ip;
+	}
+	
+
+
 }

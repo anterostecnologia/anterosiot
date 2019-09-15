@@ -19,16 +19,18 @@ import br.com.anteros.iot.triggers.Trigger;
 public class Computer extends PlantItem implements Device {
 	
 	private IpAddress ipAddress;
-	private String pathError;
+	private String topicError;
+	private Integer intervalPublishingTelemetry;
 	
 	protected DeviceController deviceController;
 
-	private Computer(String id, IpAddress ipAddress, String description, String pathError, AbstractDeviceController controller) {
+	private Computer(String id, IpAddress ipAddress, String description, String topicError, AbstractDeviceController controller, Integer intervalPublishingTelemetry) {
 		this.itemId = id;
 		this.ipAddress = ipAddress;
 		this.description = description;
-		this.pathError = pathError == null ? "": pathError;
+		this.topicError = topicError == null ? "": topicError;
 		this.deviceController = controller;
+		this.intervalPublishingTelemetry = intervalPublishingTelemetry;
 	}
 
 	public String getThingID() {
@@ -114,19 +116,19 @@ public class Computer extends PlantItem implements Device {
 		return null;
 	}
 	
-	public String getPathError() {
-		if ("".equals(pathError)) {
+	public String getTopicError() {
+		if ("".equals(topicError)) {
 			return this.getPath() + "/error";
 		}
-		return pathError;
+		return topicError;
 	}
 
-	public static Device of(String deviceName, IpAddress ipAddress, String description, String pathError, AbstractDeviceController controller) {
-		return new Computer(deviceName, ipAddress, description, pathError, controller);
+	public static Device of(String deviceName, IpAddress ipAddress, String description, String topicError, AbstractDeviceController controller, Integer intervalPublishingTelemetry) {
+		return new Computer(deviceName, ipAddress, description, topicError, controller, intervalPublishingTelemetry);
 	}
 
-	public void setPathError(String pathError) {
-		this.pathError = pathError;
+	public void setTopicError(String topicError) {
+		this.topicError = topicError;
 	}
 
 
@@ -145,5 +147,21 @@ public class Computer extends PlantItem implements Device {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	public Integer getIntervalPublishingTelemetry() {
+		return intervalPublishingTelemetry;
+	}
+
+	public void setIntervalPublishingTelemetry(Integer intervalPublishingTelemetry) {
+		this.intervalPublishingTelemetry = intervalPublishingTelemetry;
+	}
+
+	@Override
+	public String toString() {
+		return "Computer [ipAddress=" + ipAddress + ", topicError=" + topicError + ", intervalPublishingTelemetry="
+				+ intervalPublishingTelemetry + ", itemId=" + itemId + ", description=" + description + "]";
+	}
+	
+	
 
 }

@@ -17,7 +17,6 @@ public class TicketGate extends PlantItem implements Thing {
 	protected Set<Trigger> triggers = new HashSet<>();
 
 	public TicketGate() {
-		// TODO Auto-generated constructor stub
 	}
 
 	public String getThingID() {
@@ -93,8 +92,13 @@ public class TicketGate extends PlantItem implements Thing {
 
 	@Override
 	public String[] getActions() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
+	@Override
+	public String toString() {
+		return "TicketGate [itemId=" + itemId + ", description=" + description + "]";
+	}
+
+	
 }

@@ -43,6 +43,7 @@ public class PlcColletor extends Collector implements Runnable {
 		if (thing instanceof Plc) {
 			this.running = true;
 			thread = new Thread(this);
+			thread.setName("Coletor dados CLP");
 			thread.start();
 		}
 	}

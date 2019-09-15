@@ -1,5 +1,6 @@
 package br.com.anteros.iot.things;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
@@ -88,7 +89,6 @@ public class RFIDReader extends PlantItem implements Thing, Publishable {
 
 	@Override
 	public String[] getTopicsToPublishValue(CollectResult collectedData) {
-		System.out.println(ArrayUtils.toString(new String[] { this.getPath() }));
 		if (topics == null || topics.length == 0) {
 			return new String[] { this.getPath() };
 		}
@@ -114,8 +114,14 @@ public class RFIDReader extends PlantItem implements Thing, Publishable {
 
 	@Override
 	public String[] getActions() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
+	@Override
+	public String toString() {
+		return "RFIDReader [topics=" + Arrays.toString(topics) + ", model=" + model + ", itemId=" + itemId
+				+ ", description=" + description + "]";
+	}
+
+	
 }

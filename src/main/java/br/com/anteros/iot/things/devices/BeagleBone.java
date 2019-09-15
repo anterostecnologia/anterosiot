@@ -19,6 +19,10 @@ public class BeagleBone extends PlantItem implements Device {
 	
 	private IpAddress ipAddress;
 	protected DeviceController deviceController;
+	private String topicError;
+	private Integer intervalPublishingTelemetry;
+	private String ssid;
+	private String password;
 
 	public BeagleBone(String id, IpAddress ipAddress) {
 		this.itemId = id;
@@ -109,7 +113,7 @@ public class BeagleBone extends PlantItem implements Device {
 	}
 
 	@Override
-	public String getPathError() {
+	public String getTopicError() {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -132,4 +136,40 @@ public class BeagleBone extends PlantItem implements Device {
 		return null;
 	}
 
+	public Integer getIntervalPublishingTelemetry() {
+		return intervalPublishingTelemetry;
+	}
+
+	public void setIntervalPublishingTelemetry(Integer intervalPublishingTelemetry) {
+		this.intervalPublishingTelemetry = intervalPublishingTelemetry;
+	}
+
+	public String getSsid() {
+		return ssid;
+	}
+
+	public void setSsid(String ssid) {
+		this.ssid = ssid;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
+	public void setTopicError(String topicError) {
+		this.topicError = topicError;
+	}
+
+	@Override
+	public String toString() {
+		return "BeagleBone [ipAddress=" + ipAddress + ", topicError=" + topicError + ", intervalPublishingTelemetry="
+				+ intervalPublishingTelemetry + ", ssid=" + ssid + ", password=" + password + ", itemId=" + itemId
+				+ ", description=" + description + "]";
+	}
+
+	
 }

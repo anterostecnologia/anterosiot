@@ -199,11 +199,6 @@ public class Plc extends PlantItem implements Thing {
 		this.triggers = triggers;
 	}
 
-//	@Override
-//	public String[] getTopicsToPublishValue() {
-//		return new String[] { getPath() };
-//	}
-
 	public Set<Part> getMemories() {
 		return memories;
 	}

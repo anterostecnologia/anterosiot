@@ -16,6 +16,8 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import br.com.anteros.core.log.Logger;
+import br.com.anteros.core.log.LoggerProvider;
 import br.com.anteros.iot.Action;
 import br.com.anteros.iot.Actuable;
 import br.com.anteros.iot.DefaultActuators;
@@ -43,6 +45,8 @@ import br.com.anteros.iot.triggers.Trigger;
 import br.com.anteros.iot.triggers.WhenCondition;
 
 public class AnterosIOTConfiguration {
+	
+	private static final Logger LOG = LoggerProvider.getInstance().getLogger(AnterosIOTConfiguration.class.getName());
 
 	private PlantItemNode node;
 	private File fileConfig;
@@ -98,6 +102,7 @@ public class AnterosIOTConfiguration {
 
 	public AbstractDeviceController buildDevice() throws JsonParseException, JsonMappingException, IOException {
 		
+		LOG.info("Criando device a partir da configuração...");
 		serviceListener.onBeforeBuildDeviceController();
 		
 		if (fileConfig != null) {
@@ -115,6 +120,7 @@ public class AnterosIOTConfiguration {
 
 			currentPlant = ((PlantNode) node).getInstanceOfPlant();
 
+			LOG.info("Localizando device "+deviceName+" na configuração...");
 			PlantItemNode itemNode = node.findNodeByName(deviceName);
 			if (itemNode == null) {
 				throw new DeviceControllerException("Device name " + deviceName + " não encontrado na configuração.");
@@ -130,7 +136,7 @@ public class AnterosIOTConfiguration {
 
 			String clientId = deviceName + "_controller";
 
-			System.out.println("Conectando servidor broker MQTT..." + broker);
+			LOG.info("Conectando servidor MQTT..." + broker);
 			
 			serviceListener.onConnectingMqttServer();
 
@@ -142,6 +148,7 @@ public class AnterosIOTConfiguration {
 				e1.printStackTrace();
 			}
 
+			LOG.info("Registrando atuadores...");
 			DefaultActuators defaultActuators = new DefaultActuators();
 			defaultActuators.registerActuators(actuators);
 			
@@ -154,6 +161,7 @@ public class AnterosIOTConfiguration {
 					defaultActuators, serviceListener, username, password);
 
 			if (deviceResult instanceof MasterDeviceController) {
+				LOG.info("Device criado é um MASTER...");
 				List<PlantItemNode> slaves = new ArrayList<>();
 				node.findNodesByType(DeviceSlaveNode.class, slaves);
 
@@ -203,6 +211,7 @@ public class AnterosIOTConfiguration {
 
 			for (ThingNode thingNode : deviceNode.getThings()) {
 				Thing thing = thingNode.getInstanceOfThing();
+				LOG.info("Criando coisa "+thing);
 				deviceResult.addThings(thing);
 				if (!(thing instanceof PlantItem)) {
 					throw new DeviceControllerException(
@@ -212,12 +221,13 @@ public class AnterosIOTConfiguration {
 				place.addItems((PlantItem) thing);
 			}
 
+			LOG.info("Criando triggers...");
 			for (ThingNode thingNode : deviceNode.getThings()) {
 				Thing sourceThing = deviceResult.getThingById(thingNode.getItemName());
 				if (thingNode.getTriggers() != null && !thingNode.getTriggers().isEmpty()) {
 
 					for (TriggerNode triggerNode : thingNode.getTriggers()) {
-
+						LOG.info("Criando trigger para a coisa "+thingNode.getItemName()+" "+thingNode.getDescription());
 						// Source action - que disparou a trigger
 						Thing sourceActionThing = deviceResult
 								.getThingById(triggerNode.getWhenConditionNode().getThing().getItemName());
@@ -230,6 +240,7 @@ public class AnterosIOTConfiguration {
 						WhenCondition whenCondition = WhenCondition.of(sourceActionThing, sourceActionPart,
 								triggerNode.getWhenConditionNode().getActionOrValue());
 
+						LOG.info("Criando ações da trigger...");
 						// Target actions - ações a serem despachadas
 						Set<Action> targetActions = new HashSet<>();
 						for (ActionNode targetActionNode : triggerNode.getTargetActions()) {
@@ -246,7 +257,7 @@ public class AnterosIOTConfiguration {
 											targetActionNode.getMessage(), targetActionNode.getTopics()));
 
 						}
-
+						LOG.info("Criando ações exceção da trigger...");
 						// Ação de exceção
 						List<Action> exceptionActions = new ArrayList<>();
 						if (triggerNode.getExceptionActions() != null) {

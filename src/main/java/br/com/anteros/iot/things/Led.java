@@ -115,4 +115,9 @@ public class Led extends PlantItem implements Thing {
 		this.triggers = triggers;
 	}
 
+	@Override
+	public String toString() {
+		return "Led [pin=" + pin + ", itemId=" + itemId + ", description=" + description + "]";
+	}
+
 }

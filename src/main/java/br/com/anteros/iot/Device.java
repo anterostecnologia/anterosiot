@@ -9,7 +9,7 @@ public interface Device extends Thing {
 	
 	public Device setIpAddress(IpAddress ipAddress);
 	
-	public String getPathError();
+	public String getTopicError();
 	
 	public TelemetryStrategy[] getTelemetries();
 

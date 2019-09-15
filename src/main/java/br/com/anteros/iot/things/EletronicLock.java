@@ -116,5 +116,10 @@ public class EletronicLock extends PlantItem implements Thing {
 	public void setTriggers(Set<Trigger> triggers) {
 		this.triggers = triggers;
 	}
+
+	@Override
+	public String toString() {
+		return "EletronicLock [pin=" + pin + ", itemId=" + itemId + ", description=" + description + "]";
+	}
 	
 }

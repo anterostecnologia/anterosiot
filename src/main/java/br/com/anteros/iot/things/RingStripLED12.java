@@ -184,4 +184,13 @@ public class RingStripLED12 extends PlantItem implements Thing {
 		this.numPixels = numPixels;
 	}
 
+	@Override
+	public String toString() {
+		return "RingStripLED12 [pin=" + pin + ", ledType=" + ledType + ", animateMiliseconds=" + animateMiliseconds
+				+ ", color=" + color + ", brightness=" + brightness + ", numPixels=" + numPixels + ", itemId=" + itemId
+				+ ", description=" + description + "]";
+	}
+	
+	
+
 }

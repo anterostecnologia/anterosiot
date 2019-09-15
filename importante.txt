@@ -1,0 +1,3 @@
+Como compilar OPENCV
+
+	https://blogs.wcode.org/2014/10/howto-install-build-and-use-opencv-macosx-10-10/
