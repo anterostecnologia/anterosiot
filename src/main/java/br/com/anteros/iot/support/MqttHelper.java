@@ -1,6 +1,7 @@
 package br.com.anteros.iot.support;
 
 import org.eclipse.paho.client.mqttv3.MqttAsyncClient;
+import org.eclipse.paho.client.mqttv3.MqttCallback;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
@@ -26,6 +27,36 @@ public class MqttHelper {
 		MemoryPersistence memoryPersistence = new MemoryPersistence();
 		client = new MqttAsyncClient(uri, name, memoryPersistence);
 		
+		MqttConnectOptions connOpts = new MqttConnectOptions();		
+
+		if (!StringUtils.isBlank(userName) && !StringUtils.isBlank(password)) {
+			connOpts.setUserName(userName);
+			connOpts.setPassword(password.toCharArray());
+		}
+		connOpts.setAutomaticReconnect(automaticReconnect);
+		connOpts.setCleanSession(cleanSession);	
+		connOpts.setConnectionTimeout(20);
+		connOpts.setMaxInflight(1000);
+		connOpts.setMqttVersion(MqttConnectOptions.MQTT_VERSION_3_1_1);
+		connOpts.setKeepAliveInterval(MqttConnectOptions.KEEP_ALIVE_INTERVAL_DEFAULT);
+
+		client.connect(connOpts);
+
+
+		return client;
+	}
+	
+	public static MqttAsyncClient createAndConnectMqttClient(String uri, String name, String userName, String password,
+			boolean automaticReconnect, boolean cleanSession, MqttCallback callback) throws MqttSecurityException, MqttException {
+		MqttAsyncClient client = null;
+
+		if (StringUtils.isBlank(name)) {
+			name = MqttAsyncClient.generateClientId();
+		}
+
+		MemoryPersistence memoryPersistence = new MemoryPersistence();
+		client = new MqttAsyncClient(uri, name, memoryPersistence);
+		
 		MqttConnectOptions connOpts = new MqttConnectOptions();
 		
 		
@@ -38,14 +69,12 @@ public class MqttHelper {
 		connOpts.setAutomaticReconnect(automaticReconnect);
 		connOpts.setCleanSession(cleanSession);	
 		connOpts.setConnectionTimeout(20);
+		connOpts.setMaxInflight(1000);
 		connOpts.setMqttVersion(MqttConnectOptions.MQTT_VERSION_3_1_1);
 		connOpts.setKeepAliveInterval(MqttConnectOptions.KEEP_ALIVE_INTERVAL_DEFAULT);
 
+		client.setCallback(callback);
 		client.connect(connOpts);
-		
-		while (!client.isConnected()) {
-			SleepUtil.sleepMillis(2000);
-		}
 
 		return client;
 	}

@@ -118,10 +118,10 @@ public class MasterControllerRPi extends AbstractDeviceController implements Mas
 	}
 
 	public void connectionLost(Throwable cause) {
-		LOG.info("Connection lost on instance \"" + getThingID() + "\" with cause \"" + cause.getMessage()
-				+ "\" Reason code " + ((MqttException) cause).getReasonCode() + "\" Cause \""
-				+ ((MqttException) cause).getCause() + "\"");
-		cause.printStackTrace();
+		try {
+			this.clientMqtt.reconnect();
+		} catch (MqttException e) {
+		}
 	}	
 
 	public void deliveryComplete(IMqttDeliveryToken token) {

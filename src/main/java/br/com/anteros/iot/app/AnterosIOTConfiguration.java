@@ -285,11 +285,7 @@ public class AnterosIOTConfiguration {
 			}
 
 			
-			/**
-			 * Ouvindo mensagens MQTT para todas as coisas sendo contraladas e mais o
-			 * próprio contralador
-			 */
-			deviceResult.autoSubscribe();
+			
 		}
 
 		serviceListener.onAfterBuildDeviceController();

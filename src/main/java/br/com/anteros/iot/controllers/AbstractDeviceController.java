@@ -18,6 +18,7 @@ import javax.json.JsonReader;
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.MqttAsyncClient;
 import org.eclipse.paho.client.mqttv3.MqttCallback;
+import org.eclipse.paho.client.mqttv3.MqttCallbackExtended;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
@@ -46,7 +47,7 @@ import br.com.anteros.iot.plant.Plant;
 import br.com.anteros.iot.plant.PlantItem;
 import br.com.anteros.iot.things.devices.IpAddress;
 
-public abstract class AbstractDeviceController implements DeviceController, MqttCallback, Runnable {
+public abstract class AbstractDeviceController implements DeviceController, MqttCallback, MqttCallbackExtended, Runnable {
 
 	protected Device device;
 	protected Set<Thing> things = new HashSet<Thing>();
@@ -60,6 +61,8 @@ public abstract class AbstractDeviceController implements DeviceController, Mqtt
 	protected Actuators actuators;
 	protected AnterosIOTServiceListener serviceListener;
 	protected Map<String, Thing> subscribedTopics = new HashMap<>();
+	
+	protected boolean sendMsgServiceStarted = false;
 	
 	private static final Logger LOG = LoggerProvider.getInstance().getLogger(AbstractDeviceController.class.getName());
 
@@ -136,6 +139,7 @@ public abstract class AbstractDeviceController implements DeviceController, Mqtt
 	}
 
 	public void stop() {
+		this.sendMsgServiceStarted = false;
 		if (running) {
 			this.beforeStop();
 			this.running = false;
@@ -206,6 +210,7 @@ public abstract class AbstractDeviceController implements DeviceController, Mqtt
 
 	public void run() {
 		this.running = true;
+		this.sendMsgServiceStarted = true;
 		LOG.info("Iniciando device controller " + this.getThingID());
 		
 		serviceListener.onStartCollectors(this);
@@ -216,6 +221,15 @@ public abstract class AbstractDeviceController implements DeviceController, Mqtt
 		collectorManager.start();
 
 		boolean first = true;
+		
+		try {
+			Thread.sleep(2000);
+		} catch (InterruptedException e1) {
+
+		}
+		notifyService();		
+		
+		
 		while (running) {
 			if (first) {
 				LOG.info("Device controller " + this.getThingID() + " rodando...");
@@ -262,7 +276,13 @@ public abstract class AbstractDeviceController implements DeviceController, Mqtt
 		}
 	}
 
-	public abstract void connectionLost(Throwable cause);
+	public void connectionLost(Throwable cause) {
+		try {
+			this.clientMqtt.reconnect();
+		} catch (MqttException e) {
+			e.printStackTrace();
+		}
+	}
 
 	public void messageArrived(String topic, MqttMessage message) throws Exception {
 
@@ -415,7 +435,9 @@ public abstract class AbstractDeviceController implements DeviceController, Mqtt
 		try {
 			LOG.info("Removendo subscrição nos tópicos: ");
 			LOG.info(Arrays.toString(filter.toArray(new String[] {})));
-			this.clientMqtt.unsubscribe(filter.toArray(new String[] {}));
+			if (this.clientMqtt.isConnected()) {
+				this.clientMqtt.unsubscribe(filter.toArray(new String[] {}));
+			}
 		} catch (MqttException e) {
 			e.printStackTrace();
 		}
@@ -509,6 +531,39 @@ public abstract class AbstractDeviceController implements DeviceController, Mqtt
 
 	public String getPassword() {
 		return password;
+	}
+
+	@Override
+	public void connectComplete(boolean reconnect, String serverURI) {
+		/**
+		 * Ouvindo mensagens MQTT para todas as coisas sendo contraladas e mais o
+		 * próprio controlador
+		 */
+		this.autoSubscribe();	
+		
+		notifyService();
+	}
+
+	private void notifyService() {
+		if (!this.clientMqtt.isConnected()) {
+			try {
+				this.clientMqtt.reconnect();
+			} catch (MqttException e) {
+			}
+		}
+		if (this.sendMsgServiceStarted && this.clientMqtt.isConnected()) {	
+			LOG.info("Enviando notificação sobre serviço iniciado.");
+			String msg = "{\"status\":\"running\", \"message\": \"Serviço iniciado com sucesso!\"}";
+			MqttMessage message = new MqttMessage(msg.getBytes());
+			try {
+				sendMsgServiceStarted = false;
+				this.clientMqtt.publish("/"+this.getDevice().getThingID()+"/notify",message);				
+			} catch (MqttPersistenceException e1) {
+				e1.printStackTrace();
+			} catch (MqttException e1) {
+				e1.printStackTrace();
+			}
+		}
 	}
 
 }
