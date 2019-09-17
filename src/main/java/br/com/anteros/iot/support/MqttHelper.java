@@ -96,7 +96,7 @@ public class MqttHelper {
 
 
 	public static void publishHeartBeat(String deviceName, String status, Boolean controllerRunning, MqttAsyncClient client) throws MqttPersistenceException, MqttException {
-		String heartBeatTopic = AnterosIOTService.HEARTBEAT+"/deviceName";
+		String heartBeatTopic = AnterosIOTService.HEARTBEAT+"/"+deviceName;
 		String message = "{ status:" + status + ", isControllerRunning:" + controllerRunning + "}";
 		MqttMessage res = new MqttMessage(message.getBytes());
 		res.setQos(1);
