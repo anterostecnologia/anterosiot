@@ -2,7 +2,7 @@ package br.com.anteros.iot.actuators.collectors;
 
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
-import org.opencv.video.BackgroundSubtractorMOG2;
+
 import org.opencv.videoio.VideoCapture;
 
 import com.diozero.util.SleepUtil;

@@ -98,9 +98,9 @@ public class CameraQRCodeCollector extends Collector implements Runnable {
 
 		VideoCapture webcam = new VideoCapture(0);
 
-		webcam.set(Videoio.CV_CAP_PROP_FRAME_WIDTH, 800);
-		webcam.set(Videoio.CV_CAP_PROP_FRAME_HEIGHT, 480);
-		webcam.set(Videoio.CV_CAP_PROP_MONOCHROME, 1);
+		webcam.set(Videoio.CAP_PROP_FRAME_WIDTH, 800);
+		webcam.set(Videoio.CAP_PROP_FRAME_HEIGHT, 480);
+		webcam.set(Videoio.CAP_PROP_MONOCHROME, 1);
 		// Tamanho do display LCD
 		int largura = 800;
 		int altura = 480;
@@ -126,7 +126,7 @@ public class CameraQRCodeCollector extends Collector implements Runnable {
 //		frame1.add(textArea);
 		frame1.setVisible(true);
 
-		my_panel.addKeyListener(new KeyListener() {
+		frame1.addKeyListener(new KeyListener() {
 
 			@Override
 			public void keyTyped(KeyEvent e) {
@@ -138,7 +138,7 @@ public class CameraQRCodeCollector extends Collector implements Runnable {
 
 			@Override
 			public void keyReleased(KeyEvent e) {
-				// TODO Auto-generated method stub
+				
 
 			}
 
@@ -152,7 +152,7 @@ public class CameraQRCodeCollector extends Collector implements Runnable {
 		});
 
 		long startTime = System.currentTimeMillis();
-		running = true;
+		//running = true;
 
 		try {
 			Thread.sleep(3000);
@@ -181,7 +181,7 @@ public class CameraQRCodeCollector extends Collector implements Runnable {
 
 							if (difference >= ((CameraQRCodeReader) thing).getIntervalToReadSameQrCode()){
 								lastValue = result.getText();
-								textArea.setText(lastValue);
+//								textArea.setText(lastValue);
 								LOG.info(new Date() + "  " + lastValue);
 							    listener.onCollect(new SimpleResult(lastValue), thing);
 								startTime = System.currentTimeMillis();
@@ -209,7 +209,7 @@ public class CameraQRCodeCollector extends Collector implements Runnable {
 			}
 
 		}
-
+		Thread.interrupted();
 	}
 
 	public static BufferedImage matToBufferedImage(Mat mat) {

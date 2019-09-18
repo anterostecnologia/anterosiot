@@ -104,7 +104,7 @@
 			<groupId>org.rxtx</groupId>
 			<artifactId>rxtx</artifactId>
 			<version>2.1.7</version>
-		</dependency>		
+		</dependency>
 		<dependency>
 			<groupId>commons-io</groupId>
 			<artifactId>commons-io</artifactId>
@@ -128,9 +128,9 @@
 		<dependency>
 			<groupId>org.opencv</groupId>
 			<artifactId>opencv</artifactId>
-			<version>3.4.3</version>
+			<version>4.1.1</version>
 			<scope>system</scope>
-			<systemPath>${project.basedir}/opencv/opencv-343.jar</systemPath>
+			<systemPath>${project.basedir}/opencv/opencv-411.jar</systemPath>
 		</dependency>
 		<dependency>
 			<groupId>com.diozero</groupId>
@@ -172,6 +172,77 @@
 	</repositories>
 
 	<profiles>
+		<profile>
+			<id>local</id>
+			<build>
+				<pluginManagement>
+					<plugins>
+						<plugin>
+							<groupId>org.apache.maven.plugins</groupId>
+							<artifactId>maven-compiler-plugin</artifactId>
+							<configuration>
+								<target>${java.version}</target>
+								<source>${java.version}</source>
+								<compilerArgument>-proc:none</compilerArgument>
+							</configuration>
+						</plugin>
+						<plugin>
+							<groupId>org.apache.maven.plugins</groupId>
+							<artifactId>maven-dependency-plugin</artifactId>
+							<executions>
+								<execution>
+									<id>copy-dependencies</id>
+									<phase>prepare-package</phase>
+									<goals>
+										<goal>copy-dependencies</goal>
+									</goals>
+									<configuration>
+										<outputDirectory>${project.build.directory}/lib</outputDirectory>
+										<overWriteReleases>false</overWriteReleases>
+										<overWriteSnapshots>false</overWriteSnapshots>
+										<overWriteIfNewer>true</overWriteIfNewer>
+									</configuration>
+								</execution>
+							</executions>
+						</plugin>
+						<plugin>
+							<groupId>org.apache.maven.plugins</groupId>
+							<artifactId>maven-jar-plugin</artifactId>
+							<configuration>
+								<archive>
+									<manifest>
+										<addClasspath>true</addClasspath>
+										<classpathPrefix>lib/</classpathPrefix>
+										<mainClass>br.com.anteros.iot.actuators.collectors.CameraQRCodeCollector</mainClass>
+									</manifest>
+								</archive>
+							</configuration>
+						</plugin>
+					</plugins>
+				</pluginManagement>
+			</build>
+
+			<distributionManagement>
+				<repository>
+					<id>nexus-releases</id>
+					<name>Nexus Release Repository</name>
+					<url>http://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+				</repository>
+			</distributionManagement>
+
+			<repositories>
+				<repository>
+					<id>bintray</id>
+					<url>http://dl.bintray.com/${bintray.subject}/${bintray.repo}</url>
+					<releases>
+						<enabled>true</enabled>
+					</releases>
+					<snapshots>
+						<enabled>false</enabled>
+					</snapshots>
+				</repository>
+			</repositories>
+		</profile>
 		<profile>
 			<id>maven-central</id>
 			<build>
@@ -280,11 +351,12 @@
 									<manifest>
 										<addClasspath>true</addClasspath>
 										<classpathPrefix>lib/</classpathPrefix>
-										<mainClass>br.com.anteros.iot.things.test.TestBLE</mainClass>
+										<mainClass>br.com.anteros.iot.actuators.collectors.CameraQRCodeCollector</mainClass>
 									</manifest>
 								</archive>
 							</configuration>
 						</plugin>
+
 					</plugins>
 				</pluginManagement>
 			</build>
@@ -379,7 +451,7 @@
 									<manifest>
 										<addClasspath>true</addClasspath>
 										<classpathPrefix>lib/</classpathPrefix>
-										<mainClass>br.com.anteros.iot.things.test.rf.Main</mainClass>
+										<mainClass>br.com.anteros.iot.actuators.collectors.CameraQRCodeCollector</mainClass>
 									</manifest>
 								</archive>
 							</configuration>
