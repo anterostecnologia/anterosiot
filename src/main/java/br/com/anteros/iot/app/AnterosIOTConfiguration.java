@@ -114,8 +114,7 @@ public class AnterosIOTConfiguration {
 		AbstractDeviceController deviceResult = null;
 		if (node != null) {
 			if (!(node instanceof PlantNode)) {
-				throw new DeviceControllerException("O nó inicial da árvore de configuração deve ser  name "
-						+ deviceName + " não encontrado na configuração.");
+				throw new DeviceControllerException("O nó inicial da árvore de configuração deve ser um Local.");
 			}
 
 			currentPlant = ((PlantNode) node).getInstanceOfPlant();

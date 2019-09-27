@@ -3,12 +3,13 @@ package br.com.anteros.iot.domain.things;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 
 import br.com.anteros.iot.Thing;
+import br.com.anteros.iot.domain.Configurable;
 import br.com.anteros.iot.domain.DomainConstants;
 import br.com.anteros.iot.domain.ThingNode;
 import br.com.anteros.iot.things.RFIDReader;
 
 @JsonTypeName(DomainConstants.RFID_NODE)
-public class RFIDReaderNode extends ThingNode {
+public class RFIDReaderNode extends ThingNode implements Configurable {
 	
 	protected String[] topics;
 	protected RFIDModel model;

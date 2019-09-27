@@ -84,19 +84,19 @@ public class MqttHelper {
 		String payload = "{exception: "+ex.getMessage()+"}";
 		MqttMessage message = new MqttMessage(payload.getBytes());
 		message.setQos(1);
-		client.publish(AnterosIOTService.ERRORS+"/"+deviceName, message);
+		client.publish(AnterosIOTService.ERRORS_TOPIC+"/"+deviceName, message);
 	}
 	
 	public static void publishBoot(String deviceName, MqttAsyncClient client) throws MqttPersistenceException, MqttException {
 		String payload = "{boot: true}";
 		MqttMessage message = new MqttMessage(payload.getBytes());
 		message.setQos(1);
-		client.publish(AnterosIOTService.BOOT+"/"+deviceName, message);
+		client.publish(AnterosIOTService.BOOT_TOPIC+"/"+deviceName, message);
 	}
 
 
 	public static void publishHeartBeat(String deviceName, String status, Boolean controllerRunning, MqttAsyncClient client) throws MqttPersistenceException, MqttException {
-		String heartBeatTopic = AnterosIOTService.HEARTBEAT+"/"+deviceName;
+		String heartBeatTopic = AnterosIOTService.HEARTBEAT_TOPIC+"/"+deviceName;
 		String message = "{ status:" + status + ", isControllerRunning:" + controllerRunning + "}";
 		MqttMessage res = new MqttMessage(message.getBytes());
 		res.setQos(1);

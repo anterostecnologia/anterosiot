@@ -8,7 +8,7 @@ import br.com.anteros.iot.domain.ThingNode;
 import br.com.anteros.iot.things.CameraQRCodeReader;
 
 @JsonTypeName(DomainConstants.CAMERA_QR_CODE)
-public class CameraQRCodeReaderNode extends ThingNode {
+public class CameraQRCodeReaderNode extends ThingNode  {
 	
 	protected String[] topics;
 	protected int intervalToReadSameQrCode = 3000;

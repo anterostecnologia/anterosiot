@@ -15,7 +15,7 @@ import br.com.anteros.iot.controllers.AbstractDeviceController;
 import br.com.anteros.iot.plant.Plant;
 import br.com.anteros.iot.things.devices.IpAddress;
 
-public abstract class DeviceNode extends PlantItemNode {
+public abstract class DeviceNode extends PlantItemNode implements Configurable {
 
 	protected IpAddress ipAddress;
 	protected String topicError;
