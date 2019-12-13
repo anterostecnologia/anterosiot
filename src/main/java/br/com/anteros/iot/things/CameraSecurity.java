@@ -14,6 +14,7 @@ import br.com.anteros.iot.triggers.Trigger;
 public class CameraSecurity extends PlantItem implements Thing {
 
 	protected DeviceController deviceController;
+	protected boolean needsPropagation;
 	protected Set<Trigger> triggers = new HashSet<>();
 
 	public CameraSecurity() {
@@ -99,6 +100,11 @@ public class CameraSecurity extends PlantItem implements Thing {
 	@Override
 	public String toString() {
 		return "CameraSecurity [itemId=" + itemId + ", description=" + description + "]";
+	}
+	
+	@Override
+	public boolean needsPropagation() {
+		return needsPropagation ? true : false;
 	}
 
 }

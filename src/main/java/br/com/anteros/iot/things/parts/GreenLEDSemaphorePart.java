@@ -20,6 +20,7 @@ public class GreenLEDSemaphorePart extends PlantItem implements Part, LedSemapho
 	protected int pin;
 	protected String thingId;
 	protected DeviceController deviceController;
+	protected boolean needsPropagation;
 	protected Set<Trigger> triggers = new HashSet<>();
 
 	private GreenLEDSemaphorePart(String id, Semaphore owner, int pin) {
@@ -129,6 +130,11 @@ public class GreenLEDSemaphorePart extends PlantItem implements Part, LedSemapho
 	public String[] getActions() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+	
+	@Override
+	public boolean needsPropagation() {
+		return needsPropagation ? true : false;
 	}
 	
 }

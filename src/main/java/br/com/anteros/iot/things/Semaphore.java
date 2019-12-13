@@ -21,6 +21,7 @@ import br.com.anteros.iot.triggers.Trigger;
 public class Semaphore extends PlantItem implements Thing {
 
 	protected DeviceController deviceController;
+	protected boolean needsPropagation;
 	protected Set<Part> leds = new LinkedHashSet<Part>();
 	protected Set<Trigger> triggers = new HashSet<>();
 
@@ -137,7 +138,9 @@ public class Semaphore extends PlantItem implements Thing {
 	public String toString() {
 		return "Semaphore [leds=" + leds + ", itemId=" + itemId + ", description=" + description + "]";
 	}
-	
-	
 
+	@Override
+	public boolean needsPropagation() {
+		return needsPropagation ? true : false;
+	}
 }

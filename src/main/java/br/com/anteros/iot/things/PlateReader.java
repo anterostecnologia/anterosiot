@@ -15,6 +15,7 @@ import br.com.anteros.iot.triggers.Trigger;
 public class PlateReader extends PlantItem implements Thing {
 	
 	protected DeviceController deviceController;
+	protected boolean needsPropagation;
 	protected Set<Trigger> triggers = new HashSet<>();
 
 	public PlateReader() {
@@ -111,4 +112,8 @@ public class PlateReader extends PlantItem implements Thing {
 		return "PlateReader [itemId=" + itemId + ", description=" + description + "]";
 	}
 
+	@Override
+	public boolean needsPropagation() {
+		return needsPropagation ? true : false;
+	}
 }

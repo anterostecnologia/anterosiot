@@ -15,6 +15,7 @@ import br.com.anteros.iot.triggers.Trigger;
 public class BarrierGate extends PlantItem implements Thing {
 	
 	protected DeviceController deviceController;
+	protected boolean needsPropagation;
 	protected Set<Trigger> triggers = new HashSet<>();
 	protected int pin;
 
@@ -117,6 +118,11 @@ public class BarrierGate extends PlantItem implements Thing {
 	@Override
 	public String toString() {
 		return "BarrierGate [pin=" + pin + ", itemId=" + itemId + ", description=" + description + "]";
+	}
+	
+	@Override
+	public boolean needsPropagation() {
+		return needsPropagation ? true : false;
 	}
 	
 	

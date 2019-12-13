@@ -25,6 +25,7 @@ public class TemperatureSensorOneWire extends PlantItem implements Sensor {
 	protected String[] topics;
 	protected TemperatureScale scale;
 	protected DeviceController deviceController;
+	protected boolean needsPropagation;
 	protected Set<Trigger> triggers = new HashSet<>();
 
 	protected TemperatureSensorOneWire(String id, String sensorId, String[] topics,
@@ -141,5 +142,9 @@ public class TemperatureSensorOneWire extends PlantItem implements Sensor {
 		return null;
 	}
 	
+	@Override
+	public boolean needsPropagation() {
+		return needsPropagation ? true : false;
+	}
 	
 }

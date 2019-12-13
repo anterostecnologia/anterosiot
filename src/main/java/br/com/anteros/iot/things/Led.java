@@ -15,6 +15,7 @@ import br.com.anteros.iot.triggers.Trigger;
 public class Led extends PlantItem implements Thing {
 	
 	protected DeviceController deviceController;
+	protected boolean needsPropagation;
 	protected Set<Trigger> triggers = new HashSet<>();
 	protected int pin;
 
@@ -118,6 +119,11 @@ public class Led extends PlantItem implements Thing {
 	@Override
 	public String toString() {
 		return "Led [pin=" + pin + ", itemId=" + itemId + ", description=" + description + "]";
+	}
+	
+	@Override
+	public boolean needsPropagation() {
+		return needsPropagation ? true : false;
 	}
 
 }

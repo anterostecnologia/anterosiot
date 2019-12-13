@@ -19,6 +19,7 @@ public class BeagleBone extends PlantItem implements Device {
 	
 	private IpAddress ipAddress;
 	protected DeviceController deviceController;
+	protected boolean needsPropagation;
 	private String topicError;
 	private Integer intervalPublishingTelemetry;
 	private String ssid;
@@ -170,6 +171,10 @@ public class BeagleBone extends PlantItem implements Device {
 				+ intervalPublishingTelemetry + ", ssid=" + ssid + ", password=" + password + ", itemId=" + itemId
 				+ ", description=" + description + "]";
 	}
-
 	
+	@Override
+	public boolean needsPropagation() {
+		return needsPropagation ? true : false;
+	}
+
 }

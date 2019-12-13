@@ -19,6 +19,8 @@ public interface Thing {
 	public Set<Part> getParts();
 
 	public boolean hasParts();
+	
+	public boolean needsPropagation();
 
 	public Thing addPart(Part part);
 

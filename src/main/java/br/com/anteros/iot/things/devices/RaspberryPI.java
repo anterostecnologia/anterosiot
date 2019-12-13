@@ -40,6 +40,7 @@ public class RaspberryPI extends PlantItem implements Device, Publishable   {
 	private String ssid;
 	private String password;
 	private DeviceController deviceController;
+	private boolean needsPropagation;
 	private TelemetryConfiguration telemetryConfiguration = TelemetryConfiguration.of(this);
 	
 		
@@ -222,7 +223,9 @@ public class RaspberryPI extends PlantItem implements Device, Publishable   {
 				+ ", description=" + description + "]";
 	}
 
-	
-	
+	@Override
+	public boolean needsPropagation() {
+		return needsPropagation ? true : false;
+	}
 
 }

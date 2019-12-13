@@ -38,6 +38,7 @@ public class RaspberryPIZero extends PlantItem implements Device, Publishable  {
 	private Integer intervalPublishingTelemetry;
 	
 	protected DeviceController deviceController;
+	protected boolean needsPropagation;
 	
 	private TelemetryConfiguration telemetryConfiguration = TelemetryConfiguration.of(this);
 
@@ -218,7 +219,9 @@ public class RaspberryPIZero extends PlantItem implements Device, Publishable  {
 				+ ", itemId=" + itemId + ", description=" + description + "]";
 	}
 
-	
-	
+	@Override
+	public boolean needsPropagation() {
+		return needsPropagation ? true : false;
+	}	
 
 }

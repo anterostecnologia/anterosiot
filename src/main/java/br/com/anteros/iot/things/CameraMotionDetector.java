@@ -18,6 +18,7 @@ import br.com.anteros.iot.triggers.Trigger;
 public class CameraMotionDetector extends PlantItem implements Thing, Publishable {
 
 	protected DeviceController deviceController;
+	protected boolean needsPropagation;
 	protected Set<Trigger> triggers = new HashSet<>();	
 
 	protected String[] topics;
@@ -120,6 +121,11 @@ public class CameraMotionDetector extends PlantItem implements Thing, Publishabl
 	public String toString() {
 		return "CameraMotionDetector [topics=" + Arrays.toString(topics) + ", url=" + url + ", itemId=" + itemId
 				+ ", description=" + description + "]";
+	}
+	
+	@Override
+	public boolean needsPropagation() {
+		return needsPropagation ? true : false;
 	}
 	
 }

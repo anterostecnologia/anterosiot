@@ -21,8 +21,11 @@ public class RFIDReader extends PlantItem implements Thing, Publishable {
 
 	protected DeviceController deviceController;
 
+	protected boolean needsPropagation;
+	
 	protected String[] topics;
 	protected RFIDModel model;
+	protected int sspin;
 	protected Set<Trigger> triggers = new HashSet<>();
 
 	public RFIDReader(PlantItemNode node) {
@@ -123,5 +126,17 @@ public class RFIDReader extends PlantItem implements Thing, Publishable {
 				+ ", description=" + description + "]";
 	}
 
+	@Override
+	public boolean needsPropagation() {
+		return needsPropagation ? true : false;
+	}
+
+	public int getSspin() {
+		return sspin;
+	}
+
+	public void setSspin(int sspin) {
+		this.sspin = sspin;
+	}
 	
 }

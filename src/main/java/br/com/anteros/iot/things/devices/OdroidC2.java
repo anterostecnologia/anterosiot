@@ -19,6 +19,7 @@ public class OdroidC2 extends PlantItem implements Device {
 	
 	private IpAddress ipAddress;
 	protected DeviceController deviceController;
+	protected boolean needsPropagation;
 	private String topicError;
 	private Integer intervalPublishingTelemetry;
 	private String ssid;
@@ -171,5 +172,9 @@ public class OdroidC2 extends PlantItem implements Device {
 				+ ", description=" + description + "]";
 	}
 
+	@Override
+	public boolean needsPropagation() {
+		return needsPropagation ? true : false;
+	}
 	
 }

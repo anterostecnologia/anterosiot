@@ -16,6 +16,7 @@ import br.com.anteros.iot.triggers.Trigger;
 public class LampSonoff extends PlantItem implements Thing {
 
 	protected DeviceController deviceController;
+	protected boolean needsPropagation;
 	protected String topic;
 	protected Set<Trigger> triggers = new HashSet<>();
 
@@ -110,4 +111,8 @@ public class LampSonoff extends PlantItem implements Thing {
 		return "LampSonoff [topic=" + topic + ", itemId=" + itemId + ", description=" + description + "]";
 	}
 
+	@Override
+	public boolean needsPropagation() {
+		return needsPropagation ? true : false;
+	}
 }

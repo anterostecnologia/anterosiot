@@ -19,6 +19,7 @@ public class YellowLEDSemaphorePart extends PlantItem implements Part, LedSemaph
 	protected String thingId;
 	protected int pin;
 	protected DeviceController deviceController;
+	protected boolean needsPropagation;
 	protected Set<Trigger> triggers = new HashSet<>();
 
 	private YellowLEDSemaphorePart(String id, Semaphore owner, int pin) {
@@ -110,6 +111,11 @@ public class YellowLEDSemaphorePart extends PlantItem implements Part, LedSemaph
 	public String[] getActions() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+	
+	@Override
+	public boolean needsPropagation() {
+		return needsPropagation ? true : false;
 	}
 
 }

@@ -24,6 +24,8 @@ public class AsusTinkerBoard extends PlantItem implements Device {
 	private String password;
 	
 	protected DeviceController deviceController;
+	
+	protected boolean needsPropagation;
 
 	public AsusTinkerBoard(String id, IpAddress ipAddress) {
 		this.itemId = id;
@@ -172,6 +174,9 @@ public class AsusTinkerBoard extends PlantItem implements Device {
 				+ password + ", itemId=" + itemId + ", description=" + description + "]";
 	}
 	
-	
+	@Override
+	public boolean needsPropagation() {
+		return needsPropagation ? true : false;
+	}	
 
 }

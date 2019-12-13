@@ -14,6 +14,7 @@ import br.com.anteros.iot.triggers.Trigger;
 public class CameraALPR extends PlantItem implements Thing {
 	
 	protected DeviceController deviceController;
+	protected boolean needsPropagation;
 	protected Set<Trigger> triggers = new HashSet<>();
 	
 	public CameraALPR() {
@@ -102,4 +103,8 @@ public class CameraALPR extends PlantItem implements Thing {
 		return "CameraALPR [itemId=" + itemId + ", description=" + description + "]";
 	}	
 	
+	@Override
+	public boolean needsPropagation() {
+		return needsPropagation ? true : false;
+	}
 }

@@ -16,6 +16,7 @@ import br.com.anteros.iot.triggers.Trigger;
 public class MagneticLock extends PlantItem implements Thing {
 
 	protected DeviceController deviceController;
+	protected boolean needsPropagation;
 	protected Set<Trigger> triggers = new HashSet<>();
 
 	protected int pin;
@@ -127,4 +128,8 @@ public class MagneticLock extends PlantItem implements Thing {
 		return null;
 	}
 
+	@Override
+	public boolean needsPropagation() {
+		return needsPropagation ? true : false;
+	}
 }

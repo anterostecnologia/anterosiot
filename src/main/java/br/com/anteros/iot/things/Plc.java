@@ -25,6 +25,7 @@ public class Plc extends PlantItem implements Thing {
 	protected long timeOut;
 	protected int slaveAddress;
 	protected DeviceController deviceController;
+	protected boolean needsPropagation;
 	protected Set<Trigger> triggers = new HashSet<>();
 	protected Set<Part> memories = new LinkedHashSet<Part>();
 	
@@ -210,5 +211,10 @@ public class Plc extends PlantItem implements Thing {
 	@Override
 	public String toString() {
 		return "Plc [itemOwner=" + itemOwner + ", itemId=" + itemId + ", description=" + description + "]";
+	}
+	
+	@Override
+	public boolean needsPropagation() {
+		return needsPropagation ? true : false;
 	}
 }

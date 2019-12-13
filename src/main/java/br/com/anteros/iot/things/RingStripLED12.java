@@ -19,6 +19,7 @@ import br.com.anteros.iot.triggers.Trigger;
 public class RingStripLED12 extends PlantItem implements Thing {
 	
 	protected DeviceController deviceController;
+	protected boolean needsPropagation;
 	protected int pin;
 	protected LEDDisplayType ledType;
 	protected int animateMiliseconds;
@@ -190,7 +191,10 @@ public class RingStripLED12 extends PlantItem implements Thing {
 				+ ", color=" + color + ", brightness=" + brightness + ", numPixels=" + numPixels + ", itemId=" + itemId
 				+ ", description=" + description + "]";
 	}
-	
-	
+
+	@Override
+	public boolean needsPropagation() {
+		return needsPropagation ? true : false;
+	}
 
 }

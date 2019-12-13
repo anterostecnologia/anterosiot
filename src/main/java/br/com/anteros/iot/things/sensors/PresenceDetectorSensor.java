@@ -22,6 +22,7 @@ public class PresenceDetectorSensor extends PlantItem implements Sensor {
 	protected int pin;
 	protected String[] topics;
 	protected DeviceController deviceController;
+	protected boolean needsPropagation;
 	protected Set<Trigger> triggers = new HashSet<>();
 
 	public PresenceDetectorSensor(String itemId, int pin, String[] topics) {
@@ -151,6 +152,9 @@ public class PresenceDetectorSensor extends PlantItem implements Sensor {
 				+ ", description=" + description + "]";
 	}
 	
-	
+	@Override
+	public boolean needsPropagation() {
+		return needsPropagation ? true : false;
+	}
 
 }

@@ -8,6 +8,8 @@ import org.eclipse.paho.client.mqttv3.MqttClient;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import br.com.anteros.iot.Actuators;
 import br.com.anteros.iot.app.listeners.AnterosIOTServiceListener;
@@ -20,9 +22,18 @@ public abstract class DeviceNode extends PlantItemNode implements Configurable {
 	protected IpAddress ipAddress;
 	protected String topicError;
 	protected boolean publishSystemInfo;
+	protected boolean needsPropagation;
 	protected Integer intervalPublishingTelemetry;
 	protected String ssid;
 	protected String password;
+	
+	protected String hostNtp;
+	protected int timezoneNtp;
+	
+	protected String hostMqtt;
+	protected int portMqtt;
+	protected String userMqtt;
+	protected String passwordMqtt;
 
 	@JsonIdentityInfo(generator = ObjectIdGenerators.UUIDGenerator.class, property = "@id")
 	protected Set<ThingNode> things = new HashSet<>();
@@ -49,6 +60,8 @@ public abstract class DeviceNode extends PlantItemNode implements Configurable {
 			this.things.add(thing);
 		}
 	}
+	
+	public abstract String parseConfig(ObjectMapper mapper, PlantItemNode node) throws JsonProcessingException;
 
 	public abstract AbstractDeviceController getInstanceOfDeviceController(MqttAsyncClient clientMqtt, Plant currentPlant,
 			Actuators actuators, AnterosIOTServiceListener serviceListener, String username, String password);
@@ -99,6 +112,62 @@ public abstract class DeviceNode extends PlantItemNode implements Configurable {
 
 	public void setPassword(String password) {
 		this.password = password;
+	}
+	
+	public void setNeedsPropagation(boolean needsPropagation) {
+		this.needsPropagation = needsPropagation;
+	}
+	
+	public boolean needsPropagation() {
+		return needsPropagation ? true : false;
+	}
+
+	public String getHostMqtt() {
+		return hostMqtt;
+	}
+
+	public void setHostMqtt(String hostMqtt) {
+		this.hostMqtt = hostMqtt;
+	}
+
+	public int getPortMqtt() {
+		return portMqtt;
+	}
+
+	public void setPortMqtt(int portMqtt) {
+		this.portMqtt = portMqtt;
+	}
+
+	public String getUserMqtt() {
+		return userMqtt;
+	}
+
+	public void setUserMqtt(String userMqtt) {
+		this.userMqtt = userMqtt;
+	}
+
+	public String getPasswordMqtt() {
+		return passwordMqtt;
+	}
+
+	public void setPasswordMqtt(String passwordMqtt) {
+		this.passwordMqtt = passwordMqtt;
+	}
+
+	public String getHostNtp() {
+		return hostNtp;
+	}
+
+	public void setHostNtp(String hostNtp) {
+		this.hostNtp = hostNtp;
+	}
+
+	public int getTimezoneNtp() {
+		return timezoneNtp;
+	}
+
+	public void setTimezoneNtp(int timezoneNtp) {
+		this.timezoneNtp = timezoneNtp;
 	}
 
 

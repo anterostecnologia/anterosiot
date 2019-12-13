@@ -14,6 +14,7 @@ import br.com.anteros.iot.triggers.Trigger;
 public class TicketGate extends PlantItem implements Thing {
 
 	protected DeviceController deviceController;
+	protected boolean needsPropagation;
 	protected Set<Trigger> triggers = new HashSet<>();
 
 	public TicketGate() {
@@ -100,5 +101,8 @@ public class TicketGate extends PlantItem implements Thing {
 		return "TicketGate [itemId=" + itemId + ", description=" + description + "]";
 	}
 
-	
+	@Override
+	public boolean needsPropagation() {
+		return needsPropagation ? true : false;
+	}	
 }

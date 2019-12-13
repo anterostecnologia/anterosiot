@@ -25,6 +25,7 @@ public class MemoryPlc extends PlantItem implements Part, Publishable {
 	protected Object value;
 	protected ModifyType modifyType;
 	protected DeviceController deviceController;
+	protected boolean needsPropagation;
 	protected Set<Trigger> triggers = new HashSet<>();
 	protected int multiple;
 
@@ -179,5 +180,9 @@ public class MemoryPlc extends PlantItem implements Part, Publishable {
 		return "MemoryPlc [itemOwner=" + itemOwner + ", itemId=" + itemId + ", description=" + description + "]";
 	}
 	
+	@Override
+	public boolean needsPropagation() {
+		return needsPropagation ? true : false;
+	}
 	
 }

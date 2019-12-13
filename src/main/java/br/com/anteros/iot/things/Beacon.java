@@ -16,6 +16,7 @@ import br.com.anteros.iot.triggers.Trigger;
 public class Beacon extends PlantItem implements Thing {
 	
 	protected DeviceController deviceController;
+	protected boolean needsPropagation;
 	protected Set<Trigger> triggers = new HashSet<>();
 	protected String[] topics;
 
@@ -105,6 +106,11 @@ public class Beacon extends PlantItem implements Thing {
 	public String toString() {
 		return "Beacon [topics=" + Arrays.toString(topics) + ", itemId=" + itemId + ", description=" + description
 				+ "]";
+	}
+	
+	@Override
+	public boolean needsPropagation() {
+		return needsPropagation ? true : false;
 	}
 
 	

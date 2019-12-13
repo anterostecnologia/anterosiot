@@ -19,6 +19,7 @@ import br.com.anteros.iot.triggers.Trigger;
 public class CameraQRCodeReader extends PlantItem implements Thing, Publishable {
 
 	protected DeviceController deviceController;
+	protected boolean needsPropagation;
 	protected String[] topics;
 	protected Set<Trigger> triggers = new HashSet<>();
 	protected int intervalToReadSameQrCode = 5000;
@@ -121,6 +122,9 @@ public class CameraQRCodeReader extends PlantItem implements Thing, Publishable 
 				+ intervalToReadSameQrCode + ", itemId=" + itemId + ", description=" + description + "]";
 	}
 	
-	
+	@Override
+	public boolean needsPropagation() {
+		return needsPropagation ? true : false;
+	}
 
 }

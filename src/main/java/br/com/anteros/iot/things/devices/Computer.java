@@ -23,6 +23,7 @@ public class Computer extends PlantItem implements Device {
 	private Integer intervalPublishingTelemetry;
 	
 	protected DeviceController deviceController;
+	protected boolean needsPropagation;
 
 	private Computer(String id, IpAddress ipAddress, String description, String topicError, AbstractDeviceController controller, Integer intervalPublishingTelemetry) {
 		this.itemId = id;
@@ -162,6 +163,9 @@ public class Computer extends PlantItem implements Device {
 				+ intervalPublishingTelemetry + ", itemId=" + itemId + ", description=" + description + "]";
 	}
 	
-	
+	@Override
+	public boolean needsPropagation() {
+		return needsPropagation ? true : false;
+	}	
 
 }

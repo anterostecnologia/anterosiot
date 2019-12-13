@@ -22,6 +22,7 @@ public class BarrierSensor extends PlantItem implements Sensor {
 	protected int pin;
 	protected String[] topics;
 	protected DeviceController deviceController;
+	protected boolean needsPropagation;
 	protected Set<Trigger> triggers = new HashSet<>();
 
 	public BarrierSensor(String itemId, int pin, String[] topics) {
@@ -148,6 +149,11 @@ public class BarrierSensor extends PlantItem implements Sensor {
 	public String toString() {
 		return "BarrierSensor [pin=" + pin + ", topics=" + Arrays.toString(topics) + ", itemId=" + itemId
 				+ ", description=" + description + "]";
+	}
+	
+	@Override
+	public boolean needsPropagation() {
+		return needsPropagation ? true : false;
 	}
 
 	
