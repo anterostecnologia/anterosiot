@@ -266,8 +266,16 @@ public class AnterosIOTService implements Runnable, MqttCallback, MqttCallbackEx
 		for (PlantItemNode item : items) {
 			if ((item instanceof ThingNode && ((ThingNode) item).needsPropagation())
 					|| (item instanceof DeviceNode && ((DeviceNode) item).needsPropagation())) {
+				
+				String parsedConfig = "";
+				if (item instanceof ThingNode) {
+					parsedConfig = ((ThingNode) item).parseConfig(mapper, item);
+				} else {
+					parsedConfig = ((DeviceNode) item).parseConfig(mapper, item);
+				}
+				
 				String topicPropagation = "/" + item.getItemName();
-				String jsonNode = "{\"action\": \"updateConfig\",\"type\":\"stream\",\"config\": " + mapper.writeValueAsString(item)
+				String jsonNode = "{\"action\": \"updateConfig\",\"type\":\"stream\",\"config\": " + parsedConfig
 						+ "}";
 				MqttMessage propagationNode = new MqttMessage(jsonNode.getBytes());
 				client.publish(topicPropagation, propagationNode);

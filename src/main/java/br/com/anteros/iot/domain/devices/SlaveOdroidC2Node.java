@@ -18,7 +18,8 @@ import br.com.anteros.iot.plant.Plant;
 
 @JsonTypeName(DomainConstants.SLAVE_ODROID_C2)
 public class SlaveOdroidC2Node extends DeviceSlaveNode {
-
+	
+		
 	public SlaveOdroidC2Node() {
 		super();
 	}

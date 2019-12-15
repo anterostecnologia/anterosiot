@@ -1,6 +1,5 @@
 package br.com.anteros.iot.things;
 
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -9,11 +8,10 @@ import br.com.anteros.iot.Part;
 import br.com.anteros.iot.Thing;
 import br.com.anteros.iot.ThingStatus;
 import br.com.anteros.iot.domain.PlantItemNode;
-import br.com.anteros.iot.domain.things.BeaconNode;
-import br.com.anteros.iot.domain.things.DeviceScanNode;
+import br.com.anteros.iot.domain.things.BarrierSensorReaderNode;
 import br.com.anteros.iot.triggers.Trigger;
 
-public class Beacon extends ControllerThing {
+public class BarrierSensorReader extends ControllerThing {
 	
 	protected DeviceController deviceController;
 	protected boolean needsPropagation;
@@ -21,25 +19,23 @@ public class Beacon extends ControllerThing {
 	protected String[] topics;
 	
 
-	public Beacon() {
+	public BarrierSensorReader() {
 	}
 
-	public Beacon(BeaconNode node) {
+	public BarrierSensorReader(BarrierSensorReaderNode node) {
 		this.itemId = node.getItemName();
 		this.description = node.getDescription();
 		this.topics = node.getTopics();
-		this.needsPropagation = ((BeaconNode) node).needsPropagation();
-		this.topics = ((BeaconNode) node).getTopics();
-		this.hostMqtt = ((BeaconNode) node).getHostMqtt();
-		this.hostNtp = ((BeaconNode) node).getHostNtp();
-		this.passwordMqtt = ((BeaconNode) node).getPasswordMqtt();
-		this.portMqtt = ((BeaconNode) node).getPortMqtt();
-		this.primaryPassword = ((BeaconNode) node).getPrimaryPassword();
-		this.primarySSID = ((BeaconNode) node).getPrimarySSID();
-		this.secondaryPassword = ((BeaconNode) node).getSecondaryPassword();
-		this.secondarySSID = ((BeaconNode) node).getSecondarySSID();
-		this.needsPropagation = ((BeaconNode) node).needsPropagation();
-		this.timezoneNtp = ((BeaconNode) node).getTimezoneNtp();
+		this.hostMqtt = node.getHostMqtt();
+		this.hostNtp = node.getHostNtp();
+		this.passwordMqtt = node.getPasswordMqtt();
+		this.portMqtt = node.getPortMqtt();
+		this.primaryPassword = node.getPrimaryPassword();
+		this.primarySSID = node.getPrimarySSID();
+		this.secondaryPassword = node.getSecondaryPassword();
+		this.secondarySSID = node.getSecondarySSID();
+		this.needsPropagation = node.needsPropagation();
+		this.timezoneNtp = node.getTimezoneNtp();
 	}
 
 	public String getThingID() {
@@ -47,26 +43,32 @@ public class Beacon extends ControllerThing {
 	}
 
 	public ThingStatus getStatus() {
+		// TODO Auto-generated method stub
 		return null;
 	}
 
 	public Set<Part> getParts() {
+		// TODO Auto-generated method stub
 		return null;
 	}
 
 	public boolean hasParts() {
+		// TODO Auto-generated method stub
 		return false;
 	}
 
 	public Thing addPart(Part part) {
+		// TODO Auto-generated method stub
 		return null;
 	}
 
 	public Thing removePart(Part part) {
+		// TODO Auto-generated method stub
 		return null;
 	}
 
 	public Part getPartById(String part) {
+		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -90,6 +92,7 @@ public class Beacon extends ControllerThing {
 
 	@Override
 	public String[] getActions() {
+		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -111,15 +114,6 @@ public class Beacon extends ControllerThing {
 		return this;
 	}
 
-	public void setTriggers(Set<Trigger> triggers) {
-		this.triggers = triggers;
-	}
-
-	@Override
-	public String toString() {
-		return "Beacon [topics=" + Arrays.toString(topics) + ", itemId=" + itemId + ", description=" + description
-				+ "]";
-	}
 	
 	@Override
 	public boolean needsPropagation() {
@@ -141,38 +135,13 @@ public class Beacon extends ControllerThing {
 	public void setTopics(String[] topics) {
 		this.topics = topics;
 	}
+	
 
-	public String getPrimarySSID() {
-		return primarySSID;
-	}
-
-	public void setPrimarySSID(String primarySSID) {
-		this.primarySSID = primarySSID;
-	}
-
-	public String getPrimaryPassword() {
-		return primaryPassword;
-	}
-
-	public void setPrimaryPassword(String primaryPassword) {
-		this.primaryPassword = primaryPassword;
-	}
-
-	public String getSecondarySSID() {
-		return secondarySSID;
-	}
-
-	public void setSecondarySSID(String secondarySSID) {
-		this.secondarySSID = secondarySSID;
-	}
-
-	public String getSecondaryPassword() {
-		return secondaryPassword;
-	}
-
-	public void setSecondaryPassword(String secondaryPassword) {
-		this.secondaryPassword = secondaryPassword;
+	public void setTriggers(Set<Trigger> triggers) {
+		this.triggers = triggers;
 	}
 
 	
+	
+
 }

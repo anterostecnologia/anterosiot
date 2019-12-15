@@ -8,7 +8,7 @@ public class Mqtt {
 
 	private int port;
 
-	private String dataTopic;
+	private String[] dataTopic;
 
 	private String user;
 
@@ -46,13 +46,6 @@ public class Mqtt {
 		this.port = port;
 	}
 
-	public String getDataTopic() {
-		return dataTopic;
-	}
-
-	public void setDataTopic(String dataTopic) {
-		this.dataTopic = dataTopic;
-	}
 
 	public String getUser() {
 		return user;
@@ -100,6 +93,14 @@ public class Mqtt {
 
 	public void setBootTopic(String bootTopic) {
 		this.bootTopic = bootTopic;
+	}
+
+	public String[] getDataTopic() {
+		return dataTopic;
+	}
+
+	public void setDataTopic(String[] dataTopic) {
+		this.dataTopic = dataTopic;
 	}
 
 }

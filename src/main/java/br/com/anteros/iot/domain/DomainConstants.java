@@ -11,8 +11,8 @@ public class DomainConstants {
 	public static final String PLANT = "plant";
 	public static final String PLACE = "place";
 	public static final String MASTER_ODROID_C2 = "masterOdroidC2";
-	public static final String BARRIER_GATE = "barrierGate";
 	public static final String BARRIER_SENSOR = "barrierSensor";
+	public static final String BARRIER_SENSOR_READER = "barrierSensorReader";
 	public static final String GREEN_LED_SEMAPHORE = "greenLedSemaphore";
 	public static final String LAMP = "lamp";
 	public static final String CAMERA_QR_CODE = "cameraQRCode";
@@ -35,4 +35,9 @@ public class DomainConstants {
 	public static final String GENERIC_RELAY = "genericRelay";
 	public static final String LED = "led";
 	public static final String PLATE_READER = "plateReader";
+	public static final String GATE_TRIGGER = "gateTrigger";
+	public static final String BARRIER_GATE = "barrierGate";
+	public static final String DEVICE_SCAN = "deviceScan";
+	public static final String DIGITAL_KEY = "digitalKey";
+	
 }

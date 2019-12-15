@@ -12,15 +12,36 @@ import br.com.anteros.iot.domain.DomainConstants;
 import br.com.anteros.iot.domain.PlantItemNode;
 import br.com.anteros.iot.domain.things.config.Config;
 import br.com.anteros.iot.domain.things.config.General;
+import br.com.anteros.iot.domain.things.config.Hardware;
 import br.com.anteros.iot.domain.things.config.Mqtt;
 import br.com.anteros.iot.domain.things.config.NTP;
 import br.com.anteros.iot.domain.things.config.Network;
-import br.com.anteros.iot.things.Beacon;
+import br.com.anteros.iot.things.DigitalKey;
 
-@JsonTypeName(DomainConstants.BEACON)
-public class BeaconNode extends ControllerNode implements Configurable {
+@JsonTypeName(DomainConstants.DIGITAL_KEY)
+public class DigitalKeyNode extends ControllerNode implements Configurable {
 
 	protected String[] topics;
+	protected AccessType accessType; 
+
+	public DigitalKeyNode() {
+		super();
+	}
+
+	public DigitalKeyNode(String itemName, String description, String[] topics) {
+		super(itemName, description);
+		this.topics = topics;
+	}
+
+	@Override
+	protected boolean acceptThisTypeOfChild(Class<?> child) {
+		return false;
+	}
+
+	@Override
+	public Thing getInstanceOfThing() {
+		return new DigitalKey(this);
+	}
 
 	@Override
 	public String parseConfig(ObjectMapper mapper, PlantItemNode node) throws JsonProcessingException {
@@ -28,9 +49,12 @@ public class BeaconNode extends ControllerNode implements Configurable {
 		if (deviceNode != null) {
 			String command = "configfile";
 			Network network = new Network();
+			Hardware hardware = new Hardware();
 			General general = new General();
 			Mqtt mqtt = new Mqtt();
 			NTP ntp = new NTP();
+			
+			hardware.setAccessType((accessType.equals(AccessType.PINCODE)?0:1));
 
 			if (this.getPrimarySSID() != null) {
 				network.setSsid(this.getPrimarySSID());
@@ -64,23 +88,14 @@ public class BeaconNode extends ControllerNode implements Configurable {
 				ntp.setTimezone(deviceNode.getTimezoneNtp());
 			}
 
-			Config config = new Config(command, network, null, general, mqtt, ntp);
+			Config config = new Config(command, network, hardware, general, mqtt, ntp);
 
 			return mapper.writeValueAsString(config);
 		}
 
 		return null;
-	}
-	
-	public BeaconNode() {
-		super();
-	}
 
-	public BeaconNode(String itemName, String description, int pin, String[] topics) {
-		super(itemName, description);
-		this.topics = topics;
 	}
-
 
 	public String[] getTopics() {
 		return topics;
@@ -90,9 +105,12 @@ public class BeaconNode extends ControllerNode implements Configurable {
 		this.topics = topics;
 	}
 
-	@Override
-	public Thing getInstanceOfThing() {
-		return new Beacon(this);
+	public AccessType getAccessType() {
+		return accessType;
+	}
+
+	public void setAccessType(AccessType accessType) {
+		this.accessType = accessType;
 	}
 
 }

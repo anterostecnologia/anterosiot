@@ -4,7 +4,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.eclipse.paho.client.mqttv3.MqttAsyncClient;
-import org.eclipse.paho.client.mqttv3.MqttClient;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
@@ -24,12 +23,8 @@ public abstract class DeviceNode extends PlantItemNode implements Configurable {
 	protected boolean publishSystemInfo;
 	protected boolean needsPropagation;
 	protected Integer intervalPublishingTelemetry;
-	protected String ssid;
-	protected String password;
-	
 	protected String hostNtp;
-	protected int timezoneNtp;
-	
+	protected int timezoneNtp;	
 	protected String hostMqtt;
 	protected int portMqtt;
 	protected String userMqtt;
@@ -97,23 +92,6 @@ public abstract class DeviceNode extends PlantItemNode implements Configurable {
 	public void setIntervalPublishingTelemetry(Integer intervalPublishingTelemetry) {
 		this.intervalPublishingTelemetry = intervalPublishingTelemetry;
 	}
-
-	public String getSsid() {
-		return ssid;
-	}
-
-	public void setSsid(String ssid) {
-		this.ssid = ssid;
-	}
-
-	public String getPassword() {
-		return password;
-	}
-
-	public void setPassword(String password) {
-		this.password = password;
-	}
-	
 	public void setNeedsPropagation(boolean needsPropagation) {
 		this.needsPropagation = needsPropagation;
 	}
@@ -168,6 +146,10 @@ public abstract class DeviceNode extends PlantItemNode implements Configurable {
 
 	public void setTimezoneNtp(int timezoneNtp) {
 		this.timezoneNtp = timezoneNtp;
+	}
+
+	public boolean isNeedsPropagation() {
+		return needsPropagation;
 	}
 
 

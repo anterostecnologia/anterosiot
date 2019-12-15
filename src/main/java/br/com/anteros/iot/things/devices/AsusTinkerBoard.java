@@ -20,8 +20,10 @@ public class AsusTinkerBoard extends PlantItem implements Device {
 	private IpAddress ipAddress;
 	private String topicError;
 	private Integer intervalPublishingTelemetry;
-	private String ssid;
-	private String password;
+	private String primarySSID;
+	private String primaryPassword;
+	private String secondarySSID;
+	private String secondaryPassword;
 	
 	protected DeviceController deviceController;
 	
@@ -147,36 +149,62 @@ public class AsusTinkerBoard extends PlantItem implements Device {
 		this.intervalPublishingTelemetry = intervalPublishingTelemetry;
 	}
 
-	public String getSsid() {
-		return ssid;
-	}
-
-	public void setSsid(String ssid) {
-		this.ssid = ssid;
-	}
-
-	public String getPassword() {
-		return password;
-	}
-
-	public void setPassword(String password) {
-		this.password = password;
-	}
-
 	public void setTopicError(String topicError) {
 		this.topicError = topicError;
-	}
-
-	@Override
-	public String toString() {
-		return "AsusTinkerBoard [ipAddress=" + ipAddress + ", topicError=" + topicError
-				+ ", intervalPublishingTelemetry=" + intervalPublishingTelemetry + ", ssid=" + ssid + ", password="
-				+ password + ", itemId=" + itemId + ", description=" + description + "]";
 	}
 	
 	@Override
 	public boolean needsPropagation() {
 		return needsPropagation ? true : false;
+	}
+
+	public String getPrimarySSID() {
+		return primarySSID;
+	}
+
+	public void setPrimarySSID(String primarySSID) {
+		this.primarySSID = primarySSID;
+	}
+
+	public String getPrimaryPassword() {
+		return primaryPassword;
+	}
+
+	public void setPrimaryPassword(String primaryPassword) {
+		this.primaryPassword = primaryPassword;
+	}
+
+	public String getSecondarySSID() {
+		return secondarySSID;
+	}
+
+	public void setSecondarySSID(String secondarySSID) {
+		this.secondarySSID = secondarySSID;
+	}
+
+	public String getSecondaryPassword() {
+		return secondaryPassword;
+	}
+
+	public void setSecondaryPassword(String secondaryPassword) {
+		this.secondaryPassword = secondaryPassword;
+	}
+
+	public boolean isNeedsPropagation() {
+		return needsPropagation;
+	}
+
+	public void setNeedsPropagation(boolean needsPropagation) {
+		this.needsPropagation = needsPropagation;
+	}
+
+	@Override
+	public String toString() {
+		return "AsusTinkerBoard [ipAddress=" + ipAddress + ", topicError=" + topicError
+				+ ", intervalPublishingTelemetry=" + intervalPublishingTelemetry + ", primarySSID=" + primarySSID
+				+ ", primaryPassword=" + primaryPassword + ", secondarySSID=" + secondarySSID + ", secondaryPassword="
+				+ secondaryPassword + ", deviceController=" + deviceController + ", needsPropagation="
+				+ needsPropagation + "]";
 	}	
 
 }

@@ -33,8 +33,10 @@ public class RaspberryPIZero extends PlantItem implements Device, Publishable  {
 	
 	protected IpAddress ipAddress;
 	private String topicError;
-	private String ssid;
-	private String password;
+	private String primarySSID;
+	private String primaryPassword;
+	private String secondarySSID;
+	private String secondaryPassword;
 	private Integer intervalPublishingTelemetry;
 	
 	protected DeviceController deviceController;
@@ -183,15 +185,6 @@ public class RaspberryPIZero extends PlantItem implements Device, Publishable  {
 	public void setIntervalPublishingTelemetry(Integer intervalPublishingTelemetry) {
 		this.intervalPublishingTelemetry = intervalPublishingTelemetry;
 	}
-
-	public String getSsid() {
-		return ssid;
-	}
-
-	public void setSsid(String ssid) {
-		this.ssid = ssid;
-	}
-
 	public TelemetryConfiguration getTelemetryConfiguration() {
 		return telemetryConfiguration;
 	}
@@ -204,24 +197,58 @@ public class RaspberryPIZero extends PlantItem implements Device, Publishable  {
 		this.topicError = topicError;
 	}
 
-	public String getPassword() {
-		return password;
+	@Override
+	public boolean needsPropagation() {
+		return needsPropagation ? true : false;
 	}
 
-	public void setPassword(String password) {
-		this.password = password;
+	public String getPrimarySSID() {
+		return primarySSID;
+	}
+
+	public void setPrimarySSID(String primarySSID) {
+		this.primarySSID = primarySSID;
+	}
+
+	public String getPrimaryPassword() {
+		return primaryPassword;
+	}
+
+	public void setPrimaryPassword(String primaryPassword) {
+		this.primaryPassword = primaryPassword;
+	}
+
+	public String getSecondarySSID() {
+		return secondarySSID;
+	}
+
+	public void setSecondarySSID(String secondarySSID) {
+		this.secondarySSID = secondarySSID;
+	}
+
+	public String getSecondaryPassword() {
+		return secondaryPassword;
+	}
+
+	public void setSecondaryPassword(String secondaryPassword) {
+		this.secondaryPassword = secondaryPassword;
+	}
+
+	public boolean isNeedsPropagation() {
+		return needsPropagation;
+	}
+
+	public void setNeedsPropagation(boolean needsPropagation) {
+		this.needsPropagation = needsPropagation;
 	}
 
 	@Override
 	public String toString() {
-		return "RaspberryPIZero [ipAddress=" + ipAddress + ", topicError=" + topicError + ", ssid=" + ssid
-				+ ", password=" + password + ", intervalPublishingTelemetry=" + intervalPublishingTelemetry
-				+ ", itemId=" + itemId + ", description=" + description + "]";
-	}
-
-	@Override
-	public boolean needsPropagation() {
-		return needsPropagation ? true : false;
+		return "RaspberryPIZero [ipAddress=" + ipAddress + ", topicError=" + topicError + ", primarySSID=" + primarySSID
+				+ ", primaryPassword=" + primaryPassword + ", secondarySSID=" + secondarySSID + ", secondaryPassword="
+				+ secondaryPassword + ", intervalPublishingTelemetry=" + intervalPublishingTelemetry
+				+ ", deviceController=" + deviceController + ", needsPropagation=" + needsPropagation
+				+ ", telemetryConfiguration=" + telemetryConfiguration + "]";
 	}	
 
 }

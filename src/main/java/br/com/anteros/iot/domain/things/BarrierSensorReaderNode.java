@@ -15,10 +15,10 @@ import br.com.anteros.iot.domain.things.config.General;
 import br.com.anteros.iot.domain.things.config.Mqtt;
 import br.com.anteros.iot.domain.things.config.NTP;
 import br.com.anteros.iot.domain.things.config.Network;
-import br.com.anteros.iot.things.Beacon;
+import br.com.anteros.iot.things.BarrierSensorReader;
 
-@JsonTypeName(DomainConstants.BEACON)
-public class BeaconNode extends ControllerNode implements Configurable {
+@JsonTypeName(DomainConstants.BARRIER_SENSOR_READER)
+public class BarrierSensorReaderNode extends ControllerNode implements Configurable{
 
 	protected String[] topics;
 
@@ -72,15 +72,14 @@ public class BeaconNode extends ControllerNode implements Configurable {
 		return null;
 	}
 	
-	public BeaconNode() {
+	public BarrierSensorReaderNode() {
 		super();
 	}
 
-	public BeaconNode(String itemName, String description, int pin, String[] topics) {
+	public BarrierSensorReaderNode(String itemName, String description, int pin, String[] topics) {
 		super(itemName, description);
 		this.topics = topics;
 	}
-
 
 	public String[] getTopics() {
 		return topics;
@@ -92,7 +91,39 @@ public class BeaconNode extends ControllerNode implements Configurable {
 
 	@Override
 	public Thing getInstanceOfThing() {
-		return new Beacon(this);
+		return new BarrierSensorReader(this);
+	}
+
+	public String getPrimarySSID() {
+		return primarySSID;
+	}
+
+	public void setPrimarySSID(String primarySSID) {
+		this.primarySSID = primarySSID;
+	}
+
+	public String getPrimaryPassword() {
+		return primaryPassword;
+	}
+
+	public void setPrimaryPassword(String primaryPassword) {
+		this.primaryPassword = primaryPassword;
+	}
+
+	public String getSecondarySSID() {
+		return secondarySSID;
+	}
+
+	public void setSecondarySSID(String secondarySSID) {
+		this.secondarySSID = secondarySSID;
+	}
+
+	public String getSecondaryPassword() {
+		return secondaryPassword;
+	}
+
+	public void setSecondaryPassword(String secondaryPassword) {
+		this.secondaryPassword = secondaryPassword;
 	}
 
 }

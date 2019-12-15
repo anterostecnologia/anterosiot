@@ -169,43 +169,43 @@ public class CameraQRCodeCollector extends Collector implements Runnable {
 		while (webcam.isOpened() && running) {
 			webcam.read(image);
 			if (webcam.grab() && !image.empty()) {
-				if (count == 0) {
-					try {
-						bufferedImage = matToBufferedImage(image);
-						Result result = decodeQRCode(bufferedImage);
-						if (result != null) {
-							drawResultPoints(bufferedImage, 1, result);
-							my_panel.setImage(bufferedImage);
-
-							long difference = System.currentTimeMillis() - startTime;
-
-							if (difference >= ((CameraQRCodeReader) thing).getIntervalToReadSameQrCode()){
-								lastValue = result.getText();
-//								textArea.setText(lastValue);
-								LOG.info(new Date() + "  " + lastValue);
-							    listener.onCollect(new SimpleResult(lastValue), thing);
-								startTime = System.currentTimeMillis();
-							}
-
-						} else {
-							my_panel.MatToBufferedImage(image);
-						}
-						my_panel.repaint();
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
-				} else {
-					count++;
-					if (count > 10) {
-						count = 0;
-					}
+//				if (count == 0) {
+//					try {
+//						bufferedImage = matToBufferedImage(image);
+//						Result result = decodeQRCode(bufferedImage);
+//						if (result != null) {
+//							drawResultPoints(bufferedImage, 1, result);
+//							my_panel.setImage(bufferedImage);
+//
+//							long difference = System.currentTimeMillis() - startTime;
+//
+//							if (difference >= ((CameraQRCodeReader) thing).getIntervalToReadSameQrCode()){
+//								lastValue = result.getText();
+////								textArea.setText(lastValue);
+//								LOG.info(new Date() + "  " + lastValue);
+//							    listener.onCollect(new SimpleResult(lastValue), thing);
+//								startTime = System.currentTimeMillis();
+//							}
+//
+//						} else {
+//							my_panel.MatToBufferedImage(image);
+//						}
+//						my_panel.repaint();
+//					} catch (IOException e) {
+//						e.printStackTrace();
+//					}
+//				} else {
+//					count++;
+//					if (count > 10) {
+//						count = 0;
+//					}
 					try {
 						my_panel.MatToBufferedImage(image);
 					} catch (IOException e1) {
 						e1.printStackTrace();
 					}
 					my_panel.repaint();
-				}
+				//}
 			}
 
 		}

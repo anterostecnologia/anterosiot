@@ -10,6 +10,10 @@ public class Hardware {
 	private int rtype;
 	private int rpin;
 	private int rtime;
+	private int accessType;
+	private int pincode;
+	private String passphrase;
+	
 
 	public int getReaderType() {
 		return readerType;
@@ -73,6 +77,30 @@ public class Hardware {
 
 	public void setRtime(int rtime) {
 		this.rtime = rtime;
+	}
+
+	public int getAccessType() {
+		return accessType;
+	}
+
+	public void setAccessType(int accessType) {
+		this.accessType = accessType;
+	}
+
+	public int getPincode() {
+		return pincode;
+	}
+
+	public void setPincode(int pincode) {
+		this.pincode = pincode;
+	}
+
+	public String getPassphrase() {
+		return passphrase;
+	}
+
+	public void setPassphrase(String passphrase) {
+		this.passphrase = passphrase;
 	}
 
 }

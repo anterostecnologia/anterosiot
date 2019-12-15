@@ -11,20 +11,19 @@ import br.com.anteros.iot.Thing;
 import br.com.anteros.iot.ThingStatus;
 import br.com.anteros.iot.actuators.collectors.CollectResult;
 import br.com.anteros.iot.domain.PlantItemNode;
-import br.com.anteros.iot.domain.things.RFIDModel;
-import br.com.anteros.iot.domain.things.RFIDReaderNode;
+import br.com.anteros.iot.domain.things.DeviceScanNode;
 import br.com.anteros.iot.triggers.Trigger;
 
-public class RFIDReader extends ControllerThing implements Publishable {
+public class DeviceScan extends ControllerThing implements Publishable {
 
 	protected DeviceController deviceController;
-	protected boolean needsPropagation;	
+
+	protected boolean needsPropagation;
+
 	protected String[] topics;
-	protected RFIDModel model;
-	protected int sspin;
 	protected Set<Trigger> triggers = new HashSet<>();
 
-	public RFIDReader(PlantItemNode node) {
+	public DeviceScan(PlantItemNode node) {
 		this.loadConfiguration(node);
 	}
 
@@ -57,24 +56,21 @@ public class RFIDReader extends ControllerThing implements Publishable {
 	}
 
 	@Override
-	public Thing loadConfiguration(PlantItemNode node) {		
+	public Thing loadConfiguration(PlantItemNode node) {
 		this.itemId = node.getItemName();
 		this.description = node.getDescription();
-		this.itemId = node.getItemName();
-		this.description = node.getDescription();
-		this.topics = ((RFIDReaderNode)node).getTopics();
-		this.hostMqtt = ((RFIDReaderNode)node).getHostMqtt();
-		this.hostNtp = ((RFIDReaderNode)node).getHostNtp();
-		this.passwordMqtt = ((RFIDReaderNode)node).getPasswordMqtt();
-		this.portMqtt = ((RFIDReaderNode)node).getPortMqtt();
-		this.primaryPassword = ((RFIDReaderNode)node).getPrimaryPassword();
-		this.primarySSID = ((RFIDReaderNode)node).getPrimarySSID();
-		this.secondaryPassword = ((RFIDReaderNode)node).getSecondaryPassword();
-		this.secondarySSID = ((RFIDReaderNode)node).getSecondarySSID();
-		this.needsPropagation = ((RFIDReaderNode)node).needsPropagation();
-		this.timezoneNtp = ((RFIDReaderNode)node).getTimezoneNtp();
-		this.model = ((RFIDReaderNode) node).getModel();
-		this.topics = ((RFIDReaderNode) node).getTopics();
+		this.needsPropagation = ((DeviceScanNode) node).needsPropagation();
+		this.topics = ((DeviceScanNode) node).getTopics();
+		this.hostMqtt = ((DeviceScanNode) node).getHostMqtt();
+		this.hostNtp = ((DeviceScanNode) node).getHostNtp();
+		this.passwordMqtt = ((DeviceScanNode) node).getPasswordMqtt();
+		this.portMqtt = ((DeviceScanNode) node).getPortMqtt();
+		this.primaryPassword = ((DeviceScanNode) node).getPrimaryPassword();
+		this.primarySSID = ((DeviceScanNode) node).getPrimarySSID();
+		this.secondaryPassword = ((DeviceScanNode) node).getSecondaryPassword();
+		this.secondarySSID = ((DeviceScanNode) node).getSecondarySSID();
+		this.needsPropagation = ((DeviceScanNode) node).needsPropagation();
+		this.timezoneNtp = ((DeviceScanNode) node).getTimezoneNtp();
 		return this;
 	}
 
@@ -89,14 +85,6 @@ public class RFIDReader extends ControllerThing implements Publishable {
 
 	public void setDeviceController(DeviceController deviceController) {
 		this.deviceController = deviceController;
-	}
-
-	public RFIDModel getModel() {
-		return model;
-	}
-
-	public void setModel(RFIDModel model) {
-		this.model = model;
 	}
 
 	@Override
@@ -129,23 +117,20 @@ public class RFIDReader extends ControllerThing implements Publishable {
 		return null;
 	}
 
-	@Override
-	public String toString() {
-		return "RFIDReader [topics=" + Arrays.toString(topics) + ", model=" + model + ", itemId=" + itemId
-				+ ", description=" + description + "]";
-	}
 
 	@Override
 	public boolean needsPropagation() {
 		return needsPropagation ? true : false;
 	}
 
-	public int getSspin() {
-		return sspin;
+	@Override
+	public String toString() {
+		return "DeviceScan [deviceController=" + deviceController + ", needsPropagation=" + needsPropagation
+				+ ", topics=" + Arrays.toString(topics) + ", triggers=" + triggers + ", primarySSID=" + primarySSID
+				+ ", primaryPassword=" + primaryPassword + ", secondarySSID=" + secondarySSID + ", secondaryPassword="
+				+ secondaryPassword + ", hostNtp=" + hostNtp + ", timezoneNtp=" + timezoneNtp + ", hostMqtt=" + hostMqtt
+				+ ", portMqtt=" + portMqtt + ", userMqtt=" + userMqtt + ", passwordMqtt=" + passwordMqtt
+				+ ", itemOwner=" + itemOwner + ", items=" + items + ", itemId=" + itemId + ", description="
+				+ description + "]";
 	}
-
-	public void setSspin(int sspin) {
-		this.sspin = sspin;
-	}
-	
 }

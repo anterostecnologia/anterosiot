@@ -8,21 +8,21 @@ import br.com.anteros.iot.Part;
 import br.com.anteros.iot.Thing;
 import br.com.anteros.iot.ThingStatus;
 import br.com.anteros.iot.domain.PlantItemNode;
-import br.com.anteros.iot.domain.things.BarrierGateNode;
+import br.com.anteros.iot.domain.things.BarrierSensorNode;
 import br.com.anteros.iot.plant.PlantItem;
 import br.com.anteros.iot.triggers.Trigger;
 
-public class BarrierGate extends PlantItem implements Thing {
+public class BarrierSensor extends PlantItem implements Thing {
 	
 	protected DeviceController deviceController;
 	protected boolean needsPropagation;
 	protected Set<Trigger> triggers = new HashSet<>();
 	protected int pin;
 
-	public BarrierGate() {
+	public BarrierSensor() {
 	}
 
-	public BarrierGate(BarrierGateNode node) {
+	public BarrierSensor(BarrierSensorNode node) {
 		this.itemId = node.getItemName();
 		this.description = node.getDescription();
 	}
@@ -117,7 +117,7 @@ public class BarrierGate extends PlantItem implements Thing {
 
 	@Override
 	public String toString() {
-		return "BarrierGate [pin=" + pin + ", itemId=" + itemId + ", description=" + description + "]";
+		return "BarrierSensor [pin=" + pin + ", itemId=" + itemId + ", description=" + description + "]";
 	}
 	
 	@Override

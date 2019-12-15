@@ -37,8 +37,10 @@ public class RaspberryPI extends PlantItem implements Device, Publishable   {
 	private IpAddress ipAddress;
 	private String topicError;
 	private Integer intervalPublishingTelemetry;
-	private String ssid;
-	private String password;
+	private String primarySSID;
+	private String primaryPassword;
+	private String secondarySSID;
+	private String secondaryPassword;
 	private DeviceController deviceController;
 	private boolean needsPropagation;
 	private TelemetryConfiguration telemetryConfiguration = TelemetryConfiguration.of(this);
@@ -200,32 +202,67 @@ public class RaspberryPI extends PlantItem implements Device, Publishable   {
 		this.intervalPublishingTelemetry = intervalPublishingTelemetry;
 	}
 
-	public String getSsid() {
-		return ssid;
+
+	@Override
+	public boolean needsPropagation() {
+		return needsPropagation ? true : false;
 	}
 
-	public void setSsid(String ssid) {
-		this.ssid = ssid;
+	public String getPrimarySSID() {
+		return primarySSID;
 	}
 
-	public String getPassword() {
-		return password;
+	public void setPrimarySSID(String primarySSID) {
+		this.primarySSID = primarySSID;
 	}
 
-	public void setPassword(String password) {
-		this.password = password;
+	public String getPrimaryPassword() {
+		return primaryPassword;
+	}
+
+	public void setPrimaryPassword(String primaryPassword) {
+		this.primaryPassword = primaryPassword;
+	}
+
+	public String getSecondarySSID() {
+		return secondarySSID;
+	}
+
+	public void setSecondarySSID(String secondarySSID) {
+		this.secondarySSID = secondarySSID;
+	}
+
+	public String getSecondaryPassword() {
+		return secondaryPassword;
+	}
+
+	public void setSecondaryPassword(String secondaryPassword) {
+		this.secondaryPassword = secondaryPassword;
+	}
+
+	public boolean isNeedsPropagation() {
+		return needsPropagation;
+	}
+
+	public void setNeedsPropagation(boolean needsPropagation) {
+		this.needsPropagation = needsPropagation;
+	}
+
+	public TelemetryConfiguration getTelemetryConfiguration() {
+		return telemetryConfiguration;
+	}
+
+	public void setTelemetryConfiguration(TelemetryConfiguration telemetryConfiguration) {
+		this.telemetryConfiguration = telemetryConfiguration;
 	}
 
 	@Override
 	public String toString() {
 		return "RaspberryPI [ipAddress=" + ipAddress + ", topicError=" + topicError + ", intervalPublishingTelemetry="
-				+ intervalPublishingTelemetry + ", ssid=" + ssid + ", password=" + password + ", itemId=" + itemId
-				+ ", description=" + description + "]";
-	}
-
-	@Override
-	public boolean needsPropagation() {
-		return needsPropagation ? true : false;
+				+ intervalPublishingTelemetry + ", primarySSID=" + primarySSID + ", primaryPassword=" + primaryPassword
+				+ ", secondarySSID=" + secondarySSID + ", secondaryPassword=" + secondaryPassword
+				+ ", deviceController=" + deviceController + ", needsPropagation=" + needsPropagation
+				+ ", telemetryConfiguration=" + telemetryConfiguration + "]";
 	}
 
 }

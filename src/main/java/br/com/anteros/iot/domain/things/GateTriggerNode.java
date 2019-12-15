@@ -15,12 +15,31 @@ import br.com.anteros.iot.domain.things.config.General;
 import br.com.anteros.iot.domain.things.config.Mqtt;
 import br.com.anteros.iot.domain.things.config.NTP;
 import br.com.anteros.iot.domain.things.config.Network;
-import br.com.anteros.iot.things.Beacon;
+import br.com.anteros.iot.things.GateTrigger;
 
-@JsonTypeName(DomainConstants.BEACON)
-public class BeaconNode extends ControllerNode implements Configurable {
+@JsonTypeName(DomainConstants.GATE_TRIGGER)
+public class GateTriggerNode extends ControllerNode implements Configurable {
 
 	protected String[] topics;
+
+	public GateTriggerNode() {
+		super();
+	}
+
+	public GateTriggerNode(String itemName, String description, String[] topics) {
+		super(itemName, description);
+		this.topics = topics;
+	}
+
+	@Override
+	protected boolean acceptThisTypeOfChild(Class<?> child) {
+		return false;
+	}
+
+	@Override
+	public Thing getInstanceOfThing() {
+		return new GateTrigger(this);
+	}
 
 	@Override
 	public String parseConfig(ObjectMapper mapper, PlantItemNode node) throws JsonProcessingException {
@@ -70,17 +89,8 @@ public class BeaconNode extends ControllerNode implements Configurable {
 		}
 
 		return null;
-	}
-	
-	public BeaconNode() {
-		super();
-	}
 
-	public BeaconNode(String itemName, String description, int pin, String[] topics) {
-		super(itemName, description);
-		this.topics = topics;
 	}
-
 
 	public String[] getTopics() {
 		return topics;
@@ -88,11 +98,6 @@ public class BeaconNode extends ControllerNode implements Configurable {
 
 	public void setTopics(String[] topics) {
 		this.topics = topics;
-	}
-
-	@Override
-	public Thing getInstanceOfThing() {
-		return new Beacon(this);
 	}
 
 }
