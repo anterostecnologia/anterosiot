@@ -7,7 +7,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import br.com.anteros.iot.Thing;
 import br.com.anteros.iot.domain.Configurable;
 import br.com.anteros.iot.domain.ControllerNode;
+import br.com.anteros.iot.domain.DeviceMasterNode;
 import br.com.anteros.iot.domain.DeviceNode;
+import br.com.anteros.iot.domain.DeviceSlaveNode;
 import br.com.anteros.iot.domain.DomainConstants;
 import br.com.anteros.iot.domain.PlantItemNode;
 import br.com.anteros.iot.domain.things.config.Config;
@@ -57,11 +59,29 @@ public class DigitalKeyNode extends ControllerNode implements Configurable {
 			hardware.setAccessType((accessType.equals(AccessType.PINCODE)?0:1));
 
 			if (this.getPrimarySSID() != null) {
-				network.setSsid(this.getPrimarySSID());
-				network.setPswd(this.getPrimaryPassword());
+				network.setPrimarySSID(this.getPrimarySSID());
+				network.setPrimaryPassword(this.getPrimaryPassword());
 			} else {
-				network.setSsid(deviceNode.getPrimarySSID());
-				network.setPswd(deviceNode.getPrimaryPassword());
+				if (deviceNode instanceof DeviceMasterNode) {
+					network.setPrimarySSID(((DeviceMasterNode)deviceNode).getSsid());
+					network.setPrimaryPassword(((DeviceMasterNode)deviceNode).getPassword());
+				} else if (deviceNode instanceof DeviceSlaveNode) {
+					network.setPrimarySSID(((DeviceSlaveNode)deviceNode).getPrimarySSID());
+					network.setPrimaryPassword(((DeviceSlaveNode)deviceNode).getPrimaryPassword());
+				}				
+			}
+			
+			if (this.getSecondarySSID() != null) {
+				network.setSecondarySSID(this.getSecondarySSID());
+				network.setSecondaryPassword(this.getSecondaryPassword());
+			} else {
+				if (deviceNode instanceof DeviceMasterNode) {
+					network.setSecondarySSID(((DeviceMasterNode)deviceNode).getSsidAP());
+					network.setSecondaryPassword(((DeviceMasterNode)deviceNode).getPasswordAP());
+				} else if (deviceNode instanceof DeviceSlaveNode) {
+					network.setSecondarySSID(((DeviceSlaveNode)deviceNode).getSecondarySSID());
+					network.setSecondaryPassword(((DeviceSlaveNode)deviceNode).getSecondaryPassword());
+				}				
 			}
 
 			general.setPlace(getPlaceNode().getItemName());

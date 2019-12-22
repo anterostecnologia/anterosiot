@@ -2,13 +2,13 @@ package br.com.anteros.iot.domain.things.config;
 
 public class Network {
 
-	private String bssid;
-	private String ssid;
-	private String pswd;
+	private String primaryBSSID;
+	private String primarySSID;
+	private String primaryPassword;
 
-	private String secondaryBssi;
-	private String secondarySsid;
-	private String secondaryPswd;
+	private String secondaryBSSID;
+	private String secondarySSID;
+	private String secondaryPassword;
 
 	private String ip;
 	private String subnet;
@@ -20,124 +20,95 @@ public class Network {
 	private int offtime;
 	private int dhcp;
 	private int hasConnection;
-
-	public String getBssid() {
-		return bssid;
+	public String getPrimaryBSSID() {
+		return primaryBSSID;
 	}
-
-	public void setBssid(String bssid) {
-		this.bssid = bssid;
+	public void setPrimaryBSSID(String primaryBSSID) {
+		this.primaryBSSID = primaryBSSID;
 	}
-
-	public String getSsid() {
-		return ssid;
+	public String getPrimarySSID() {
+		return primarySSID;
 	}
-
-	public void setSsid(String ssid) {
-		this.ssid = ssid;
+	public void setPrimarySSID(String primarySSID) {
+		this.primarySSID = primarySSID;
 	}
-
-	public String getPswd() {
-		return pswd;
+	public String getPrimaryPassword() {
+		return primaryPassword;
 	}
-
-	public void setPswd(String pswd) {
-		this.pswd = pswd;
+	public void setPrimaryPassword(String primaryPassword) {
+		this.primaryPassword = primaryPassword;
 	}
-
-	public String getSecondaryBssi() {
-		return secondaryBssi;
+	public String getSecondaryBSSID() {
+		return secondaryBSSID;
 	}
-
-	public void setSecondaryBssi(String secondaryBssi) {
-		this.secondaryBssi = secondaryBssi;
+	public void setSecondaryBSSID(String secondaryBSSID) {
+		this.secondaryBSSID = secondaryBSSID;
 	}
-
-	public String getSecondarySsid() {
-		return secondarySsid;
+	public String getSecondarySSID() {
+		return secondarySSID;
 	}
-
-	public void setSecondarySsid(String secondarySsid) {
-		this.secondarySsid = secondarySsid;
+	public void setSecondarySSID(String secondarySSID) {
+		this.secondarySSID = secondarySSID;
 	}
-
-	public String getSecondaryPswd() {
-		return secondaryPswd;
+	public String getSecondaryPassword() {
+		return secondaryPassword;
 	}
-
-	public void setSecondaryPswd(String secondaryPswd) {
-		this.secondaryPswd = secondaryPswd;
+	public void setSecondaryPassword(String secondaryPassword) {
+		this.secondaryPassword = secondaryPassword;
 	}
-
 	public String getIp() {
 		return ip;
 	}
-
 	public void setIp(String ip) {
 		this.ip = ip;
 	}
-
 	public String getSubnet() {
 		return subnet;
 	}
-
 	public void setSubnet(String subnet) {
 		this.subnet = subnet;
 	}
-
 	public String getGateway() {
 		return gateway;
 	}
-
 	public void setGateway(String gateway) {
 		this.gateway = gateway;
 	}
-
 	public String getDns() {
 		return dns;
 	}
-
 	public void setDns(String dns) {
 		this.dns = dns;
 	}
-
 	public int getWmode() {
 		return wmode;
 	}
-
 	public void setWmode(int wmode) {
 		this.wmode = wmode;
 	}
-
 	public int getHide() {
 		return hide;
 	}
-
 	public void setHide(int hide) {
 		this.hide = hide;
 	}
-
 	public int getOfftime() {
 		return offtime;
 	}
-
 	public void setOfftime(int offtime) {
 		this.offtime = offtime;
 	}
-
 	public int getDhcp() {
 		return dhcp;
 	}
-
 	public void setDhcp(int dhcp) {
 		this.dhcp = dhcp;
 	}
-
 	public int getHasConnection() {
 		return hasConnection;
 	}
-
 	public void setHasConnection(int hasConnection) {
 		this.hasConnection = hasConnection;
 	}
+
 }
