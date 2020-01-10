@@ -5,7 +5,12 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.net.SocketException;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -187,10 +192,24 @@ public class AnterosIOTService implements Runnable, MqttCallback, MqttCallbackEx
 			if (this.client.isConnected()) {
 				try {
 					Boolean controllerRunning = deviceController != null ? deviceController.getRunning() : false;
-					MqttHelper.publishHeartBeat(deviceName, "alive", controllerRunning, client);
+					String hostAddress = null;
+					
+					Enumeration<NetworkInterface> nets = NetworkInterface.getNetworkInterfaces();
+			        for (NetworkInterface netint : Collections.list(nets)) {
+			        	if (netint.getName().equals("eth0")) {
+			        		Enumeration<InetAddress> inetAddresses = netint.getInetAddresses();
+			        		InetAddress inetAddress = Collections.list(inetAddresses).get(1);
+			        		hostAddress = inetAddress.getHostAddress();
+			        		break;
+						}
+			        }
+					
+					MqttHelper.publishHeartBeat(deviceName, deviceType, "alive", controllerRunning, hostAddress, client);
 					LOG.debug("Mensagem de Heart Beat publicada");
 				} catch (MqttException e) {
 					LOG.error("Falha ao publicar mensagem Heart Beat");
+					e.printStackTrace();
+				} catch (SocketException e) {
 					e.printStackTrace();
 				}
 			}
