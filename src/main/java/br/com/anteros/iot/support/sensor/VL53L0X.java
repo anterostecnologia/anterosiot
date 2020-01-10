@@ -7,10 +7,6 @@ import br.com.anteros.iot.support.utils.EndianReaders;
 
 import java.io.IOException;
 
-/**
- * Adapted from from https://github.com/adafruit/Adafruit_CircuitPython_VL53L0X/blob/master/adafruit_vl53l0x.py
- * Driver for the VL53L0X https://www.adafruit.com/product/3317
- */
 public class VL53L0X {
 	public final static int VL53L0X_I2CADDR = 0x29;
 
@@ -134,7 +130,7 @@ public class VL53L0X {
 		if (verbose) {
 			System.out.println("Connected to device. OK.");
 		}
-		// Check identification registers for expected values.
+		// Check identification registers for expected values.	
 		// From section 3.2 of the datasheet.
 		if (this.readU8(0xC0) != 0xEE || this.readU8(0xC1) != 0xAA || this.readU8(0xC2) != 0x10) {
 			throw new RuntimeException("Failed to find expected ID register values. Check wiring!");
@@ -165,7 +161,7 @@ public class VL53L0X {
 		refSpadMap[0] = (byte) GLOBAL_CONFIG_SPAD_ENABLES_REF_0;
 
 		this.vl53l0x.write(refSpadMap, 0, 1);
-//		self._device.readinto(ref_spad_map, start=1)
+		//		self._device.readinto(ref_spad_map, start=1)
 		this.vl53l0x.read(refSpadMap, 1, 6); // TODO Verify
 
 		this.vl53l0x.write((byte) 0xFF, (byte) 0x01);
