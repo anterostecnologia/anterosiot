@@ -84,23 +84,22 @@ public class MqttHelper {
 		String payload = "{exception: "+ex.getMessage()+"}";
 		MqttMessage message = new MqttMessage(payload.getBytes());
 		message.setQos(1);
-		client.publish(AnterosIOTService.ERRORS_TOPIC+"/"+deviceName, message);
+		client.publish("/" + deviceName + AnterosIOTService.ERRORS_TOPIC, message);
 	}
 	
 	public static void publishBoot(String deviceName, MqttAsyncClient client) throws MqttPersistenceException, MqttException {
 		String payload = "{boot: true}";
 		MqttMessage message = new MqttMessage(payload.getBytes());
 		message.setQos(1);
-		client.publish(AnterosIOTService.BOOT_TOPIC+"/"+deviceName, message);
+		client.publish("/" + deviceName + AnterosIOTService.BOOT_TOPIC, message);
 	}
 
 
 	public static void publishHeartBeat(String deviceName, String deviceType, String status, Boolean controllerRunning, String hostAddress, MqttAsyncClient client) throws MqttPersistenceException, MqttException {
-		String heartBeatTopic = AnterosIOTService.HEARTBEAT_TOPIC+"/"+deviceName;
-		String message = "{ \"status\":\"" + status + "\", \"deviceType\":\"" + deviceType + "\", \"deviceName\":\"" + deviceName + "\", \"ip\":\"" + hostAddress + "\"}";
-		MqttMessage res = new MqttMessage(message.getBytes());
-		res.setQos(1);
-		client.publish(heartBeatTopic, res);
+		String payload = "{ \"status\":\"" + status + "\", \"deviceType\":\"" + deviceType + "\", \"deviceName\":\"" + deviceName + "\", \"ip\":\"" + hostAddress + "\"}";
+		MqttMessage message = new MqttMessage(payload.getBytes());
+		message.setQos(1);
+		client.publish("/" + deviceName + AnterosIOTService.HEARTBEAT_TOPIC, message);
 		
 	}
 
