@@ -17,7 +17,7 @@ import br.com.anteros.iot.Thing;
 import br.com.anteros.iot.support.colors.RGB;
 import br.com.anteros.iot.things.RingStripLED12;
 import br.com.anteros.iot.things.test.LEDDisplayType;
-import br.com.anteros.iot.triggers.TriggerType;
+import br.com.anteros.iot.triggers.ShotMoment;
 
 public class RingStripLED12Actuator implements Actuator<Boolean> {
 
@@ -157,7 +157,7 @@ public class RingStripLED12Actuator implements Actuator<Boolean> {
 			int rgb = PixelColour.createColourRGB(ringLed.getColor().getRed(), ringLed.getColor().getGreen(),
 					ringLed.getColor().getBlue());
 
-			fireTriggers(TriggerType.BEFORE, ON, ringLed, null);
+			fireTriggers(ShotMoment.BEFORE, ON, ringLed, null);
 			ledDriver.allOff();
 			if (LEDDisplayType.COLOUR_WIPE_ANIMATED.equals(ringLed.getLedType())) {
 				PixelAnimations.colourWipe(ledDriver, rgb, ringLed.getAnimateMiliseconds());
@@ -179,7 +179,7 @@ public class RingStripLED12Actuator implements Actuator<Boolean> {
 				PixelAnimations.theatreChaseRainbow(ledDriver, ringLed.getAnimateMiliseconds());
 			}
 
-			fireTriggers(TriggerType.AFTER, ON, ringLed, null);
+			fireTriggers(ShotMoment.AFTER, ON, ringLed, null);
 			running = Running.of(false);
 		}
 

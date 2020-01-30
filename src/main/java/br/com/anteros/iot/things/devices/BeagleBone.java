@@ -17,6 +17,7 @@ import br.com.anteros.iot.triggers.Trigger;
 
 public class BeagleBone extends PlantItem implements Device {
 	
+	private String hostnameACL;
 	private IpAddress ipAddress;
 	protected DeviceController deviceController;
 	protected boolean needsPropagation;
@@ -194,6 +195,14 @@ public class BeagleBone extends PlantItem implements Device {
 
 	public void setSecondaryPassword(String secondaryPassword) {
 		this.secondaryPassword = secondaryPassword;
+	}
+
+	public String getHostnameACL() {
+		return hostnameACL;
+	}
+
+	public void setHostnameACL(String hostnameACL) {
+		this.hostnameACL = hostnameACL;
 	}
 
 }

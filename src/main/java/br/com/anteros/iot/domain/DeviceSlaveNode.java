@@ -8,6 +8,7 @@ public abstract class DeviceSlaveNode extends DeviceNode {
 	protected String primaryPassword;
 	protected String secondarySSID;
 	protected String secondaryPassword;	
+	protected String hostnameACL;
 
 
 	public DeviceSlaveNode() {
@@ -53,6 +54,14 @@ public abstract class DeviceSlaveNode extends DeviceNode {
 
 	public void setSecondaryPassword(String secondaryPassword) {
 		this.secondaryPassword = secondaryPassword;
+	}
+
+	public String getHostnameACL() {
+		return hostnameACL;
+	}
+
+	public void setHostnameACL(String hostnameACL) {
+		this.hostnameACL = hostnameACL;
 	}
 
 }

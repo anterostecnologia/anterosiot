@@ -18,6 +18,7 @@ import br.com.anteros.iot.triggers.Trigger;
 
 public class Computer extends PlantItem implements Device {
 	
+	private String hostnameACL;
 	private IpAddress ipAddress;
 	private String topicError;
 	private Integer intervalPublishingTelemetry;
@@ -166,6 +167,22 @@ public class Computer extends PlantItem implements Device {
 	@Override
 	public boolean needsPropagation() {
 		return needsPropagation ? true : false;
+	}
+
+	public String getHostnameACL() {
+		return hostnameACL;
+	}
+
+	public void setHostnameACL(String hostnameACL) {
+		this.hostnameACL = hostnameACL;
+	}
+
+	public boolean isNeedsPropagation() {
+		return needsPropagation;
+	}
+
+	public void setNeedsPropagation(boolean needsPropagation) {
+		this.needsPropagation = needsPropagation;
 	}	
 
 }

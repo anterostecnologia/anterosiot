@@ -1,4 +1,4 @@
- package br.com.anteros.iot.app;
+package br.com.anteros.iot.app;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -45,6 +45,7 @@ import br.com.anteros.iot.domain.ThingNode;
 import br.com.anteros.iot.domain.plant.PlaceNode;
 import br.com.anteros.iot.domain.plant.PlantNode;
 import br.com.anteros.iot.support.MqttHelper;
+import br.com.anteros.iot.utils.Utils;
 
 public class AnterosIOTService implements Runnable, MqttCallback, MqttCallbackExtended {
 
@@ -61,7 +62,7 @@ public class AnterosIOTService implements Runnable, MqttCallback, MqttCallbackEx
 	public static final String TYPE = "type";
 
 	public static final String CONFIG = "config";
-	
+
 	private static final String MASTER = "master";
 
 	public static final Logger LOG = LoggerProvider.getInstance().getLogger(AnterosIOTService.class.getName());
@@ -85,8 +86,10 @@ public class AnterosIOTService implements Runnable, MqttCallback, MqttCallbackEx
 	public static final String ERRORS_TOPIC = "/errors";
 	public static final String UPDATE_CONFIG_TOPIC = "/updateConfig";
 
-	public AnterosIOTService(String deviceName, String deviceType, String hostMqtt, String port, String username, String password,
-			File config, InputStream streamConfig, AnterosIOTServiceListener serviceListener,
+	private ObjectMapper mapper;
+
+	public AnterosIOTService(String deviceName, String deviceType, String hostMqtt, String port, String username,
+			String password, File config, InputStream streamConfig, AnterosIOTServiceListener serviceListener,
 			Class<? extends Actuable>[] actuators) {
 		this.deviceName = deviceName;
 		this.deviceType = deviceType;
@@ -102,8 +105,8 @@ public class AnterosIOTService implements Runnable, MqttCallback, MqttCallbackEx
 	}
 
 	/**
-	 * -name master -type master -host-mqtt 192.168.0.1 -port 1883 -username admin -password
-	 * admin -config /home/pi/iot.json
+	 * -name master -type master -host-mqtt 192.168.0.1 -port 1883 -username admin
+	 * -password admin -config /home/pi/iot.json
 	 * 
 	 * 
 	 * @param args
@@ -125,8 +128,8 @@ public class AnterosIOTService implements Runnable, MqttCallback, MqttCallbackEx
 			configFile = new File(config);
 		}
 
-		Thread thread = new Thread(
-				new AnterosIOTService(deviceName, deviceType, hostMqtt, port, username, password, configFile, null, null, null));
+		Thread thread = new Thread(new AnterosIOTService(deviceName, deviceType, hostMqtt, port, username, password,
+				configFile, null, null, null));
 		thread.start();
 		thread.setName("Anteros IOT Service");
 	}
@@ -193,18 +196,19 @@ public class AnterosIOTService implements Runnable, MqttCallback, MqttCallbackEx
 				try {
 					Boolean controllerRunning = deviceController != null ? deviceController.getRunning() : false;
 					String hostAddress = null;
-					
+
 					Enumeration<NetworkInterface> nets = NetworkInterface.getNetworkInterfaces();
-			        for (NetworkInterface netint : Collections.list(nets)) {
-			        	if (netint.getName().equals("eth0")) {
-			        		Enumeration<InetAddress> inetAddresses = netint.getInetAddresses();
-			        		InetAddress inetAddress = Collections.list(inetAddresses).get(1);
-			        		hostAddress = inetAddress.getHostAddress();
-			        		break;
+					for (NetworkInterface netint : Collections.list(nets)) {
+						if (netint.getName().equals("eth0")) {
+							Enumeration<InetAddress> inetAddresses = netint.getInetAddresses();
+							InetAddress inetAddress = Collections.list(inetAddresses).get(1);
+							hostAddress = inetAddress.getHostAddress();
+							break;
 						}
-			        }
-					
-					MqttHelper.publishHeartBeat(deviceName, deviceType, "alive", controllerRunning, hostAddress, client);
+					}
+
+					MqttHelper.publishHeartBeat(deviceName, deviceType, "alive", controllerRunning, hostAddress,
+							client);
 					LOG.debug("Mensagem de Heart Beat publicada");
 				} catch (MqttException e) {
 					LOG.error("Falha ao publicar mensagem Heart Beat");
@@ -222,9 +226,11 @@ public class AnterosIOTService implements Runnable, MqttCallback, MqttCallbackEx
 	private void startService() throws JsonParseException, JsonMappingException, IOException {
 		if ((fileConfig != null || streamConfig != null) && client.isConnected()) {
 			LOG.info("Lendo configuração e criando device controller...");
-			ObjectMapper mapper = new ObjectMapper();
-			mapper.setSerializationInclusion(Include.NON_NULL);
-			mapper.enable(SerializationFeature.INDENT_OUTPUT);
+			if (mapper == null) {
+				mapper = new ObjectMapper();
+				mapper.setSerializationInclusion(Include.NON_NULL);
+				mapper.enable(SerializationFeature.INDENT_OUTPUT);
+			}
 			if (serviceListener != null) {
 				serviceListener.onAddSubTypeNames(mapper);
 			}
@@ -249,7 +255,7 @@ public class AnterosIOTService implements Runnable, MqttCallback, MqttCallbackEx
 			}
 
 			if (deviceController != null) {
-				serviceListener.onStartDeviceController();
+				serviceListener.onStartDeviceController(deviceController.getDevice());
 				deviceController.start();
 			}
 
@@ -275,31 +281,44 @@ public class AnterosIOTService implements Runnable, MqttCallback, MqttCallbackEx
 				throw new DeviceControllerException("O nó inicial da árvore de configuração deve ser um Local.");
 			}
 
-			propagate(mapper, node);
+			propagate(mapper, node, node);
 		}
 	}
 
-	private void propagate(ObjectMapper mapper, PlantItemNode node)
+	private void propagate(ObjectMapper mapper, PlantItemNode node, PlantItemNode rootNode)
 			throws JsonProcessingException, MqttException, MqttPersistenceException {
 		Set<PlantItemNode> items = node.getItems();
 		for (PlantItemNode item : items) {
 			if ((item instanceof ThingNode && ((ThingNode) item).needsPropagation())
 					|| (item instanceof DeviceNode && ((DeviceNode) item).needsPropagation())) {
-				
+
 				String parsedConfig = "";
 				if (item instanceof ThingNode) {
 					parsedConfig = ((ThingNode) item).parseConfig(mapper, item);
 				} else {
-					parsedConfig = ((DeviceNode) item).parseConfig(mapper, item);
+					
+//					parsedConfig = ((DeviceNode) item).parseConfig(mapper, rootNode);
+					
+					if (fileConfig != null) {
+						parsedConfig = Utils.readLineByLineOfFile(fileConfig.getPath());
+					} else if (streamConfig != null) {
+						try {
+							parsedConfig = Utils.readLineByLineOfFile(Utils.inputStreamToFile(streamConfig, "src/main/resources/targetFile.tmp").getPath());
+						} catch (Exception e) {
+							MqttHelper.publishError(e, deviceName, client);
+							e.printStackTrace();
+						}
+					}
 				}
 				
+				
 				String topicPropagation = "/" + item.getItemName();
-				String jsonNode = "{\"action\": \"updateConfig\",\"type\":\"stream\",\"config\": " + parsedConfig
-						+ "}";
+				String jsonNode = "{\"action\": \"updateConfig\",\"type\":\"stream\",\"config\": "
+						+ parsedConfig + "}";
 				MqttMessage propagationNode = new MqttMessage(jsonNode.getBytes());
 				client.publish(topicPropagation, propagationNode);
 			} else if (item instanceof PlaceNode || item instanceof PlantNode) {
-				propagate(mapper, item);
+				propagate(mapper, item, rootNode);
 			}
 		}
 	}
@@ -322,11 +341,15 @@ public class AnterosIOTService implements Runnable, MqttCallback, MqttCallbackEx
 	@Override
 	public void messageArrived(String topic, MqttMessage message) throws MqttPersistenceException, MqttException {
 
-		ObjectMapper mapper = new ObjectMapper();
 		JsonNode jsonMessage = null;
 		try {
+			if (mapper == null) {
+				mapper = new ObjectMapper();
+				mapper.setSerializationInclusion(Include.NON_NULL);
+				mapper.enable(SerializationFeature.INDENT_OUTPUT);
+			}
 			jsonMessage = mapper.readTree(message.getPayload());
-		} catch (IOException e) {
+		} catch (Exception e) {
 			MqttHelper.publishError(e, deviceName, client);
 			e.printStackTrace();
 		}

@@ -5,6 +5,7 @@ import java.util.Set;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import br.com.anteros.iot.Actuable;
+import br.com.anteros.iot.Device;
 import br.com.anteros.iot.controllers.AbstractDeviceController;
 import br.com.anteros.iot.triggers.Trigger;
 
@@ -27,12 +28,12 @@ public interface AnterosIOTServiceListener {
 	public void onBeforeBuildDeviceController();
 
 	public void onAfterBuildDeviceController();
-
-	public void onStartDeviceController();
 	
 	public void onStopDeviceController();
 
 	public void onStartCollectors(AbstractDeviceController abstractDeviceController);
 
 	public void onStopCollectors(AbstractDeviceController abstractDeviceController);
+
+	public void onStartDeviceController(Device device);
 }

@@ -34,6 +34,7 @@ import br.com.anteros.iot.triggers.Trigger;
 
 public class RaspberryPI extends PlantItem implements Device, Publishable   {
 
+	private String hostnameACL;
 	private IpAddress ipAddress;
 	private String topicError;
 	private Integer intervalPublishingTelemetry;
@@ -263,6 +264,14 @@ public class RaspberryPI extends PlantItem implements Device, Publishable   {
 				+ ", secondarySSID=" + secondarySSID + ", secondaryPassword=" + secondaryPassword
 				+ ", deviceController=" + deviceController + ", needsPropagation=" + needsPropagation
 				+ ", telemetryConfiguration=" + telemetryConfiguration + "]";
+	}
+
+	public String getHostnameACL() {
+		return hostnameACL;
+	}
+
+	public void setHostnameACL(String hostnameACL) {
+		this.hostnameACL = hostnameACL;
 	}
 
 }

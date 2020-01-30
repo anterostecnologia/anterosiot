@@ -12,16 +12,16 @@ import br.com.anteros.iot.plant.PlantItem;
 public class Trigger {
 
 	private String name;
-	private TriggerType type;
+	private ShotMoment shotMoment;
 	private WhenCondition whenCondition;
 	private Action[] targetActions;
 	private Action[] exceptionActions;
 	private boolean requiresPermission;
 
-	private Trigger(String name, TriggerType type, WhenCondition whenCondition, Action[] targetActions,
+	private Trigger(String name, ShotMoment shotMoment, WhenCondition whenCondition, Action[] targetActions,
 			Action[] exceptionActions) {
 		this.name = name;
-		this.type = type;
+		this.shotMoment = shotMoment;
 		this.whenCondition = whenCondition;
 		this.targetActions = targetActions;
 		this.exceptionActions = exceptionActions;
@@ -72,7 +72,7 @@ public class Trigger {
 		}
 	}
 
-	public static Trigger of(String name, TriggerType type, WhenCondition whenCondition, Action[] targetActions,
+	public static Trigger of(String name, ShotMoment type, WhenCondition whenCondition, Action[] targetActions,
 			Action[] exceptionActions) {
 		return new Trigger(name, type, whenCondition, targetActions, exceptionActions);
 	}
@@ -83,14 +83,6 @@ public class Trigger {
 
 	public void setName(String name) {
 		this.name = name;
-	}
-
-	public TriggerType getType() {
-		return type;
-	}
-
-	public void setType(TriggerType type) {
-		this.type = type;
 	}
 
 	public Action[] getTargetActions() {
@@ -127,6 +119,14 @@ public class Trigger {
 
 	public void setExceptionActions(Action[] exceptionActions) {
 		this.exceptionActions = exceptionActions;
+	}
+
+	public ShotMoment getShotMoment() {
+		return shotMoment;
+	}
+
+	public void setShotMoment(ShotMoment shotMoment) {
+		this.shotMoment = shotMoment;
 	}
 
 }

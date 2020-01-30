@@ -12,7 +12,7 @@ import br.com.anteros.iot.Actuator;
 import br.com.anteros.iot.Thing;
 import br.com.anteros.iot.support.Pi4JHelper;
 import br.com.anteros.iot.things.LampOrBulb;
-import br.com.anteros.iot.triggers.TriggerType;
+import br.com.anteros.iot.triggers.ShotMoment;
 
 public class LampOrBulbActuator implements Actuator<Boolean> {
 
@@ -31,26 +31,26 @@ public class LampOrBulbActuator implements Actuator<Boolean> {
 		String action = recivedPayload.getString("action");
 		if (thing instanceof LampOrBulb) {
 			if (action.equals(ON)) {
-				fireTriggers(TriggerType.BEFORE, action, thing, null);
+				fireTriggers(ShotMoment.BEFORE, action, thing, null);
 
 				GpioController gpio = Pi4JHelper.getGpioController();
 				final GpioPinDigitalOutput pin = getOutputPinFromThing(gpio, thing);
 				gpio.high(pin);
 
-				fireTriggers(TriggerType.AFTER, action, thing, null);
+				fireTriggers(ShotMoment.AFTER, action, thing, null);
 
 				return true;
 			} else if (action.equals(OFF)) {
-				fireTriggers(TriggerType.BEFORE, action, thing, null);
+				fireTriggers(ShotMoment.BEFORE, action, thing, null);
 
 				GpioController gpio = Pi4JHelper.getGpioController();
 				final GpioPinDigitalOutput pin = getOutputPinFromThing(gpio, thing);
 				gpio.low(pin);
 
-				fireTriggers(TriggerType.AFTER, action, thing, null);
+				fireTriggers(ShotMoment.AFTER, action, thing, null);
 				return true;
 			} else if (action.equals(TOGGLE)) {
-				fireTriggers(TriggerType.BEFORE, action, thing, null);
+				fireTriggers(ShotMoment.BEFORE, action, thing, null);
 
 				GpioController gpio = Pi4JHelper.getGpioController();
 				final GpioPinDigitalOutput pin = getOutputPinFromThing(gpio, thing);
@@ -59,7 +59,7 @@ public class LampOrBulbActuator implements Actuator<Boolean> {
 				else
 					gpio.high(pin);
 
-				fireTriggers(TriggerType.AFTER, action, thing, null);
+				fireTriggers(ShotMoment.AFTER, action, thing, null);
 				return true;
 			}
 		}

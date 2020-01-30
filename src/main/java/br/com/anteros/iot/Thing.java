@@ -7,7 +7,7 @@ import java.util.Set;
 import br.com.anteros.core.utils.StringUtils;
 import br.com.anteros.iot.domain.PlantItemNode;
 import br.com.anteros.iot.triggers.Trigger;
-import br.com.anteros.iot.triggers.TriggerType;
+import br.com.anteros.iot.triggers.ShotMoment;
 import br.com.anteros.iot.triggers.WhenCondition;
 
 public interface Thing {
@@ -42,7 +42,7 @@ public interface Thing {
 
 	public Trigger[] getTriggers();
 
-	default public boolean hasTriggers(TriggerType type, String actionOrValue) {
+	default public boolean hasTriggers(ShotMoment type, String actionOrValue) {
 		for (Trigger trigger : getTriggers()) {
 			if (StringUtils.isEmpty(trigger.getWhenCondition().getActionOrValue())
 					|| trigger.getWhenCondition().hasActionOrValueEquals(WhenCondition.ALL_VALUES)
@@ -53,19 +53,19 @@ public interface Thing {
 		return false;
 	}
 
-	default public boolean hasTriggers(TriggerType type) {
+	default public boolean hasTriggers(ShotMoment shotMoment) {
 		for (Trigger trigger : getTriggers()) {
-			if (trigger.getType().equals(type)) {
+			if (trigger.getShotMoment().equals(shotMoment)) {
 				return true;
 			}
 		}
 		return false;
 	}
 
-	default public Trigger[] getTriggersByType(TriggerType type, String actionOrValue) {
+	default public Trigger[] getTriggersByType(ShotMoment shotMoment, String actionOrValue) {
 		List<Trigger> result = new ArrayList<>();
 		for (Trigger trigger : getTriggers()) {
-			if (trigger.getType().equals(type)) {
+			if (trigger.getShotMoment().equals(shotMoment)) {
 
 				if (StringUtils.isEmpty(trigger.getWhenCondition().getActionOrValue())
 						|| trigger.getWhenCondition().hasActionOrValueEquals(WhenCondition.ALL_VALUES)
@@ -77,10 +77,10 @@ public interface Thing {
 		return result.toArray(new Trigger[] {});
 	}
 
-	default public Trigger[] getTriggersByType(TriggerType type) {
+	default public Trigger[] getTriggersByType(ShotMoment shotMoment) {
 		List<Trigger> result = new ArrayList<>();
 		for (Trigger trigger : getTriggers()) {
-			if (trigger.getType().equals(type)) {
+			if (trigger.getShotMoment().equals(shotMoment)) {
 				result.add(trigger);
 			}
 		}

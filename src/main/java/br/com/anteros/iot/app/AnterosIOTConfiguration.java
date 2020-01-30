@@ -276,7 +276,7 @@ public class AnterosIOTConfiguration {
 							}
 						}
 
-						sourceThing.addTrigger(Trigger.of(triggerNode.getName(), triggerNode.getType(), whenCondition,
+						sourceThing.addTrigger(Trigger.of(triggerNode.getName(), triggerNode.getShotMoment(), whenCondition,
 								targetActions.toArray(new Action[] {}), exceptionActions.toArray(new Action[] {})));
 					}
 				}

@@ -25,18 +25,18 @@ public class DefaultActuators implements Actuators {
 	private Map<Thing, Actuable> cacheColletors = new HashMap<>();
 
 	public DefaultActuators() {
-		//registerActuator(DeviceSystemInfoCollector.class);
-		//registerActuator(LedActuator.class);
-		//registerActuator(LampOrBulbActuator.class);
-		//registerActuator(MagneticLockActuator.class);
-		//registerActuator(PresenceDetectorCollector.class);
-		//registerActuator(RFIDReaderCollector.class);
-		//registerActuator(CameraQRCodeCollector.class);
-		//registerActuator(TemperatureOneWireCollector.class);
-		//registerActuator(CameraMotionDetectorCollector.class);
+		registerActuator(DeviceSystemInfoCollector.class);
+		registerActuator(LedActuator.class);
+		registerActuator(LampOrBulbActuator.class);
+		registerActuator(MagneticLockActuator.class);
+		registerActuator(PresenceDetectorCollector.class);
+		registerActuator(RFIDReaderCollector.class);
+		registerActuator(CameraQRCodeCollector.class);
+		registerActuator(TemperatureOneWireCollector.class);
+		registerActuator(CameraMotionDetectorCollector.class);
 		registerActuator(PlcColletor.class);
-		//registerActuator(MemoryPlcActuator.class);
-		//registerActuator(RingStripLED12Actuator.class);
+		registerActuator(MemoryPlcActuator.class);
+		registerActuator(RingStripLED12Actuator.class);
 	}
 
 	public DefaultActuators registerActuator(Class<? extends Actuable> actuable) {

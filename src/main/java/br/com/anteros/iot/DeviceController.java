@@ -11,6 +11,8 @@ import br.com.anteros.iot.app.listeners.AnterosIOTServiceListener;
 
 public interface DeviceController extends ThingController {
 
+	public Device getDevice();
+	
 	public DeviceStatus getStatus();	
 	
 	public DeviceController addThings(Thing... things);

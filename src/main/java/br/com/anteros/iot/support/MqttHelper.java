@@ -36,9 +36,9 @@ public class MqttHelper {
 		connOpts.setAutomaticReconnect(automaticReconnect);
 		connOpts.setCleanSession(cleanSession);	
 		connOpts.setConnectionTimeout(20);
-		connOpts.setMaxInflight(1000);
+		connOpts.setMaxInflight(2000);
 		connOpts.setMqttVersion(MqttConnectOptions.MQTT_VERSION_3_1_1);
-		connOpts.setKeepAliveInterval(MqttConnectOptions.KEEP_ALIVE_INTERVAL_DEFAULT);
+		connOpts.setKeepAliveInterval(7200);
 
 		client.connect(connOpts);
 
@@ -71,7 +71,7 @@ public class MqttHelper {
 		connOpts.setConnectionTimeout(20);
 		connOpts.setMaxInflight(1000);
 		connOpts.setMqttVersion(MqttConnectOptions.MQTT_VERSION_3_1_1);
-		connOpts.setKeepAliveInterval(MqttConnectOptions.KEEP_ALIVE_INTERVAL_DEFAULT);
+		connOpts.setKeepAliveInterval(7200);
 
 		client.setCallback(callback);
 		client.connect(connOpts);

@@ -17,6 +17,7 @@ import br.com.anteros.iot.triggers.Trigger;
 
 public class OdroidC2 extends PlantItem implements Device {
 	
+	private String hostnameACL;
 	private IpAddress ipAddress;
 	protected DeviceController deviceController;
 	protected boolean needsPropagation;
@@ -201,6 +202,14 @@ public class OdroidC2 extends PlantItem implements Device {
 				+ needsPropagation + ", topicError=" + topicError + ", intervalPublishingTelemetry="
 				+ intervalPublishingTelemetry + ", primarySSID=" + primarySSID + ", primaryPassword=" + primaryPassword
 				+ ", secondarySSID=" + secondarySSID + ", secondaryPassword=" + secondaryPassword + "]";
+	}
+
+	public String getHostnameACL() {
+		return hostnameACL;
+	}
+
+	public void setHostnameACL(String hostnameACL) {
+		this.hostnameACL = hostnameACL;
 	}
 	
 }

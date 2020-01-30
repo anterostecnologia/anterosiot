@@ -17,6 +17,7 @@ import br.com.anteros.iot.triggers.Trigger;
 
 public class AsusTinkerBoard extends PlantItem implements Device {
 	
+	private String hostnameACL;
 	private IpAddress ipAddress;
 	private String topicError;
 	private Integer intervalPublishingTelemetry;
@@ -205,6 +206,14 @@ public class AsusTinkerBoard extends PlantItem implements Device {
 				+ ", primaryPassword=" + primaryPassword + ", secondarySSID=" + secondarySSID + ", secondaryPassword="
 				+ secondaryPassword + ", deviceController=" + deviceController + ", needsPropagation="
 				+ needsPropagation + "]";
+	}
+
+	public String getHostnameACL() {
+		return hostnameACL;
+	}
+
+	public void setHostnameACL(String hostnameACL) {
+		this.hostnameACL = hostnameACL;
 	}	
 
 }

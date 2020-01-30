@@ -10,6 +10,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
 import br.com.anteros.iot.Actuable;
+import br.com.anteros.iot.Device;
 import br.com.anteros.iot.actuators.MemoryPlcActuator;
 import br.com.anteros.iot.app.AnterosIOTService;
 import br.com.anteros.iot.app.listeners.AnterosIOTServiceListener;
@@ -128,12 +129,6 @@ public class AnterosIotService implements AnterosIOTServiceListener {
 	}
 
 	@Override
-	public void onStartDeviceController() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
 	public void onStopDeviceController() {
 		// TODO Auto-generated method stub
 		
@@ -148,6 +143,12 @@ public class AnterosIotService implements AnterosIOTServiceListener {
 
 	@Override
 	public void onStopCollectors(AbstractDeviceController abstractDeviceController) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onStartDeviceController(Device device) {
 		// TODO Auto-generated method stub
 		
 	}

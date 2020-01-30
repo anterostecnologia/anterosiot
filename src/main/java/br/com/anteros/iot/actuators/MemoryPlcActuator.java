@@ -17,7 +17,7 @@ import br.com.anteros.iot.protocol.modbus.type.CollectType;
 import br.com.anteros.iot.protocol.modbus.type.ModifyType;
 import br.com.anteros.iot.things.Plc;
 import br.com.anteros.iot.things.parts.MemoryPlc;
-import br.com.anteros.iot.triggers.TriggerType;
+import br.com.anteros.iot.triggers.ShotMoment;
 
 public class MemoryPlcActuator implements Actuator<Boolean> {
 	
@@ -59,29 +59,29 @@ public class MemoryPlcActuator implements Actuator<Boolean> {
 
 			if (memory.getCollectType().equals(CollectType.COIL)) {
 				if (action.equals("on")) {
-					fireTriggers(TriggerType.BEFORE, action, thing, null);
+					fireTriggers(ShotMoment.BEFORE, action, thing, null);
 
 					this.protocolDevice.writeSingleCoil(plc.getSlaveAddress(), memory.getRegisterAddress(), true);
 
-					fireTriggers(TriggerType.AFTER, action, thing, null);
+					fireTriggers(ShotMoment.AFTER, action, thing, null);
 					return true;
 				} else if (action.equals("off")) {
-					fireTriggers(TriggerType.BEFORE, action, thing, null);
+					fireTriggers(ShotMoment.BEFORE, action, thing, null);
 
 					this.protocolDevice.writeSingleCoil(plc.getSlaveAddress(), memory.getRegisterAddress(), false);
 
-					fireTriggers(TriggerType.AFTER, action, thing, null);
+					fireTriggers(ShotMoment.AFTER, action, thing, null);
 					return true;
 				}
 			} else if (memory.getCollectType().equals(CollectType.INPUTREGISTER)) {
 
 				if (StringUtils.isInteger(action)) {
-					fireTriggers(TriggerType.BEFORE, action, thing, null);
+					fireTriggers(ShotMoment.BEFORE, action, thing, null);
 
 					this.protocolDevice.writeSingleRegister(plc.getSlaveAddress(), memory.getRegisterAddress(),
 							Integer.parseInt(action));
 
-					fireTriggers(TriggerType.AFTER, action, thing, null);
+					fireTriggers(ShotMoment.AFTER, action, thing, null);
 					return true;
 				}
 			}

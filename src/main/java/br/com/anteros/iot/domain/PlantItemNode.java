@@ -44,6 +44,8 @@ import br.com.anteros.iot.domain.things.TemperatureOneWireNode;
 import br.com.anteros.iot.domain.things.parts.GreenLEDSemaphorePartNode;
 import br.com.anteros.iot.domain.things.parts.MemoryPlcNode;
 import br.com.anteros.iot.domain.things.parts.RedLEDSemaphorePartNode;
+import br.com.anteros.iot.domain.triggers.TriggerNode;
+import br.com.anteros.iot.domain.triggers.WhenConditionNode;
 import br.com.anteros.iot.things.GenericRelay;
 import br.com.anteros.iot.things.sensors.BarrierSensor;
 
@@ -59,9 +61,11 @@ import br.com.anteros.iot.things.sensors.BarrierSensor;
 		@Type(value = RedLEDSemaphorePartNode.class, name = "redLedSemaphore"),
 		@Type(value = LampOrBulbNode.class, name = "lamp"),
 		@Type(value = MasterAsusTinkerNode.class, name = "masterAsusTinker"),
-		@Type(value = MasterDeviceRPiNode.class, name = "masterRPi"), @Type(value = PlaceNode.class, name = "place"),
+		@Type(value = MasterDeviceRPiNode.class, name = "masterRPi"),
+		@Type(value = PlaceNode.class, name = "place"),
 		@Type(value = CameraQRCodeReaderNode.class, name = "cameraQRCode"),
-		@Type(value = RFIDReaderNode.class, name = "rfidNode"), @Type(value = SemaphoreNode.class, name = "semaphore"),
+		@Type(value = RFIDReaderNode.class, name = "rfidNode"),
+		@Type(value = SemaphoreNode.class, name = "semaphore"),
 		@Type(value = SlaveAsusTinkerNode.class, name = "slaveAsusTinker"),
 		@Type(value = MagneticLockNode.class, name = "magneticLock"),
 		@Type(value = TemperatureOneWireNode.class, name = "temperatureOneWire"),
@@ -73,6 +77,8 @@ import br.com.anteros.iot.things.sensors.BarrierSensor;
 		@Type(value = SlaveComputerNode.class, name = "slaveComputer"),
 		@Type(value = CameraMotionDetectorNode.class, name = "cameraMotionDetector"),
 		@Type(value = GenericRelayNode.class, name = "genericRelay"),
+		@Type(value = TriggerNode.class, name = "trigger"),
+		@Type(value = WhenConditionNode.class, name = "whenCondition"),
 		@Type(value = ActionNode.class, name = "action"),
 		@Type(value = RingStripLED12Node.class, name = DomainConstants.RING_STRIP_LED12)})
 public abstract class PlantItemNode {
