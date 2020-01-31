@@ -45,7 +45,7 @@ import br.com.anteros.iot.domain.ThingNode;
 import br.com.anteros.iot.domain.plant.PlaceNode;
 import br.com.anteros.iot.domain.plant.PlantNode;
 import br.com.anteros.iot.support.MqttHelper;
-import br.com.anteros.iot.utils.Utils;
+import br.com.anteros.iot.support.utils.StaticUtil;
 
 public class AnterosIOTService implements Runnable, MqttCallback, MqttCallbackExtended {
 
@@ -300,10 +300,10 @@ public class AnterosIOTService implements Runnable, MqttCallback, MqttCallbackEx
 //					parsedConfig = ((DeviceNode) item).parseConfig(mapper, rootNode);
 					
 					if (fileConfig != null) {
-						parsedConfig = Utils.readLineByLineOfFile(fileConfig.getPath());
+						parsedConfig = StaticUtil.readLineByLineOfFile(fileConfig.getPath());
 					} else if (streamConfig != null) {
 						try {
-							parsedConfig = Utils.readLineByLineOfFile(Utils.inputStreamToFile(streamConfig, "src/main/resources/targetFile.tmp").getPath());
+							parsedConfig = StaticUtil.readLineByLineOfFile(StaticUtil.inputStreamToFile(streamConfig, "src/main/resources/targetFile.tmp").getPath());
 						} catch (Exception e) {
 							MqttHelper.publishError(e, deviceName, client);
 							e.printStackTrace();
