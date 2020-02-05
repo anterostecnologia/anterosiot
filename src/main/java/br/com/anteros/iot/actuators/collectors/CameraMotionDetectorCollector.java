@@ -85,4 +85,9 @@ public class CameraMotionDetectorCollector extends Collector implements Runnable
 		return thing instanceof CameraMotionDetector;
 	}
 
+	@Override
+	public boolean isRunning() {
+		return running ? true : false;
+	}
+
 }

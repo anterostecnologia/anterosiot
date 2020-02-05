@@ -65,9 +65,14 @@
 			<artifactId>Anteros-Core</artifactId>
 			<version>[1.0.0,)</version>
 		</dependency>
-		<dependency>
+		<!-- <dependency>
 			<groupId>org.eclipse.paho</groupId>
 			<artifactId>org.eclipse.paho.client.mqttv3</artifactId>
+			<version>1.2.2</version>
+		</dependency> -->
+		<dependency>
+			<groupId>br.com.anteros</groupId>
+			<artifactId>br.com.anteros.client.mqttv3</artifactId>
 			<version>1.2.2</version>
 		</dependency>
 		<dependency>
@@ -130,7 +135,7 @@
 			<artifactId>opencv</artifactId>
 			<version>4.1.1</version>
 			<scope>system</scope>
-			<systemPath>${project.basedir}/opencv/opencv-411.jar</systemPath>
+			<systemPath>${project.basedir}/opencv/opencv_java411.jar</systemPath>
 		</dependency>
 		<dependency>
 			<groupId>com.diozero</groupId>

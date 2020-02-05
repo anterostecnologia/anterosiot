@@ -14,6 +14,7 @@ import br.com.anteros.iot.things.sensors.PresenceDetectorSensor;
 public class PresenceDetectorCollector extends Collector implements GpioPinListenerDigital {
 
 	private GpioPinDigitalInput digitalInputPin;
+	private boolean running;
 
 	public PresenceDetectorCollector(CollectorListener listener, Thing thing) {
 		super(listener, thing);
@@ -35,6 +36,7 @@ public class PresenceDetectorCollector extends Collector implements GpioPinListe
 		digitalInputPin = Pi4JHelper.getDigitalInputPin(gpio, presenceDetector.getPin());
 		digitalInputPin.setPullResistance(PinPullResistance.PULL_DOWN);
 		digitalInputPin.addListener(this);
+		running = true;
 
 	}
 
@@ -43,6 +45,7 @@ public class PresenceDetectorCollector extends Collector implements GpioPinListe
 		if (digitalInputPin != null) {
 			digitalInputPin.removeListener(this);
 		}
+		running = false;
 	}
 
 	@Override
@@ -50,6 +53,11 @@ public class PresenceDetectorCollector extends Collector implements GpioPinListe
 		if (listener != null) {
 			listener.onCollect(new SimpleResult(Boolean.valueOf(event.getState().isHigh())), thing);
 		}
+	}
+
+	@Override
+	public boolean isRunning() {
+		return running ? true : false;
 	}
 
 }

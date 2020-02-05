@@ -63,6 +63,7 @@ public class StaticUtil {
 	public static File inputStreamToFile(InputStream stream, String path) throws IOException {
 		
 		File targetFile = new File(path);
+		targetFile.createNewFile();
 	    FileUtils.copyInputStreamToFile(stream, targetFile);
 	    
 	    return targetFile;

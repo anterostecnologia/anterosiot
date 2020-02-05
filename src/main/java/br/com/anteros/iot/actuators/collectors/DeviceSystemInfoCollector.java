@@ -66,8 +66,13 @@ public class DeviceSystemInfoCollector extends Collector implements Runnable {
 					strategy.setLastIntervalPublishing(time);
 				}
 			}
-			SleepUtil.sleepMillis(10);
+			SleepUtil.sleepMillis(15000);
 		}
+	}
+
+	@Override
+	public boolean isRunning() {
+		return running ? true : false;
 	}
 
 }

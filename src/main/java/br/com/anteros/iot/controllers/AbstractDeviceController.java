@@ -42,6 +42,7 @@ import br.com.anteros.iot.actuators.collectors.SimpleCollectorManager;
 import br.com.anteros.iot.app.AnterosIOTService;
 import br.com.anteros.iot.app.listeners.AnterosIOTServiceListener;
 import br.com.anteros.iot.domain.DeviceNode;
+import br.com.anteros.iot.domain.PlantItemNode;
 import br.com.anteros.iot.plant.Place;
 import br.com.anteros.iot.plant.Plant;
 import br.com.anteros.iot.plant.PlantItem;
@@ -49,6 +50,7 @@ import br.com.anteros.iot.things.devices.IpAddress;
 
 public abstract class AbstractDeviceController implements DeviceController, MqttCallback, MqttCallbackExtended, Runnable {
 
+	private PlantItemNode node;
 	protected Device device;
 	protected Set<Thing> things = new HashSet<Thing>();
 	protected MqttAsyncClient clientMqtt;
@@ -394,13 +396,13 @@ public abstract class AbstractDeviceController implements DeviceController, Mqtt
 		for (Thing thing : things) {
 			if (thing instanceof PlantItem) {
 				String topic = ((PlantItem) thing).getPath();
-				filter.add(topic);
+				filter.add("/" + topic);
 				subscribedTopics.put(topic, thing);
 				if (thing.getParts() != null) {
 					for (Part part : thing.getParts()) {
 						String topicPart = ((PlantItem) part).getPath();
-						filter.add(topicPart);
-						subscribedTopics.put(topicPart, part);
+						filter.add("/" + topicPart);
+						subscribedTopics.put("/" + topicPart, part);
 
 					}
 				}
@@ -409,8 +411,8 @@ public abstract class AbstractDeviceController implements DeviceController, Mqtt
 
 		if (this.getThing() instanceof PlantItem) {
 			String topic = ((PlantItem) this.getThing()).getPath();
-			filter.add(topic);
-			subscribedTopics.put(topic, this.getThing());
+			filter.add("/" + topic);
+			subscribedTopics.put("/" + topic, this.getThing());
 		}
 
 		try {
@@ -564,6 +566,14 @@ public abstract class AbstractDeviceController implements DeviceController, Mqtt
 				e1.printStackTrace();
 			}
 		}
+	}
+
+	public PlantItemNode getNode() {
+		return node;
+	}
+
+	public void setNode(PlantItemNode node) {
+		this.node = node;
 	}
 
 }

@@ -19,12 +19,13 @@ public class TriggerNode extends PlantItemNode {
 		
 	}
 
-	public TriggerNode(String name, ShotMoment shotMoment, WhenConditionNode whenConditionNode, ActionNode[] targetActions, ActionNode[] exceptionActions) {
+	public TriggerNode(String name, ShotMoment shotMoment, WhenConditionNode whenConditionNode, ActionNode[] targetActions, ActionNode[] exceptionActions, boolean requiresPermission) {
 		this.name = name;
 		this.shotMoment = shotMoment;
 		this.whenConditionNode = whenConditionNode;
 		this.targetActions = targetActions;
 		this.exceptionActions = exceptionActions;
+		this.requiresPermission = requiresPermission;
 	}
 
 

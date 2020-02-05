@@ -36,7 +36,7 @@ public class AnterosIotService implements AnterosIOTServiceListener {
 		AnterosIotService service = new AnterosIotService();
 
 		new Thread(new AnterosIOTService("master", "master", "10.0.1.1", "1883", "admin", "L657NKJH", null,
-				buildConfiguration(), service, new Class[] { MemoryPlcActuator.class })).start();
+				null, buildConfiguration(), service, new Class[] { MemoryPlcActuator.class })).start();
 	}
 
 	private static InputStream buildConfiguration() throws JsonProcessingException {

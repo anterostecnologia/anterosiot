@@ -19,12 +19,13 @@ public class Trigger {
 	private boolean requiresPermission;
 
 	private Trigger(String name, ShotMoment shotMoment, WhenCondition whenCondition, Action[] targetActions,
-			Action[] exceptionActions) {
+			Action[] exceptionActions, boolean requiresPermission) {
 		this.name = name;
 		this.shotMoment = shotMoment;
 		this.whenCondition = whenCondition;
 		this.targetActions = targetActions;
 		this.exceptionActions = exceptionActions;
+		this.requiresPermission = requiresPermission;
 	}
 
 	public void fire(CollectResult value) {
@@ -73,8 +74,8 @@ public class Trigger {
 	}
 
 	public static Trigger of(String name, ShotMoment type, WhenCondition whenCondition, Action[] targetActions,
-			Action[] exceptionActions) {
-		return new Trigger(name, type, whenCondition, targetActions, exceptionActions);
+			Action[] exceptionActions, boolean requiresPermission) {
+		return new Trigger(name, type, whenCondition, targetActions, exceptionActions, requiresPermission);
 	}
 
 	public String getName() {

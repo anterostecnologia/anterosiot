@@ -16,6 +16,7 @@ import javax.json.stream.JsonGenerator;
 
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.MqttAsyncClient;
+import org.eclipse.paho.client.mqttv3.MqttCallback;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
@@ -98,6 +99,12 @@ public class SimpleCollectorManager implements CollectorManager, CollectorListen
 			LOG.info("Adicionando coletores de telemetria...");
 			Collector collector = actuators.discoverCollectorToThing(device);
 			if (collector != null) {
+				
+				while(collector.isRunning()){
+					collector.stopCollect();
+					Thread.yield();
+				}
+				
 				collector.setListener(this);
 				collector.startCollect();
 				collectorsRunning.add(collector);
@@ -114,13 +121,18 @@ public class SimpleCollectorManager implements CollectorManager, CollectorListen
 					MqttAsyncClient clientCollector = null;
 					try {
 						clientCollector = MqttHelper.createAndConnectMqttClient(mqttClient.getServerURI(),
-								device.getThingID() + "-" + thing.getThingID() + "_collector", username, password, true,
-								true);
+								thing.getThingID().split("-")[0] + "_collector", username, password, true,
+								true, (MqttCallback) collector);
 					} catch (MqttException e1) {
 						e1.printStackTrace();
 					}
 
 					((MqttCollector) collector).setMqttClient(clientCollector);
+				}
+				
+				while(collector.isRunning()){
+					collector.stopCollect();
+					Thread.yield();
 				}
 				collector.startCollect();
 				collectorsRunning.add(collector);
@@ -200,8 +212,12 @@ public class SimpleCollectorManager implements CollectorManager, CollectorListen
 
 	@Override
 	public void connectionLost(Throwable cause) {
-		// TODO Auto-generated method stub
-		
+//		LOG.warn("Conexão com o broker MQTT perdida. Causa: " + cause.toString());
+		try {
+			this.mqttClient.reconnect();
+		} catch (MqttException e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Override

@@ -35,12 +35,14 @@ import br.com.anteros.iot.domain.DeviceSlaveNode;
 import br.com.anteros.iot.domain.PlantItemNode;
 import br.com.anteros.iot.domain.ThingNode;
 import br.com.anteros.iot.domain.actions.ActionNode;
+import br.com.anteros.iot.domain.plant.PlaceNode;
 import br.com.anteros.iot.domain.plant.PlantNode;
 import br.com.anteros.iot.domain.triggers.TriggerNode;
 import br.com.anteros.iot.plant.Place;
 import br.com.anteros.iot.plant.Plant;
 import br.com.anteros.iot.plant.PlantItem;
 import br.com.anteros.iot.support.MqttHelper;
+import br.com.anteros.iot.support.utils.StaticUtil;
 import br.com.anteros.iot.triggers.Trigger;
 import br.com.anteros.iot.triggers.WhenCondition;
 
@@ -50,6 +52,7 @@ public class AnterosIOTConfiguration {
 
 	private PlantItemNode node;
 	private File fileConfig;
+	private String configFilePath;
 	private ObjectMapper mapper;
 	private String deviceName;
 	private MqttClient clientMqtt;
@@ -109,7 +112,12 @@ public class AnterosIOTConfiguration {
 			node = mapper.readValue(fileConfig, PlantItemNode.class);
 		}
 		if (streamConfig != null) {
-			node = mapper.readValue(streamConfig, PlantItemNode.class);
+			if (this.configFilePath != null) {
+				File newFileConfig = StaticUtil.inputStreamToFile(this.streamConfig, this.configFilePath);   
+				node = mapper.readValue(newFileConfig, PlantItemNode.class);
+			} else {
+				node = mapper.readValue(streamConfig, PlantItemNode.class);				
+			}
 		}
 		AbstractDeviceController deviceResult = null;
 		if (node != null) {
@@ -172,7 +180,7 @@ public class AnterosIOTConfiguration {
 						MqttAsyncClient remoteClientMqtt = null;
 						try {
 							remoteClientMqtt = MqttHelper.createAndConnectMqttClient(broker,
-									deviceName + "_remoteController", username, password, true, true);
+									deviceName.split("-")[0] + "_rController", username, password, true, true);
 						} catch (MqttException e1) {
 							serviceListener.onErrorConnectingMqttServer(e1.getMessage());
 							e1.printStackTrace();
@@ -195,7 +203,7 @@ public class AnterosIOTConfiguration {
 
 				MqttAsyncClient remoteClientMqtt = null;
 				try {
-					remoteClientMqtt = MqttHelper.createAndConnectMqttClient(broker, deviceName + "_remoteController",
+					remoteClientMqtt = MqttHelper.createAndConnectMqttClient(broker, deviceName.split("-")[0] + "_rController",
 							"", "", true, true);
 				} catch (MqttException e1) {
 					serviceListener.onErrorConnectingMqttServer(e1.getMessage());
@@ -217,6 +225,10 @@ public class AnterosIOTConfiguration {
 							"A coisa " + itemNode.getItemName() + " não é um item da planta.");
 				}
 				Place place = (Place) currentPlant.getItemByName(thingNode.getItemNodeOwner().getItemName());
+				if (place == null) {
+					place = (Place) currentPlant.getItemByName(findPlace(thingNode.getItemNodeOwner()));
+				}
+				
 				place.addItems((PlantItem) thing);
 			}
 
@@ -277,7 +289,7 @@ public class AnterosIOTConfiguration {
 						}
 
 						sourceThing.addTrigger(Trigger.of(triggerNode.getName(), triggerNode.getShotMoment(), whenCondition,
-								targetActions.toArray(new Action[] {}), exceptionActions.toArray(new Action[] {})));
+								targetActions.toArray(new Action[] {}), exceptionActions.toArray(new Action[] {}), triggerNode.isRequiresPermission()));
 					}
 				}
 
@@ -288,7 +300,21 @@ public class AnterosIOTConfiguration {
 		}
 
 		serviceListener.onAfterBuildDeviceController();
+		deviceResult.setNode(node);
 		return deviceResult;
+	}
+
+	private String findPlace(PlantItemNode item) {
+		
+		if (item == null) {
+			return null;
+		}
+		
+		if (item instanceof PlaceNode) {
+			return item.getItemName();
+		}
+		
+		return findPlace(item.getItemNodeOwner());
 	}
 
 	public AnterosIOTConfiguration deviceName(String deviceName) {
@@ -328,6 +354,19 @@ public class AnterosIOTConfiguration {
 
 	public AnterosIOTConfiguration registerActuators(Set<Class<? extends Actuable>> actuators) {
 		this.actuators.addAll(actuators);
+		return this;
+	}
+
+	public PlantItemNode getNode() {
+		return node;
+	}
+
+	public void setNode(PlantItemNode node) {
+		this.node = node;
+	}
+
+	public AnterosIOTConfiguration configFilePath(String configFilePath) {
+		this.configFilePath = configFilePath;
 		return this;
 	}
 

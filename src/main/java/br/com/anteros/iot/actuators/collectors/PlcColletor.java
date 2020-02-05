@@ -125,4 +125,9 @@ public class PlcColletor extends Collector implements Runnable {
 
 		return prop;
 	}
+
+	@Override
+	public boolean isRunning() {
+		return running ? true : false;
+	}
 }

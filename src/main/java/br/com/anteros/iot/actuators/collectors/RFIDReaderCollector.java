@@ -68,7 +68,7 @@ public class RFIDReaderCollector extends Collector implements Runnable {
 			MFRC522.UID uid = null;
 			LOG.info("Aguardando um cartão");
 			int i = 0;
-			while (true) {
+			while (running) {
 
 				uid = getID(mfrc522);
 				if (uid != null) {
@@ -161,6 +161,11 @@ public class RFIDReaderCollector extends Collector implements Runnable {
 			SleepUtil.sleepMillis(100);
 		}
 
+	}
+
+	@Override
+	public boolean isRunning() {
+		return running ? true : false;
 	}
 
 }

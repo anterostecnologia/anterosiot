@@ -58,15 +58,15 @@ public class CameraQRCodeCollector extends Collector implements Runnable {
 	protected Thread thread;
 	protected String lastValue;
 
-	public static void main(String[] args) {
-		new Thread(new CameraQRCodeCollector()).start();
-	}
+//	public static void main(String[] args) {
+//		new Thread(new CameraQRCodeCollector()).start();
+//	}
 
 	public CameraQRCodeCollector(CollectorListener listener, Thing thing) {
 		super(listener, thing);
 	}
 
-	public CameraQRCodeCollector() {
+	public CameraQRCodeCollector() { 
 	}
 
 	@Override
@@ -98,12 +98,12 @@ public class CameraQRCodeCollector extends Collector implements Runnable {
 
 		VideoCapture webcam = new VideoCapture(0);
 
-		webcam.set(Videoio.CAP_PROP_FRAME_WIDTH, 800);
-		webcam.set(Videoio.CAP_PROP_FRAME_HEIGHT, 480);
+		webcam.set(Videoio.CAP_PROP_FRAME_WIDTH, 480);
+		webcam.set(Videoio.CAP_PROP_FRAME_HEIGHT, 800);
 		webcam.set(Videoio.CAP_PROP_MONOCHROME, 1);
 		// Tamanho do display LCD
-		int largura = 800;
-		int altura = 480;
+		int largura = 480;
+		int altura = 800;
 
 		if (webcam.isOpened()) {
 			LOG.info("Video aberto");
@@ -161,14 +161,22 @@ public class CameraQRCodeCollector extends Collector implements Runnable {
 		}
 
 		Mat image = new Mat();
-		webcam.read(image);
+		if (webcam.isOpened()) {
+			webcam.read(image);			
+		}
 
 		BufferedImage bufferedImage = null;
 		int count = 0;
 
-		while (webcam.isOpened() && running) {
-			webcam.read(image);
-			if (webcam.grab() && !image.empty()) {
+		boolean retrieve;
+		while (running) {
+			retrieve = false;
+			if (webcam.isOpened()) {
+				retrieve = webcam.read(image);		
+//				retrieve = webcam.retrieve(image);
+			}
+			Core.flip(image, image, 1);
+			if (retrieve && !image.empty()) {
 				if (count == 0) {
 					try {
 						bufferedImage = matToBufferedImage(image);
@@ -195,7 +203,6 @@ public class CameraQRCodeCollector extends Collector implements Runnable {
 						e.printStackTrace();
 					}
 				} else {
-					count++;
 					if (count > 10) {
 						count = 0;
 					}
@@ -206,6 +213,7 @@ public class CameraQRCodeCollector extends Collector implements Runnable {
 					}
 					my_panel.repaint();
 				}
+				count++;
 			}
 
 		}
@@ -250,6 +258,11 @@ public class CameraQRCodeCollector extends Collector implements Runnable {
 		} catch (NotFoundException e) {
 			return null;
 		}
+	}
+
+	@Override
+	public boolean isRunning() {
+		return running ? true : false;
 	}
 
 	

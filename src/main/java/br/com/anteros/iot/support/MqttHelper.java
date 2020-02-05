@@ -1,5 +1,6 @@
 package br.com.anteros.iot.support;
 
+import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.MqttAsyncClient;
 import org.eclipse.paho.client.mqttv3.MqttCallback;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
@@ -22,6 +23,10 @@ public class MqttHelper {
 
 		if (StringUtils.isBlank(name)) {
 			name = MqttAsyncClient.generateClientId();
+		}
+		
+		if (name.length() > 23) {
+			name = name.substring(0, 22);
 		}
 
 		MemoryPersistence memoryPersistence = new MemoryPersistence();
@@ -53,6 +58,10 @@ public class MqttHelper {
 		if (StringUtils.isBlank(name)) {
 			name = MqttAsyncClient.generateClientId();
 		}
+		
+		if (name.length() > 23) {
+			name = name.substring(0, 22);
+		}
 
 		MemoryPersistence memoryPersistence = new MemoryPersistence();
 		client = new MqttAsyncClient(uri, name, memoryPersistence);
@@ -80,26 +89,26 @@ public class MqttHelper {
 	}
 	
 	
-	public static void publishError(Exception ex, String deviceName, MqttAsyncClient client) throws MqttPersistenceException, MqttException {
+	public static IMqttDeliveryToken publishError(Exception ex, String deviceName, MqttAsyncClient client) throws MqttPersistenceException, MqttException {
 		String payload = "{exception: "+ex.getMessage()+"}";
 		MqttMessage message = new MqttMessage(payload.getBytes());
 		message.setQos(1);
-		client.publish("/" + deviceName + AnterosIOTService.ERRORS_TOPIC, message);
+		return client.publish("/" + deviceName + AnterosIOTService.ERRORS_TOPIC, message);
 	}
 	
-	public static void publishBoot(String deviceName, MqttAsyncClient client) throws MqttPersistenceException, MqttException {
+	public static IMqttDeliveryToken publishBoot(String deviceName, MqttAsyncClient client) throws MqttPersistenceException, MqttException {
 		String payload = "{boot: true}";
 		MqttMessage message = new MqttMessage(payload.getBytes());
 		message.setQos(1);
-		client.publish("/" + deviceName + AnterosIOTService.BOOT_TOPIC, message);
+		return client.publish("/" + deviceName + AnterosIOTService.BOOT_TOPIC, message);
 	}
 
 
-	public static void publishHeartBeat(String deviceName, String deviceType, String status, Boolean controllerRunning, String hostAddress, MqttAsyncClient client) throws MqttPersistenceException, MqttException {
+	public static IMqttDeliveryToken publishHeartBeat(String deviceName, String deviceType, String status, Boolean controllerRunning, String hostAddress, MqttAsyncClient client) throws MqttPersistenceException, MqttException {
 		String payload = "{ \"status\":\"" + status + "\", \"deviceType\":\"" + deviceType + "\", \"deviceName\":\"" + deviceName + "\", \"ip\":\"" + hostAddress + "\"}";
 		MqttMessage message = new MqttMessage(payload.getBytes());
 		message.setQos(1);
-		client.publish("/" + deviceName + AnterosIOTService.HEARTBEAT_TOPIC, message);
+		return client.publish("/" + deviceName + AnterosIOTService.HEARTBEAT_TOPIC, message);
 		
 	}
 

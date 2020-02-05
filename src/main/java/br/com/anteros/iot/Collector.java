@@ -19,6 +19,8 @@ public abstract class Collector implements Actuable {
 	public abstract void startCollect();
 	
 	public abstract void stopCollect();
+	
+	public abstract boolean isRunning();
 
 	public abstract boolean isSupportedThing(Thing thing);
 

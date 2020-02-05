@@ -78,4 +78,9 @@ public class TemperatureOneWireCollector extends Collector implements Runnable {
 		}
 	}
 
+	@Override
+	public boolean isRunning() {
+		return running ? true : false;
+	}
+
 }
