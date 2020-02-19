@@ -141,7 +141,7 @@ public class AnterosIOTConfiguration {
 
 			String broker = "tcp://" + hostMqtt + ":" + (port == null ? 1883 : port);
 
-			String clientId = deviceName + "_controller";
+			String clientId = deviceName.split("-")[0] + "_controller";
 
 			LOG.info("Conectando servidor MQTT..." + broker);
 			
@@ -149,7 +149,7 @@ public class AnterosIOTConfiguration {
 
 			MqttAsyncClient clientMqtt = null;
 			try {
-				clientMqtt = MqttHelper.createAndConnectMqttClient(broker, clientId, username, password, true, true);
+				clientMqtt = MqttHelper.createAndConnectMqttClient(broker, clientId, username, password, false, true);
 			} catch (MqttException e1) {
 				serviceListener.onErrorConnectingMqttServer(e1.getMessage());
 				e1.printStackTrace();

@@ -29,6 +29,7 @@ public abstract class DeviceNode extends PlantItemNode implements Configurable {
 	protected int portMqtt;
 	protected String userMqtt;
 	protected String passwordMqtt;
+	protected String hostnameACL;
 
 	@JsonIdentityInfo(generator = ObjectIdGenerators.UUIDGenerator.class, property = "@id")
 	protected Set<ThingNode> things = new HashSet<>();
@@ -150,6 +151,14 @@ public abstract class DeviceNode extends PlantItemNode implements Configurable {
 
 	public boolean isNeedsPropagation() {
 		return needsPropagation;
+	}
+
+	public String getHostnameACL() {
+		return hostnameACL;
+	}
+
+	public void setHostnameACL(String hostnameACL) {
+		this.hostnameACL = hostnameACL;
 	}
 
 

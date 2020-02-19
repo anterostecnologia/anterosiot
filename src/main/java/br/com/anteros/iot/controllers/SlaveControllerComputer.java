@@ -133,8 +133,8 @@ public class SlaveControllerComputer extends AbstractDeviceController implements
 	}
 
 	@Override
-	protected Device doCreateDevice(String deviceName, IpAddress ipAddress, String description, String topicError, Integer intervalPublishingTelemetry) {
-		return Computer.of(deviceName, ipAddress, description, topicError, this, intervalPublishingTelemetry);
+	protected Device doCreateDevice(String deviceName, IpAddress ipAddress, String description, String topicError, Integer intervalPublishingTelemetry, String hostnameACL) {
+		return Computer.of(deviceName, ipAddress, description, topicError, this, intervalPublishingTelemetry, hostnameACL);
 	}
 
 	@Override

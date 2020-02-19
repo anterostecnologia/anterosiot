@@ -36,4 +36,6 @@ public interface AnterosIOTServiceListener {
 	public void onStopCollectors(AbstractDeviceController abstractDeviceController);
 
 	public void onStartDeviceController(Device device);
+
+	public void onUpdateConfiguration();
 }

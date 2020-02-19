@@ -152,6 +152,7 @@ public abstract class AbstractDeviceController implements DeviceController, Mqtt
 	public void start() {
 		if (!running) {
 			this.beforeStart();
+			this.autoSubscribe();
 			this.thread.start();
 			this.afterStart();
 		}
@@ -324,7 +325,7 @@ public abstract class AbstractDeviceController implements DeviceController, Mqtt
 	public abstract void deliveryComplete(IMqttDeliveryToken token);
 
 	protected abstract Device doCreateDevice(String deviceName, IpAddress ipAddress, String description,
-			String topicError, Integer intervalPublishingTelemetry);
+			String topicError, Integer intervalPublishingTelemetry, String hostnameACL);
 
 	public void dispatchMessage(String topic, String message) {
 		if ((StringUtils.isNotEmpty(topic) || StringUtils.isNotEmpty(message))) {
@@ -333,7 +334,7 @@ public abstract class AbstractDeviceController implements DeviceController, Mqtt
 				LOG.info("Mensagem: "+message);
 				MqttMessage msg = new MqttMessage(message.getBytes());
 				msg.setQos(1);
-				this.clientMqtt.publish(topic, msg);
+				this.clientMqtt.publish("/" + topic, msg);
 			} catch (MqttPersistenceException e) {
 				e.printStackTrace();
 			} catch (MqttException e) {
@@ -380,7 +381,7 @@ public abstract class AbstractDeviceController implements DeviceController, Mqtt
 	public void loadConfiguration(DeviceNode itemNode, Plant plant) {
 		Place place = (Place) plant.getItemByName(itemNode.getItemNodeOwner().getItemName());
 		this.device = doCreateDevice(itemNode.getItemName(), itemNode.getIpAddress(), itemNode.getDescription(),
-				itemNode.getTopicError(), itemNode.getIntervalPublishingTelemetry());
+				itemNode.getTopicError(), itemNode.getIntervalPublishingTelemetry(), itemNode.getHostnameACL());
 		if (!(this.device instanceof PlantItem)) {
 			throw new DeviceException("O device " + itemNode.getItemName() + " não é um item da planta.");
 		}
@@ -397,7 +398,7 @@ public abstract class AbstractDeviceController implements DeviceController, Mqtt
 			if (thing instanceof PlantItem) {
 				String topic = ((PlantItem) thing).getPath();
 				filter.add("/" + topic);
-				subscribedTopics.put(topic, thing);
+				subscribedTopics.put("/" + topic, thing);
 				if (thing.getParts() != null) {
 					for (Part part : thing.getParts()) {
 						String topicPart = ((PlantItem) part).getPath();

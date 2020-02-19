@@ -226,7 +226,8 @@ public class AnterosIOTService implements Runnable, MqttCallback, MqttCallbackEx
 	}
 
 	private void startService() throws JsonParseException, JsonMappingException, IOException {
-		if ((fileConfig != null || streamConfig != null) && client.isConnected()) {
+		
+		if ((fileConfig != null || streamConfig != null)) {
 			LOG.info("Lendo configuração e criando device controller...");
 			if (mapper == null) {
 				mapper = new ObjectMapper();
@@ -262,7 +263,7 @@ public class AnterosIOTService implements Runnable, MqttCallback, MqttCallbackEx
 			}
 
 		} else {
-			LOG.info(
+			LOG.warn(
 					"Nenhuma configuração foi encontrada para criar o device controller ou o client mqtt não está conectado.");
 		}
 
@@ -381,7 +382,7 @@ public class AnterosIOTService implements Runnable, MqttCallback, MqttCallbackEx
 					} else if (jsonMessage.get(TYPE).toString().contains(FILE)) {
 						newConfigFile = jsonMessage.has(CONFIG) ? new File(jsonMessage.get(CONFIG).toString()) : null;
 					} else if (jsonMessage.get(TYPE).toString().contains(RELOAD)) {
-						newConfigFile = new File("/home/versatil/versatil-iot/conf/iot_config.json");
+						newConfigFile = new File(configFilePath);
 					}
 				}
 
@@ -412,6 +413,7 @@ public class AnterosIOTService implements Runnable, MqttCallback, MqttCallbackEx
 					client.publish(AnterosIOTService.UPDATE_CONFIG_TOPIC + "/" + deviceName, msg);
 
 					propagateConfigurationToThings(mapper, fileConfig, streamConfig);
+					serviceListener.onUpdateConfiguration();
 				} catch (Exception e) {
 					String payload = "{\"status\": \"error\",\"message\": \"" + e.getMessage() + "\"}";
 					MqttMessage msg = new MqttMessage(payload.getBytes());

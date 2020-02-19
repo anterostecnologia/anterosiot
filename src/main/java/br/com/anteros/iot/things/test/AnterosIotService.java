@@ -153,4 +153,10 @@ public class AnterosIotService implements AnterosIOTServiceListener {
 		
 	}
 
+	@Override
+	public void onUpdateConfiguration() {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

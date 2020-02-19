@@ -26,13 +26,14 @@ public class Computer extends PlantItem implements Device {
 	protected DeviceController deviceController;
 	protected boolean needsPropagation;
 
-	private Computer(String id, IpAddress ipAddress, String description, String topicError, AbstractDeviceController controller, Integer intervalPublishingTelemetry) {
+	private Computer(String id, IpAddress ipAddress, String description, String topicError, AbstractDeviceController controller, Integer intervalPublishingTelemetry, String hostnameACL) {
 		this.itemId = id;
 		this.ipAddress = ipAddress;
 		this.description = description;
 		this.topicError = topicError == null ? "": topicError;
 		this.deviceController = controller;
 		this.intervalPublishingTelemetry = intervalPublishingTelemetry;
+		this.hostnameACL = hostnameACL;
 	}
 
 	public String getThingID() {
@@ -125,8 +126,8 @@ public class Computer extends PlantItem implements Device {
 		return topicError;
 	}
 
-	public static Device of(String deviceName, IpAddress ipAddress, String description, String topicError, AbstractDeviceController controller, Integer intervalPublishingTelemetry) {
-		return new Computer(deviceName, ipAddress, description, topicError, controller, intervalPublishingTelemetry);
+	public static Device of(String deviceName, IpAddress ipAddress, String description, String topicError, AbstractDeviceController controller, Integer intervalPublishingTelemetry, String hostnameACL) {
+		return new Computer(deviceName, ipAddress, description, topicError, controller, intervalPublishingTelemetry, hostnameACL);
 	}
 
 	public void setTopicError(String topicError) {

@@ -47,11 +47,12 @@ public class RaspberryPI extends PlantItem implements Device, Publishable   {
 	private TelemetryConfiguration telemetryConfiguration = TelemetryConfiguration.of(this);
 	
 		
-	protected RaspberryPI(String id, IpAddress ipAddress,String description, String topicError, Integer intervalPublishingTelemetry) {
+	protected RaspberryPI(String id, IpAddress ipAddress,String description, String topicError, Integer intervalPublishingTelemetry, String hostnameACL) {
 		this.itemId = id;
 		this.ipAddress = ipAddress;
 		this.description = description;
 		this.topicError = topicError;
+		this.hostnameACL = hostnameACL;
 		
 		telemetryConfiguration.addStrategy(new PlatformTelemetryStrategy(), intervalPublishingTelemetry);
 		telemetryConfiguration.addStrategy(new HardwareTelemetryStrategy(), intervalPublishingTelemetry);
@@ -88,8 +89,8 @@ public class RaspberryPI extends PlantItem implements Device, Publishable   {
 		return this;
 	}
 	
-	public static RaspberryPI of(String id, IpAddress ipAddress,String description, String topicError, Integer intervalPublishingTelemetry) {
-		return new RaspberryPI(id, ipAddress, description, topicError, intervalPublishingTelemetry);
+	public static RaspberryPI of(String id, IpAddress ipAddress,String description, String topicError, Integer intervalPublishingTelemetry, String hostnameACL) {
+		return new RaspberryPI(id, ipAddress, description, topicError, intervalPublishingTelemetry, hostnameACL);
 	}
 
 	public IpAddress getIpAddress() {
