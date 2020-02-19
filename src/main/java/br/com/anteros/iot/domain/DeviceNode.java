@@ -3,7 +3,7 @@ package br.com.anteros.iot.domain;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.eclipse.paho.client.mqttv3.MqttAsyncClient;
+import br.com.anteros.client.mqttv3.MqttAsyncClient;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;

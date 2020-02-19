@@ -1,7 +1,7 @@
 package br.com.anteros.iot.actuators.collectors;
 
-import org.eclipse.paho.client.mqttv3.MqttAsyncClient;
-import org.eclipse.paho.client.mqttv3.MqttClient;
+import br.com.anteros.client.mqttv3.MqttAsyncClient;
+import br.com.anteros.client.mqttv3.MqttClient;
 
 import br.com.anteros.iot.Collector;
 import br.com.anteros.iot.Thing;

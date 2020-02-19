@@ -1,6 +1,6 @@
 package br.com.anteros.iot.actuators.collectors;
 
-import org.eclipse.paho.client.mqttv3.MqttCallback;
+import br.com.anteros.client.mqttv3.MqttCallback;
 
 public interface CollectorManager extends MqttCallback, Runnable {
 	
