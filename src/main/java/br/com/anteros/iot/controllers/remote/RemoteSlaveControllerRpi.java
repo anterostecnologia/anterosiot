@@ -1,8 +1,8 @@
 package br.com.anteros.iot.controllers.remote;
 
-import org.eclipse.paho.client.mqttv3.MqttAsyncClient;
-import org.eclipse.paho.client.mqttv3.MqttClient;
-import org.eclipse.paho.client.mqttv3.MqttMessage;
+import br.com.anteros.client.mqttv3.MqttAsyncClient;
+import br.com.anteros.client.mqttv3.MqttClient;
+import br.com.anteros.client.mqttv3.MqttMessage;
 
 import br.com.anteros.core.utils.Assert;
 import br.com.anteros.iot.Device;

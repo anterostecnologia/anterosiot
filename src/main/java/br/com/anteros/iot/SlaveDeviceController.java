@@ -2,7 +2,7 @@ package br.com.anteros.iot;
 
 import java.util.Set;
 
-import org.eclipse.paho.client.mqttv3.MqttCallback;
+import br.com.anteros.client.mqttv3.MqttCallback;
 
 public interface SlaveDeviceController extends DeviceController, MqttCallback, Runnable {
 	
