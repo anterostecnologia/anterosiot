@@ -11,6 +11,7 @@ import com.pi4j.io.gpio.GpioPinDigitalOutput;
 
 import br.com.anteros.iot.Actuator;
 import br.com.anteros.iot.Thing;
+import br.com.anteros.iot.actuators.collectors.CollectorListener;
 import br.com.anteros.iot.support.Pi4JHelper;
 import br.com.anteros.iot.things.MagneticLock;
 
@@ -26,7 +27,7 @@ public class MagneticLockActuator implements Actuator<Boolean> {
 	}
 
 	@Override
-	public Boolean executeAction(JsonObject recivedPayload, Thing thing) {
+	public Boolean executeAction(JsonObject recivedPayload, Thing thing, CollectorListener listenerAction) {
 		String action = recivedPayload.getString("action");
 		if (thing instanceof MagneticLock) {
 			if (action.equals(OPEN)) {

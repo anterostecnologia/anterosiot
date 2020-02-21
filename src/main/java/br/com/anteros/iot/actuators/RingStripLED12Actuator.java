@@ -14,6 +14,7 @@ import com.pi4j.io.gpio.GpioPinDigitalOutput;
 
 import br.com.anteros.iot.Actuator;
 import br.com.anteros.iot.Thing;
+import br.com.anteros.iot.actuators.collectors.CollectorListener;
 import br.com.anteros.iot.support.colors.RGB;
 import br.com.anteros.iot.things.RingStripLED12;
 import br.com.anteros.iot.things.test.LEDDisplayType;
@@ -34,7 +35,7 @@ public class RingStripLED12Actuator implements Actuator<Boolean> {
 	}
 
 	@Override
-	public Boolean executeAction(JsonObject recivedPayload, Thing thing) {
+	public Boolean executeAction(JsonObject recivedPayload, Thing thing, CollectorListener listenerAction) {
 		String action = recivedPayload.getString("action");
 		if (action.equals(ON)) {
 			if (thread != null)

@@ -10,6 +10,7 @@ import com.pi4j.io.gpio.GpioPinDigitalOutput;
 
 import br.com.anteros.iot.Actuator;
 import br.com.anteros.iot.Thing;
+import br.com.anteros.iot.actuators.collectors.CollectorListener;
 import br.com.anteros.iot.support.Pi4JHelper;
 import br.com.anteros.iot.things.LampOrBulb;
 import br.com.anteros.iot.triggers.ShotMoment;
@@ -27,7 +28,7 @@ public class LampOrBulbActuator implements Actuator<Boolean> {
 	}
 
 	@Override
-	public Boolean executeAction(JsonObject recivedPayload, Thing thing) {
+	public Boolean executeAction(JsonObject recivedPayload, Thing thing, CollectorListener listenerAction) {
 		String action = recivedPayload.getString("action");
 		if (thing instanceof LampOrBulb) {
 			if (action.equals(ON)) {

@@ -10,6 +10,7 @@ import org.apache.logging.log4j.Logger;
 import br.com.anteros.core.utils.StringUtils;
 import br.com.anteros.iot.Actuator;
 import br.com.anteros.iot.Thing;
+import br.com.anteros.iot.actuators.collectors.CollectorListener;
 import br.com.anteros.iot.protocol.modbus.ModbusProtocolDevice;
 import br.com.anteros.iot.protocol.modbus.ModbusProtocolDeviceService;
 import br.com.anteros.iot.protocol.modbus.ModbusProtocolException;
@@ -31,7 +32,7 @@ public class MemoryPlcActuator implements Actuator<Boolean> {
 	}
 
 	@Override
-	public Boolean executeAction(JsonObject recivedPayload, Thing thing) {
+	public Boolean executeAction(JsonObject recivedPayload, Thing thing, CollectorListener listenerAction) {
 		String action = recivedPayload.get("action").toString();
 		MemoryPlc memory = (MemoryPlc) thing;
 
