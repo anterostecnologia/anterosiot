@@ -32,6 +32,7 @@ import br.com.anteros.core.utils.StringUtils;
 import br.com.anteros.iot.Action;
 import br.com.anteros.iot.Actuator;
 import br.com.anteros.iot.Actuators;
+import br.com.anteros.iot.Collector;
 import br.com.anteros.iot.Device;
 import br.com.anteros.iot.DeviceController;
 import br.com.anteros.iot.DeviceStatus;
@@ -350,8 +351,14 @@ public abstract class AbstractDeviceController implements DeviceController, Mqtt
 			if (actuator != null) {
 				try {
 					LOG.info("Executando ação "+action);
+					if (actuator instanceof Collector) {
+						((Collector)actuator).getListener();
+						actuator.executeAction(action.getReceivedPayload(),
+								action.getPart() != null ? action.getPart() : action.getThing(), ((Collector)actuator).getListener());
+					} else {
 					actuator.executeAction(action.getReceivedPayload(),
-							action.getPart() != null ? action.getPart() : action.getThing());
+							action.getPart() != null ? action.getPart() : action.getThing(), null);
+					}
 				} catch (Exception e) {
 					LOG.error("Ocorreu erro ao executar ação "+action);
 					JsonObject jsonMessage = Json.createObjectBuilder()
