@@ -17,18 +17,18 @@ import br.com.anteros.iot.domain.things.config.General;
 import br.com.anteros.iot.domain.things.config.Mqtt;
 import br.com.anteros.iot.domain.things.config.NTP;
 import br.com.anteros.iot.domain.things.config.Network;
-import br.com.anteros.iot.things.GateTrigger;
+import br.com.anteros.iot.things.VehicleEntranceTrigger;
 
 @JsonTypeName(DomainConstants.GATE_TRIGGER)
-public class GateTriggerNode extends ControllerNode implements Configurable {
+public class VehicleEntranceTriggerNode extends ControllerNode implements Configurable {
 
 	protected String[] topics;
 
-	public GateTriggerNode() {
+	public VehicleEntranceTriggerNode() {
 		super();
 	}
 
-	public GateTriggerNode(String itemName, String description, String[] topics) {
+	public VehicleEntranceTriggerNode(String itemName, String description, String[] topics) {
 		super(itemName, description);
 		this.topics = topics;
 	}
@@ -40,7 +40,7 @@ public class GateTriggerNode extends ControllerNode implements Configurable {
 
 	@Override
 	public Thing getInstanceOfThing() {
-		return new GateTrigger(this);
+		return new VehicleEntranceTrigger(this);
 	}
 
 	@Override

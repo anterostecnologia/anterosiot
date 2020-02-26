@@ -32,7 +32,7 @@ public class MemoryPlcActuator implements Actuator<Boolean> {
 	}
 
 	@Override
-	public Boolean executeAction(JsonObject recivedPayload, Thing thing, CollectorListener listenerAction) {
+	public Boolean executeAction(JsonObject recivedPayload, Thing thing) {
 		String action = recivedPayload.get("action").toString();
 		MemoryPlc memory = (MemoryPlc) thing;
 

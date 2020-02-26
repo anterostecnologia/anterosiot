@@ -27,7 +27,7 @@ public class MagneticLockActuator implements Actuator<Boolean> {
 	}
 
 	@Override
-	public Boolean executeAction(JsonObject recivedPayload, Thing thing, CollectorListener listenerAction) {
+	public Boolean executeAction(JsonObject recivedPayload, Thing thing) {
 		String action = recivedPayload.getString("action");
 		if (thing instanceof MagneticLock) {
 			if (action.equals(OPEN)) {

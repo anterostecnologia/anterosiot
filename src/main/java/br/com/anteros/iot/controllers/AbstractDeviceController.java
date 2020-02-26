@@ -354,10 +354,10 @@ public abstract class AbstractDeviceController implements DeviceController, Mqtt
 					if (actuator instanceof Collector) {
 						((Collector)actuator).getListener();
 						actuator.executeAction(action.getReceivedPayload(),
-								action.getPart() != null ? action.getPart() : action.getThing(), ((Collector)actuator).getListener());
+								action.getPart() != null ? action.getPart() : action.getThing());
 					} else {
 					actuator.executeAction(action.getReceivedPayload(),
-							action.getPart() != null ? action.getPart() : action.getThing(), null);
+							action.getPart() != null ? action.getPart() : action.getThing());
 					}
 				} catch (Exception e) {
 					LOG.error("Ocorreu erro ao executar ação "+action);

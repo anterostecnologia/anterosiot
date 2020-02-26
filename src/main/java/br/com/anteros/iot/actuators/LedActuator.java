@@ -31,7 +31,7 @@ public class LedActuator implements Actuator<Boolean> {
 		return thing instanceof Semaphore;
 	}
 
-	public Boolean executeAction(JsonObject recivedPayload, Thing thing, CollectorListener listenerAction) {
+	public Boolean executeAction(JsonObject recivedPayload, Thing thing) {
 		String action = recivedPayload.getString("action");
 		if (thing instanceof LedSemaphore || thing instanceof Led) {
 			if (action.equals(ON)) {

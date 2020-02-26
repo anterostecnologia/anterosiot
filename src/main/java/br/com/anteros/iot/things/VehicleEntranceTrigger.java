@@ -11,10 +11,10 @@ import br.com.anteros.iot.Thing;
 import br.com.anteros.iot.ThingStatus;
 import br.com.anteros.iot.actuators.collectors.CollectResult;
 import br.com.anteros.iot.domain.PlantItemNode;
-import br.com.anteros.iot.domain.things.GateTriggerNode;
+import br.com.anteros.iot.domain.things.VehicleEntranceTriggerNode;
 import br.com.anteros.iot.triggers.Trigger;
 
-public class GateTrigger extends ControllerThing implements Publishable {
+public class VehicleEntranceTrigger extends ControllerThing implements Publishable {
 
 	protected DeviceController deviceController;
 
@@ -23,7 +23,7 @@ public class GateTrigger extends ControllerThing implements Publishable {
 	protected String[] topics;
 	protected Set<Trigger> triggers = new HashSet<>();
 
-	public GateTrigger(PlantItemNode node) {
+	public VehicleEntranceTrigger(PlantItemNode node) {
 		this.loadConfiguration(node);
 	}
 
@@ -59,18 +59,18 @@ public class GateTrigger extends ControllerThing implements Publishable {
 	public Thing loadConfiguration(PlantItemNode node) {
 		this.itemId = node.getItemName();
 		this.description = node.getDescription();
-		this.needsPropagation = ((GateTriggerNode) node).needsPropagation();
-		this.topics = ((GateTriggerNode) node).getTopics();
-		this.hostMqtt = ((GateTriggerNode)node).getHostMqtt();
-		this.hostNtp = ((GateTriggerNode)node).getHostNtp();
-		this.passwordMqtt = ((GateTriggerNode)node).getPasswordMqtt();
-		this.portMqtt = ((GateTriggerNode)node).getPortMqtt();
-		this.primaryPassword = ((GateTriggerNode)node).getPrimaryPassword();
-		this.primarySSID = ((GateTriggerNode)node).getPrimarySSID();
-		this.secondaryPassword = ((GateTriggerNode)node).getSecondaryPassword();
-		this.secondarySSID = ((GateTriggerNode)node).getSecondarySSID();
-		this.needsPropagation = ((GateTriggerNode)node).needsPropagation();
-		this.timezoneNtp = ((GateTriggerNode)node).getTimezoneNtp();
+		this.needsPropagation = ((VehicleEntranceTriggerNode) node).needsPropagation();
+		this.topics = ((VehicleEntranceTriggerNode) node).getTopics();
+		this.hostMqtt = ((VehicleEntranceTriggerNode)node).getHostMqtt();
+		this.hostNtp = ((VehicleEntranceTriggerNode)node).getHostNtp();
+		this.passwordMqtt = ((VehicleEntranceTriggerNode)node).getPasswordMqtt();
+		this.portMqtt = ((VehicleEntranceTriggerNode)node).getPortMqtt();
+		this.primaryPassword = ((VehicleEntranceTriggerNode)node).getPrimaryPassword();
+		this.primarySSID = ((VehicleEntranceTriggerNode)node).getPrimarySSID();
+		this.secondaryPassword = ((VehicleEntranceTriggerNode)node).getSecondaryPassword();
+		this.secondarySSID = ((VehicleEntranceTriggerNode)node).getSecondarySSID();
+		this.needsPropagation = ((VehicleEntranceTriggerNode)node).needsPropagation();
+		this.timezoneNtp = ((VehicleEntranceTriggerNode)node).getTimezoneNtp();
 		return this;
 	}
 

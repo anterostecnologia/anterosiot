@@ -18,7 +18,6 @@ import br.com.anteros.iot.domain.things.config.Mqtt;
 import br.com.anteros.iot.domain.things.config.NTP;
 import br.com.anteros.iot.domain.things.config.Network;
 import br.com.anteros.iot.things.DeviceScan;
-import br.com.anteros.iot.things.GateTrigger;
 
 @JsonTypeName(DomainConstants.DEVICE_SCAN)
 public class DeviceScanNode extends ControllerNode implements Configurable {

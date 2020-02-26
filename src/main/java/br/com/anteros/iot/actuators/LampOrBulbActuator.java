@@ -28,7 +28,7 @@ public class LampOrBulbActuator implements Actuator<Boolean> {
 	}
 
 	@Override
-	public Boolean executeAction(JsonObject recivedPayload, Thing thing, CollectorListener listenerAction) {
+	public Boolean executeAction(JsonObject recivedPayload, Thing thing) {
 		String action = recivedPayload.getString("action");
 		if (thing instanceof LampOrBulb) {
 			if (action.equals(ON)) {

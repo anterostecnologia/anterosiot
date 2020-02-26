@@ -35,7 +35,7 @@ public class RingStripLED12Actuator implements Actuator<Boolean> {
 	}
 
 	@Override
-	public Boolean executeAction(JsonObject recivedPayload, Thing thing, CollectorListener listenerAction) {
+	public Boolean executeAction(JsonObject recivedPayload, Thing thing) {
 		String action = recivedPayload.getString("action");
 		if (action.equals(ON)) {
 			if (thread != null)

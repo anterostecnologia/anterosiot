@@ -13,7 +13,6 @@ import br.com.anteros.iot.actuators.collectors.CollectResult;
 import br.com.anteros.iot.domain.PlantItemNode;
 import br.com.anteros.iot.domain.things.AccessType;
 import br.com.anteros.iot.domain.things.DigitalKeyNode;
-import br.com.anteros.iot.domain.things.GateTriggerNode;
 import br.com.anteros.iot.triggers.Trigger;
 
 public class DigitalKey extends ControllerThing implements Publishable {

@@ -6,7 +6,7 @@ import br.com.anteros.iot.actuators.collectors.CollectorListener;
 
 public interface Actuator<T> extends Actuable {	
 	
-	public T executeAction(JsonObject receivedPayload, Thing thing, CollectorListener collectorListener);
+	public T executeAction(JsonObject receivedPayload, Thing thing);
 	
 	
 
