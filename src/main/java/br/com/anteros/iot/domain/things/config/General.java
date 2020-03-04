@@ -6,7 +6,7 @@ public class General {
 	private String place;
 	private String pswd;
 
-	private int restart;
+	private long restart;
 
 	public String getHostnm() {
 		return hostnm;
@@ -32,11 +32,11 @@ public class General {
 		this.pswd = pswd;
 	}
 
-	public int getRestart() {
+	public long getRestart() {
 		return restart;
 	}
 
-	public void setRestart(int restart) {
+	public void setRestart(long restart) {
 		this.restart = restart;
 	}
 

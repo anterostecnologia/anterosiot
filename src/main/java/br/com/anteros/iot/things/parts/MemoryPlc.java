@@ -7,7 +7,6 @@ import java.util.Set;
 import br.com.anteros.iot.DeviceController;
 import br.com.anteros.iot.Part;
 import br.com.anteros.iot.Thing;
-import br.com.anteros.iot.ThingStatus;
 import br.com.anteros.iot.actuators.collectors.CollectResult;
 import br.com.anteros.iot.domain.PlantItemNode;
 import br.com.anteros.iot.domain.things.parts.MemoryPlcNode;
@@ -46,10 +45,12 @@ public class MemoryPlc extends PlantItem implements Part, Publishable {
 		return this.itemId;
 	}
 
-	@Override
-	public ThingStatus getStatus() {
-		// TODO Auto-generated method stub
+	public String getStatus() {
 		return null;
+	}
+	
+	public void setStatus(java.lang.String status) {
+		
 	}
 
 	@Override

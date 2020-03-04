@@ -10,7 +10,6 @@ import br.com.anteros.iot.Part;
 import br.com.anteros.iot.Sensor;
 import br.com.anteros.iot.SensorCollectionType;
 import br.com.anteros.iot.Thing;
-import br.com.anteros.iot.ThingStatus;
 import br.com.anteros.iot.actuators.collectors.CollectResult;
 import br.com.anteros.iot.domain.PlantItemNode;
 import br.com.anteros.iot.domain.things.BarrierSensorNode;
@@ -44,9 +43,12 @@ public class BarrierSensor extends PlantItem implements Sensor {
 		return itemId;
 	}
 
-	@Override
-	public ThingStatus getStatus() {
+	public String getStatus() {
 		return null;
+	}
+	
+	public void setStatus(java.lang.String status) {
+		
 	}
 
 	@Override

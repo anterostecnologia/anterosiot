@@ -12,11 +12,12 @@ import br.com.anteros.iot.domain.DeviceNode;
 import br.com.anteros.iot.domain.DeviceSlaveNode;
 import br.com.anteros.iot.domain.DomainConstants;
 import br.com.anteros.iot.domain.PlantItemNode;
-import br.com.anteros.iot.domain.things.config.Config;
 import br.com.anteros.iot.domain.things.config.General;
 import br.com.anteros.iot.domain.things.config.Mqtt;
 import br.com.anteros.iot.domain.things.config.NTP;
 import br.com.anteros.iot.domain.things.config.Network;
+import br.com.anteros.iot.domain.things.config.VehicleEntrance.Config;
+import br.com.anteros.iot.domain.things.config.VehicleEntrance.Hardware;
 import br.com.anteros.iot.things.VehicleEntranceTrigger;
 
 @JsonTypeName(DomainConstants.GATE_TRIGGER)
@@ -49,6 +50,7 @@ public class VehicleEntranceTriggerNode extends ControllerNode implements Config
 		if (deviceNode != null) {
 			String command = "configfile";
 			Network network = new Network();
+			Hardware hardware = new Hardware();
 			General general = new General();
 			Mqtt mqtt = new Mqtt();
 			NTP ntp = new NTP();
@@ -86,13 +88,11 @@ public class VehicleEntranceTriggerNode extends ControllerNode implements Config
 				mqtt.setPort(this.getPortMqtt());
 				mqtt.setUser(this.getUserMqtt());
 				mqtt.setPswd(this.getPasswordMqtt());
-				mqtt.setDataTopic(getTopics());
 			} else {
 				mqtt.setHost(deviceNode.getHostMqtt());
 				mqtt.setPort(deviceNode.getPortMqtt());
 				mqtt.setUser(deviceNode.getUserMqtt());
 				mqtt.setPswd(deviceNode.getPasswordMqtt());
-				mqtt.setDataTopic(getTopics());
 			}
 
 			if (this.getHostNtp() != null) {
@@ -103,7 +103,7 @@ public class VehicleEntranceTriggerNode extends ControllerNode implements Config
 				ntp.setTimezone(deviceNode.getTimezoneNtp());
 			}
 
-			Config config = new Config(command, network, null, general, mqtt, ntp);
+			Config config = new Config(command, network, hardware, general, mqtt, ntp);
 
 			return mapper.writeValueAsString(config);
 		}

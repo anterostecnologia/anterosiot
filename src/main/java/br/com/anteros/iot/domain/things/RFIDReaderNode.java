@@ -13,12 +13,13 @@ import br.com.anteros.iot.domain.DeviceSlaveNode;
 import br.com.anteros.iot.domain.DomainConstants;
 import br.com.anteros.iot.domain.PlantItemNode;
 import br.com.anteros.iot.domain.ThingNode;
-import br.com.anteros.iot.domain.things.config.Config;
 import br.com.anteros.iot.domain.things.config.General;
-import br.com.anteros.iot.domain.things.config.Hardware;
 import br.com.anteros.iot.domain.things.config.Mqtt;
 import br.com.anteros.iot.domain.things.config.NTP;
 import br.com.anteros.iot.domain.things.config.Network;
+import br.com.anteros.iot.domain.things.config.RFID.Config;
+import br.com.anteros.iot.domain.things.config.RFID.Hardware;
+import br.com.anteros.iot.domain.things.config.RFID.Notification;
 import br.com.anteros.iot.things.RFIDReader;
 
 @JsonTypeName(DomainConstants.RFID_NODE)
@@ -27,6 +28,21 @@ public class RFIDReaderNode extends ControllerNode implements Configurable {
 	protected String[] topics;
 	protected RFIDModel model;
 	protected int sspin;
+	protected int rfidgain;
+	protected int wgd0pin;
+	protected int wgd1pin;
+	protected long readInterval;
+	protected int readMode;
+	
+	protected int ledEnabled;
+	protected int buzzerEnabled;
+	protected int displayEnabled;
+	protected String firstPlaceholderMessage;
+	protected String secondPlaceholderMessage;
+	protected long ledOnTime;
+	protected long buzzerOnTime;
+	protected long displayMessageTime;
+	
 
 	public RFIDReaderNode() {
 		super();
@@ -55,6 +71,7 @@ public class RFIDReaderNode extends ControllerNode implements Configurable {
 			String command = "configfile";
 			Network network = new Network();
 			Hardware hardware = new Hardware();
+			Notification notification = new Notification();
 			General general = new General();
 			Mqtt mqtt = new Mqtt();
 			NTP ntp = new NTP();
@@ -86,11 +103,29 @@ public class RFIDReaderNode extends ControllerNode implements Configurable {
 			}
 
 			if (this.getModel().equals(RFIDModel.RC522)) {
-				hardware.setReaderType(4);
-			} else {
+				hardware.setReaderType(0);
+				hardware.setSspin(sspin);
+				hardware.setRfidgain(rfidgain);
+			} else if (this.getModel().equals(RFIDModel.PN532)) {
 				hardware.setReaderType(2);
+				hardware.setSspin(sspin);
+			} else {
+				hardware.setReaderType(1);
+				hardware.setWgd0pin(wgd0pin);
+				hardware.setWgd1pin(wgd1pin);
 			}
-			hardware.setSspin(sspin);
+			
+			hardware.setReadInterval(readInterval);
+			hardware.setReadMode(readMode);
+			
+			notification.setBuzzerEnabled(buzzerEnabled);
+			notification.setBuzzerOnTime(buzzerOnTime);
+			notification.setDisplayEnabled(displayEnabled);
+			notification.setDisplayMessageTime(displayMessageTime);
+			notification.setFirstPlaceholderMessage(firstPlaceholderMessage);
+			notification.setSecondPlaceholderMessage(secondPlaceholderMessage);
+			notification.setLedEnabled(ledEnabled);
+			notification.setLedOnTime(ledOnTime);
 
 			general.setPlace(getPlaceNode().getItemName());
 
@@ -114,7 +149,7 @@ public class RFIDReaderNode extends ControllerNode implements Configurable {
 				ntp.setTimezone(deviceNode.getTimezoneNtp());
 			}
 
-			Config config = new Config(command, network, hardware, general, mqtt, ntp);
+			Config config = new Config(command, network, hardware, notification, general, mqtt, ntp);
 
 			return mapper.writeValueAsString(config);
 		}
@@ -225,5 +260,109 @@ public class RFIDReaderNode extends ControllerNode implements Configurable {
 
 	public void setPasswordMqtt(String passwordMqtt) {
 		this.passwordMqtt = passwordMqtt;
+	}
+
+	public int getRfidgain() {
+		return rfidgain;
+	}
+
+	public void setRfidgain(int rfidgain) {
+		this.rfidgain = rfidgain;
+	}
+
+	public int getWgd0pin() {
+		return wgd0pin;
+	}
+
+	public void setWgd0pin(int wgd0pin) {
+		this.wgd0pin = wgd0pin;
+	}
+
+	public int getWgd1pin() {
+		return wgd1pin;
+	}
+
+	public void setWgd1pin(int wgd1pin) {
+		this.wgd1pin = wgd1pin;
+	}
+
+	public long getReadInterval() {
+		return readInterval;
+	}
+
+	public void setReadInterval(long readInterval) {
+		this.readInterval = readInterval;
+	}
+
+	public int getReadMode() {
+		return readMode;
+	}
+
+	public void setReadMode(int readMode) {
+		this.readMode = readMode;
+	}
+
+	public int getLedEnabled() {
+		return ledEnabled;
+	}
+
+	public void setLedEnabled(int ledEnabled) {
+		this.ledEnabled = ledEnabled;
+	}
+
+	public int getBuzzerEnabled() {
+		return buzzerEnabled;
+	}
+
+	public void setBuzzerEnabled(int buzzerEnabled) {
+		this.buzzerEnabled = buzzerEnabled;
+	}
+
+	public int getDisplayEnabled() {
+		return displayEnabled;
+	}
+
+	public void setDisplayEnabled(int displayEnabled) {
+		this.displayEnabled = displayEnabled;
+	}
+
+	public String getFirstPlaceholderMessage() {
+		return firstPlaceholderMessage;
+	}
+
+	public void setFirstPlaceholderMessage(String firstPlaceholderMessage) {
+		this.firstPlaceholderMessage = firstPlaceholderMessage;
+	}
+
+	public String getSecondPlaceholderMessage() {
+		return secondPlaceholderMessage;
+	}
+
+	public void setSecondPlaceholderMessage(String secondPlaceholderMessage) {
+		this.secondPlaceholderMessage = secondPlaceholderMessage;
+	}
+
+	public long getLedOnTime() {
+		return ledOnTime;
+	}
+
+	public void setLedOnTime(long ledOnTime) {
+		this.ledOnTime = ledOnTime;
+	}
+
+	public long getBuzzerOnTime() {
+		return buzzerOnTime;
+	}
+
+	public void setBuzzerOnTime(long buzzerOnTime) {
+		this.buzzerOnTime = buzzerOnTime;
+	}
+
+	public long getDisplayMessageTime() {
+		return displayMessageTime;
+	}
+
+	public void setDisplayMessageTime(long displayMessageTime) {
+		this.displayMessageTime = displayMessageTime;
 	}
 }

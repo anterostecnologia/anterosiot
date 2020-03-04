@@ -14,7 +14,9 @@ public interface Thing {
 
 	public String getThingID(); // UUID
 
-	public ThingStatus getStatus();
+	public String getStatus();
+	
+	public void setStatus(String status);
 
 	public Set<Part> getParts();
 

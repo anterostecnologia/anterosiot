@@ -6,7 +6,6 @@ import java.util.Set;
 import br.com.anteros.iot.DeviceController;
 import br.com.anteros.iot.Part;
 import br.com.anteros.iot.Thing;
-import br.com.anteros.iot.ThingStatus;
 import br.com.anteros.iot.domain.PlantItemNode;
 import br.com.anteros.iot.domain.things.BarrierSensorReaderNode;
 import br.com.anteros.iot.triggers.Trigger;
@@ -42,33 +41,31 @@ public class BarrierSensorReader extends ControllerThing {
 		return itemId;
 	}
 
-	public ThingStatus getStatus() {
-		// TODO Auto-generated method stub
+	public String getStatus() {
 		return null;
+	}
+	
+	public void setStatus(java.lang.String status) {
+		
 	}
 
 	public Set<Part> getParts() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	public boolean hasParts() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	public Thing addPart(Part part) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	public Thing removePart(Part part) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	public Part getPartById(String part) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -92,7 +89,6 @@ public class BarrierSensorReader extends ControllerThing {
 
 	@Override
 	public String[] getActions() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 

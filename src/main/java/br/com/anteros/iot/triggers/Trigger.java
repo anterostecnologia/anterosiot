@@ -4,7 +4,7 @@ import javax.json.Json;
 import javax.json.JsonObjectBuilder;
 
 import br.com.anteros.core.utils.StringUtils;
-import br.com.anteros.iot.Action;
+import br.com.anteros.iot.actions.Action;
 import br.com.anteros.iot.actuators.collectors.CollectResult;
 import br.com.anteros.iot.app.listeners.AnterosIOTServiceListener;
 import br.com.anteros.iot.plant.PlantItem;
@@ -35,12 +35,12 @@ public class Trigger {
 				serviceListener.onFireTrigger(this, value);
 			} catch (Exception e) {
 				e.printStackTrace();
-				if (exceptionActions != null) {		
+				if (exceptionActions != null) {
 					for (Action exceptionAction : exceptionActions) {
 						if (exceptionAction.getThing() instanceof PlantItem) {
 							internalDispatchMessage(value, exceptionAction);
-						}					
-						whenCondition.getThing().getDeviceController().dispatchAction(exceptionAction, null);
+						}
+//						whenCondition.getThing().getDeviceController().dispatchAction(exceptionAction, null);
 					}
 				}
 				return;
@@ -50,7 +50,7 @@ public class Trigger {
 		if (targetActions != null) {
 			for (Action targetAction : targetActions) {
 				if (targetAction.getThing() instanceof PlantItem) {
-					internalDispatchMessage(value, targetAction);					
+					internalDispatchMessage(value, targetAction);
 				}
 			}
 		}
@@ -59,7 +59,12 @@ public class Trigger {
 
 	protected void internalDispatchMessage(CollectResult value, Action action) {
 		String topic = ((PlantItem) action.getThing()).getPath();
-		JsonObjectBuilder builder = Json.createObjectBuilder().add("action", action.getAction());
+		JsonObjectBuilder builder = Json.createObjectBuilder();
+		builder.add("action", action.getAction());
+		builder.add("executionCondition",
+				Json.createObjectBuilder().add("condition", action.getExecutionCondition().getCondition().toString())
+						.add("value", action.getExecutionCondition().getValue())
+						.add("target", action.getExecutionCondition().getTarget().toString()));
 		if (value != null) {
 			value.toJson(builder);
 		}
@@ -67,8 +72,7 @@ public class Trigger {
 
 		if (StringUtils.isNotEmpty(action.getMessage()) && action.getTopics() != null) {
 			for (String tpc : action.getTopics()) {
-				action.getThing().getDeviceController().dispatchMessage(tpc,
-						action.getMessage());
+				action.getThing().getDeviceController().dispatchMessage(tpc, action.getMessage());
 			}
 		}
 	}

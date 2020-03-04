@@ -16,6 +16,7 @@ import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import br.com.anteros.core.utils.ReflectionUtils;
 import br.com.anteros.iot.Thing;
+import br.com.anteros.iot.actions.ExecutionCondition;
 import br.com.anteros.iot.domain.actions.ActionNode;
 import br.com.anteros.iot.domain.devices.MasterAsusTinkerNode;
 import br.com.anteros.iot.domain.devices.MasterComputerNode;
@@ -27,6 +28,7 @@ import br.com.anteros.iot.domain.plant.PlaceNode;
 import br.com.anteros.iot.domain.plant.PlantNode;
 import br.com.anteros.iot.domain.things.BarrierGateNode;
 import br.com.anteros.iot.domain.things.BarrierSensorNode;
+import br.com.anteros.iot.domain.things.BarrierSensorReaderNode;
 import br.com.anteros.iot.domain.things.BeaconNode;
 import br.com.anteros.iot.domain.things.CameraMotionDetectorNode;
 import br.com.anteros.iot.domain.things.CameraQRCodeReaderNode;
@@ -41,11 +43,13 @@ import br.com.anteros.iot.domain.things.RFIDReaderNode;
 import br.com.anteros.iot.domain.things.RingStripLED12Node;
 import br.com.anteros.iot.domain.things.SemaphoreNode;
 import br.com.anteros.iot.domain.things.TemperatureOneWireNode;
+import br.com.anteros.iot.domain.things.VehicleEntranceTriggerNode;
 import br.com.anteros.iot.domain.things.parts.GreenLEDSemaphorePartNode;
 import br.com.anteros.iot.domain.things.parts.MemoryPlcNode;
 import br.com.anteros.iot.domain.things.parts.RedLEDSemaphorePartNode;
 import br.com.anteros.iot.domain.triggers.TriggerNode;
 import br.com.anteros.iot.domain.triggers.WhenConditionNode;
+import br.com.anteros.iot.things.BarrierSensorReader;
 import br.com.anteros.iot.things.GenericRelay;
 import br.com.anteros.iot.things.sensors.BarrierSensor;
 
@@ -80,6 +84,9 @@ import br.com.anteros.iot.things.sensors.BarrierSensor;
 		@Type(value = TriggerNode.class, name = "trigger"),
 		@Type(value = WhenConditionNode.class, name = "whenCondition"),
 		@Type(value = ActionNode.class, name = "action"),
+		@Type(value = ExecutionCondition.class, name = "executionCondition"),
+		@Type(value = VehicleEntranceTriggerNode.class, name = "vehicleEntranceTrigger"),
+		@Type(value = BarrierSensorReaderNode.class, name = "barrierSensorReader"),
 		@Type(value = RingStripLED12Node.class, name = DomainConstants.RING_STRIP_LED12)})
 public abstract class PlantItemNode {
 

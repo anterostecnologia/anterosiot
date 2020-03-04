@@ -1,12 +1,15 @@
 package br.com.anteros.iot.domain.things.config;
 
-public class Config {
+import br.com.anteros.iot.domain.things.config.General;
+import br.com.anteros.iot.domain.things.config.Mqtt;
+import br.com.anteros.iot.domain.things.config.NTP;
+import br.com.anteros.iot.domain.things.config.Network;
+
+public abstract class  AbstractConfig {
 	
 	private String command;
 	
 	private Network network;
-	
-	private Hardware hardware;
 	
 	private General general;
 	
@@ -14,14 +17,13 @@ public class Config {
 	
 	private NTP ntp;
 
-	public Config() {
+	public AbstractConfig() {
 		
 	}
 	
-	public Config(String command, Network network, Hardware hardware, General general, Mqtt mqtt, NTP ntp) {
+	public AbstractConfig(String command, Network network, General general, Mqtt mqtt, NTP ntp) {
 		this.command = command;
 		this.network = network;
-		this.hardware = hardware;
 		this.general = general;
 		this.mqtt = mqtt;
 		this.ntp = ntp;
@@ -41,14 +43,6 @@ public class Config {
 
 	public void setNetwork(Network network) {
 		this.network = network;
-	}
-
-	public Hardware getHardware() {
-		return hardware;
-	}
-
-	public void setHardware(Hardware hardware) {
-		this.hardware = hardware;
 	}
 
 	public General getGeneral() {
@@ -74,4 +68,5 @@ public class Config {
 	public void setNtp(NTP ntp) {
 		this.ntp = ntp;
 	}
+
 }

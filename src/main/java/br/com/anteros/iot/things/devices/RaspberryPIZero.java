@@ -11,7 +11,6 @@ import br.com.anteros.iot.Device;
 import br.com.anteros.iot.DeviceController;
 import br.com.anteros.iot.Part;
 import br.com.anteros.iot.Thing;
-import br.com.anteros.iot.ThingStatus;
 import br.com.anteros.iot.actuators.collectors.CollectResult;
 import br.com.anteros.iot.domain.PlantItemNode;
 import br.com.anteros.iot.plant.PlantItem;
@@ -29,8 +28,8 @@ import br.com.anteros.iot.things.devices.telemetry.TelemetryStrategy;
 import br.com.anteros.iot.things.devices.telemetry.TemperatureTelemetryStrategy;
 import br.com.anteros.iot.triggers.Trigger;
 
-public class RaspberryPIZero extends PlantItem implements Device, Publishable  {
-	
+public class RaspberryPIZero extends PlantItem implements Device, Publishable {
+
 	private String hostnameACL;
 	protected IpAddress ipAddress;
 	private String topicError;
@@ -39,18 +38,17 @@ public class RaspberryPIZero extends PlantItem implements Device, Publishable  {
 	private String secondarySSID;
 	private String secondaryPassword;
 	private Integer intervalPublishingTelemetry;
-	
+
 	protected DeviceController deviceController;
 	protected boolean needsPropagation;
-	
+
 	private TelemetryConfiguration telemetryConfiguration = TelemetryConfiguration.of(this);
 
-		
 	protected RaspberryPIZero(String id, IpAddress ipAddress, String topicError, Integer intervalPublishingTelemetry) {
 		this.itemId = id;
 		this.ipAddress = ipAddress;
 		this.topicError = topicError;
-		
+
 		telemetryConfiguration.addStrategy(new PlatformTelemetryStrategy(), intervalPublishingTelemetry);
 		telemetryConfiguration.addStrategy(new HardwareTelemetryStrategy(), intervalPublishingTelemetry);
 		telemetryConfiguration.addStrategy(new MemoryTelemetryStrategy(), intervalPublishingTelemetry);
@@ -66,8 +64,11 @@ public class RaspberryPIZero extends PlantItem implements Device, Publishable  {
 		return itemId;
 	}
 
-	public ThingStatus getStatus() {
+	public String getStatus() {
 		return null;
+	}
+
+	public void setStatus(java.lang.String status) {
 	}
 
 	public Set<Part> getParts() {
@@ -91,13 +92,11 @@ public class RaspberryPIZero extends PlantItem implements Device, Publishable  {
 	}
 
 	public Part getPartById(String part) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public Thing loadConfiguration(PlantItemNode node) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -109,7 +108,8 @@ public class RaspberryPIZero extends PlantItem implements Device, Publishable  {
 
 	@Override
 	protected boolean acceptThisTypeOfPlantItem(Class<?> child) {
-		return ReflectionUtils.isImplementsInterface(child, Thing.class) && !ReflectionUtils.isImplementsInterface(child, Part.class) 
+		return ReflectionUtils.isImplementsInterface(child, Thing.class)
+				&& !ReflectionUtils.isImplementsInterface(child, Part.class)
 				&& !ReflectionUtils.isImplementsInterface(child, Device.class);
 	}
 
@@ -120,28 +120,24 @@ public class RaspberryPIZero extends PlantItem implements Device, Publishable  {
 	public void setDeviceController(DeviceController deviceController) {
 		this.deviceController = deviceController;
 	}
-	
+
 	@Override
 	public String[] getActions() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public Thing addTrigger(Trigger trigger) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public Thing removeTrigger(Trigger trigger) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public Trigger[] getTriggers() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -149,11 +145,11 @@ public class RaspberryPIZero extends PlantItem implements Device, Publishable  {
 	public String getTopicError() {
 		return topicError;
 	}
-	
+
 	@Override
 	public String[] getTopicsToPublishValue(CollectResult collectedData) {
 		if (hasTelemetries()) {
-			return new String[] {this.getPath()+"/systemInfo"};
+			return new String[] { this.getPath() + "/systemInfo" };
 		}
 		return new String[] {};
 	}
@@ -172,7 +168,8 @@ public class RaspberryPIZero extends PlantItem implements Device, Publishable  {
 	public TelemetryStrategy[] getTelemetriesByInterval(long ellapsedTime) {
 		List<TelemetryStrategy> result = new ArrayList<>();
 		for (TelemetryStrategy strategy : telemetryConfiguration.getStrategies().keySet()) {
-			if (ellapsedTime - strategy.getLastIntervalPublishing() >= telemetryConfiguration.getStrategies().get(strategy)) {
+			if (ellapsedTime - strategy.getLastIntervalPublishing() >= telemetryConfiguration.getStrategies()
+					.get(strategy)) {
 				result.add(strategy);
 			}
 		}
@@ -186,6 +183,7 @@ public class RaspberryPIZero extends PlantItem implements Device, Publishable  {
 	public void setIntervalPublishingTelemetry(Integer intervalPublishingTelemetry) {
 		this.intervalPublishingTelemetry = intervalPublishingTelemetry;
 	}
+
 	public TelemetryConfiguration getTelemetryConfiguration() {
 		return telemetryConfiguration;
 	}
@@ -258,6 +256,6 @@ public class RaspberryPIZero extends PlantItem implements Device, Publishable  {
 
 	public void setHostnameACL(String hostnameACL) {
 		this.hostnameACL = hostnameACL;
-	}	
+	}
 
 }

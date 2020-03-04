@@ -7,10 +7,8 @@ import java.util.Set;
 import br.com.anteros.iot.DeviceController;
 import br.com.anteros.iot.Part;
 import br.com.anteros.iot.Thing;
-import br.com.anteros.iot.ThingStatus;
 import br.com.anteros.iot.domain.PlantItemNode;
 import br.com.anteros.iot.domain.things.BeaconNode;
-import br.com.anteros.iot.domain.things.DeviceScanNode;
 import br.com.anteros.iot.triggers.Trigger;
 
 public class Beacon extends ControllerThing {
@@ -46,8 +44,12 @@ public class Beacon extends ControllerThing {
 		return itemId;
 	}
 
-	public ThingStatus getStatus() {
+	public String getStatus() {
 		return null;
+	}
+	
+	public void setStatus(java.lang.String status) {
+		
 	}
 
 	public Set<Part> getParts() {

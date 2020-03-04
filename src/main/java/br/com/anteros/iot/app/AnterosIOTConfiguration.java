@@ -18,7 +18,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import br.com.anteros.core.log.Logger;
 import br.com.anteros.core.log.LoggerProvider;
-import br.com.anteros.iot.Action;
 import br.com.anteros.iot.Actuable;
 import br.com.anteros.iot.DefaultActuators;
 import br.com.anteros.iot.MasterDeviceController;
@@ -26,6 +25,7 @@ import br.com.anteros.iot.Part;
 import br.com.anteros.iot.RemoteMasterDeviceController;
 import br.com.anteros.iot.SlaveDeviceController;
 import br.com.anteros.iot.Thing;
+import br.com.anteros.iot.actions.Action;
 import br.com.anteros.iot.app.listeners.AnterosIOTServiceListener;
 import br.com.anteros.iot.controllers.AbstractDeviceController;
 import br.com.anteros.iot.controllers.remote.RemoteDeviceControllerFactory;
@@ -265,7 +265,7 @@ public class AnterosIOTConfiguration {
 
 							targetActions
 									.add(Action.of(targetActionThing, targetActionPart, targetActionNode.getAction(),
-											targetActionNode.getMessage(), targetActionNode.getTopics()));
+											targetActionNode.getMessage(), targetActionNode.getTopics(), targetActionNode.getExecutionCondition()));
 
 						}
 						LOG.info("Criando ações exceção da trigger...");
@@ -284,7 +284,7 @@ public class AnterosIOTConfiguration {
 							exceptionActions.add(Action.of(exceptionActionThing, exceptionActionPart,
 									exceptionAction.getAction(),
 									exceptionAction.getMessage(),
-									exceptionAction.getTopics()));
+									exceptionAction.getTopics(), exceptionAction.getExecutionCondition()));
 							}
 						}
 

@@ -1,4 +1,4 @@
-package br.com.anteros.iot.domain.things.config;
+package br.com.anteros.iot.domain.things.config.DigitalKey;
 
 public class Hardware {
 
@@ -7,12 +7,9 @@ public class Hardware {
 	private int wgd1pin;
 	private int sspin;
 	private int rfidgain;
-	private int rtype;
-	private int rpin;
-	private int rtime;
+	private long readInterval;
+	private int readMode;
 	private int accessType;
-	private int pincode;
-	private String passphrase;
 	
 
 	public int getReaderType() {
@@ -55,28 +52,20 @@ public class Hardware {
 		this.rfidgain = rfidgain;
 	}
 
-	public int getRtype() {
-		return rtype;
+	public long getReadInterval() {
+		return readInterval;
 	}
 
-	public void setRtype(int rtype) {
-		this.rtype = rtype;
+	public void setReadInterval(long readInterval) {
+		this.readInterval = readInterval;
 	}
 
-	public int getRpin() {
-		return rpin;
+	public int getReadMode() {
+		return readMode;
 	}
 
-	public void setRpin(int rpin) {
-		this.rpin = rpin;
-	}
-
-	public int getRtime() {
-		return rtime;
-	}
-
-	public void setRtime(int rtime) {
-		this.rtime = rtime;
+	public void setReadMode(int readMode) {
+		this.readMode = readMode;
 	}
 
 	public int getAccessType() {
@@ -85,22 +74,6 @@ public class Hardware {
 
 	public void setAccessType(int accessType) {
 		this.accessType = accessType;
-	}
-
-	public int getPincode() {
-		return pincode;
-	}
-
-	public void setPincode(int pincode) {
-		this.pincode = pincode;
-	}
-
-	public String getPassphrase() {
-		return passphrase;
-	}
-
-	public void setPassphrase(String passphrase) {
-		this.passphrase = passphrase;
 	}
 
 }

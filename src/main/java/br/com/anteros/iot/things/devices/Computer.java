@@ -9,7 +9,6 @@ import br.com.anteros.iot.Device;
 import br.com.anteros.iot.DeviceController;
 import br.com.anteros.iot.Part;
 import br.com.anteros.iot.Thing;
-import br.com.anteros.iot.ThingStatus;
 import br.com.anteros.iot.controllers.AbstractDeviceController;
 import br.com.anteros.iot.domain.PlantItemNode;
 import br.com.anteros.iot.plant.PlantItem;
@@ -40,9 +39,13 @@ public class Computer extends PlantItem implements Device {
 		return itemId;
 	}
 
-	public ThingStatus getStatus() {
+	public String getStatus() {
 		return null;
 	}
+	
+	public void setStatus(java.lang.String status) {
+		
+	}	
 
 	public Set<Part> getParts() {
 		return Collections.unmodifiableSet(new HashSet<Part>());

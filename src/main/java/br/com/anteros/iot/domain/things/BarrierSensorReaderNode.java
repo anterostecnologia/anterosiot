@@ -12,11 +12,11 @@ import br.com.anteros.iot.domain.DeviceNode;
 import br.com.anteros.iot.domain.DeviceSlaveNode;
 import br.com.anteros.iot.domain.DomainConstants;
 import br.com.anteros.iot.domain.PlantItemNode;
-import br.com.anteros.iot.domain.things.config.Config;
 import br.com.anteros.iot.domain.things.config.General;
 import br.com.anteros.iot.domain.things.config.Mqtt;
 import br.com.anteros.iot.domain.things.config.NTP;
 import br.com.anteros.iot.domain.things.config.Network;
+import br.com.anteros.iot.domain.things.config.RFID.Config;
 import br.com.anteros.iot.things.BarrierSensorReader;
 
 @JsonTypeName(DomainConstants.BARRIER_SENSOR_READER)
@@ -67,13 +67,11 @@ public class BarrierSensorReaderNode extends ControllerNode implements Configura
 				mqtt.setPort(this.getPortMqtt());
 				mqtt.setUser(this.getUserMqtt());
 				mqtt.setPswd(this.getPasswordMqtt());
-				mqtt.setDataTopic(getTopics());
 			} else {
 				mqtt.setHost(deviceNode.getHostMqtt());
 				mqtt.setPort(deviceNode.getPortMqtt());
 				mqtt.setUser(deviceNode.getUserMqtt());
 				mqtt.setPswd(deviceNode.getPasswordMqtt());
-				mqtt.setDataTopic(getTopics());
 			}
 
 			if (this.getHostNtp() != null) {
@@ -84,7 +82,7 @@ public class BarrierSensorReaderNode extends ControllerNode implements Configura
 				ntp.setTimezone(deviceNode.getTimezoneNtp());
 			}
 
-			Config config = new Config(command, network, null, general, mqtt, ntp);
+			Config config = new Config(command, network, null, null, general, mqtt, ntp);
 
 			return mapper.writeValueAsString(config);
 		}

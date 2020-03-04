@@ -7,7 +7,6 @@ import java.util.Set;
 import br.com.anteros.iot.DeviceController;
 import br.com.anteros.iot.Part;
 import br.com.anteros.iot.Thing;
-import br.com.anteros.iot.ThingStatus;
 import br.com.anteros.iot.domain.PlantItemNode;
 import br.com.anteros.iot.domain.things.parts.RedLEDSemaphorePartNode;
 import br.com.anteros.iot.parts.exception.IllegalPartException;
@@ -40,9 +39,12 @@ public class RedLEDSemaphorePart extends PlantItem implements Part, LedSemaphore
 		return thingId;
 	}
 
-	public ThingStatus getStatus() {
-		// TODO Auto-generated method stub
+	public String getStatus() {
 		return null;
+	}
+	
+	public void setStatus(java.lang.String status) {
+		
 	}
 
 	public Set<Part> getParts() {

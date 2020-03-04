@@ -13,7 +13,6 @@ import br.com.anteros.iot.Device;
 import br.com.anteros.iot.DeviceController;
 import br.com.anteros.iot.Part;
 import br.com.anteros.iot.Thing;
-import br.com.anteros.iot.ThingStatus;
 import br.com.anteros.iot.actuators.collectors.CollectResult;
 import br.com.anteros.iot.actuators.collectors.TelemetryResult;
 import br.com.anteros.iot.domain.PlantItemNode;
@@ -69,9 +68,13 @@ public class RaspberryPI extends PlantItem implements Device, Publishable   {
 		return itemId;
 	}
 
-	public ThingStatus getStatus() {
+	public String getStatus() {
 		return null;
 	}
+	
+	public void setStatus(java.lang.String status) {
+		
+	}	
 
 	public Set<Part> getParts() {
 		return Collections.unmodifiableSet(new HashSet<Part>());
@@ -98,13 +101,11 @@ public class RaspberryPI extends PlantItem implements Device, Publishable   {
 	}
 
 	public Part getPartById(String part) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public Thing loadConfiguration(PlantItemNode node) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -130,25 +131,21 @@ public class RaspberryPI extends PlantItem implements Device, Publishable   {
 
 	@Override
 	public String[] getActions() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public Thing addTrigger(Trigger trigger) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public Thing removeTrigger(Trigger trigger) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public Trigger[] getTriggers() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 

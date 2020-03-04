@@ -1,8 +1,5 @@
 package br.com.anteros.iot.actuators.collectors;
 
-import java.io.IOException;
-import java.io.StringWriter;
-import java.io.Writer;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -11,24 +8,19 @@ import java.util.Set;
 import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
-import javax.json.JsonWriterFactory;
 import javax.json.stream.JsonGenerator;
 
 import br.com.anteros.client.mqttv3.IMqttDeliveryToken;
 import br.com.anteros.client.mqttv3.MqttAsyncClient;
 import br.com.anteros.client.mqttv3.MqttCallback;
-import br.com.anteros.client.mqttv3.MqttClient;
 import br.com.anteros.client.mqttv3.MqttException;
 import br.com.anteros.client.mqttv3.MqttMessage;
-import br.com.anteros.client.mqttv3.MqttPersistenceException;
-
 import br.com.anteros.core.log.Logger;
 import br.com.anteros.core.log.LoggerProvider;
 import br.com.anteros.iot.Actuators;
 import br.com.anteros.iot.Collector;
 import br.com.anteros.iot.Device;
 import br.com.anteros.iot.Thing;
-import br.com.anteros.iot.controllers.AbstractDeviceController;
 import br.com.anteros.iot.support.MqttHelper;
 import br.com.anteros.iot.things.Publishable;
 
@@ -116,7 +108,12 @@ public class SimpleCollectorManager implements CollectorManager, CollectorListen
 			Collector collector = actuators.discoverCollectorToThing(thing);
 			if (collector != null) {
 				collector.setListener(this);
-
+				
+				while(collector.isRunning()){
+					collector.stopCollect();
+					Thread.yield();
+				}
+				
 				if (collector instanceof MqttCollector) {
 					MqttAsyncClient clientCollector = null;
 					try {
@@ -130,10 +127,7 @@ public class SimpleCollectorManager implements CollectorManager, CollectorListen
 					((MqttCollector) collector).setMqttClient(clientCollector);
 				}
 				
-				while(collector.isRunning()){
-					collector.stopCollect();
-					Thread.yield();
-				}
+				
 				collector.startCollect();
 				collectorsRunning.add(collector);
 			}
@@ -181,28 +175,13 @@ public class SimpleCollectorManager implements CollectorManager, CollectorListen
 
 						config.put(JsonGenerator.PRETTY_PRINTING, true);
 
-//						JsonWriterFactory writerFactory = Json.createWriterFactory(config);
-
 						JsonObjectBuilder builder = Json.createObjectBuilder();
 						JsonObject jsonMessage = result.toJson(builder).build();
-
-//						String jsonString="";	
-//						try (Writer writer = new StringWriter()) {
-//							writerFactory.createWriter(writer).write(builder.build());
-//							jsonString = writer.toString();
-//						} catch (IOException e) {
-//						}
-
-//						MqttMessage message = new MqttMessage(jsonString.getBytes());
 
 						MqttMessage message = new MqttMessage(jsonMessage.toString().getBytes());
 						message.setQos(1);
 						mqttClient.publish(topic, message);
-					} catch (MqttPersistenceException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					} catch (MqttException e) {
-						// TODO Auto-generated catch block
+					} catch (Exception e) {
 						e.printStackTrace();
 					}
 				}
@@ -212,7 +191,6 @@ public class SimpleCollectorManager implements CollectorManager, CollectorListen
 
 	@Override
 	public void connectionLost(Throwable cause) {
-//		LOG.warn("Conexão com o broker MQTT perdida. Causa: " + cause.toString());
 		try {
 			this.mqttClient.reconnect();
 		} catch (MqttException e) {
@@ -222,14 +200,10 @@ public class SimpleCollectorManager implements CollectorManager, CollectorListen
 
 	@Override
 	public void messageArrived(String topic, MqttMessage message) throws Exception {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
 	public void deliveryComplete(IMqttDeliveryToken token) {
-		// TODO Auto-generated method stub
-		
 	}
 
 }

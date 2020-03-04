@@ -9,7 +9,6 @@ import br.com.anteros.iot.Device;
 import br.com.anteros.iot.DeviceController;
 import br.com.anteros.iot.Part;
 import br.com.anteros.iot.Thing;
-import br.com.anteros.iot.ThingStatus;
 import br.com.anteros.iot.domain.PlantItemNode;
 import br.com.anteros.iot.plant.PlantItem;
 import br.com.anteros.iot.things.devices.telemetry.TelemetryStrategy;
@@ -37,9 +36,13 @@ public class OdroidC2 extends PlantItem implements Device {
 		return itemId;
 	}
 
-	public ThingStatus getStatus() {
+	public String getStatus() {
 		return null;
 	}
+	
+	public void setStatus(java.lang.String status) {
+		
+	}	
 
 	public Set<Part> getParts() {
 		return Collections.unmodifiableSet(new HashSet<Part>());

@@ -17,6 +17,7 @@ import br.com.anteros.iot.actuators.collectors.PlcColletor;
 import br.com.anteros.iot.actuators.collectors.PresenceDetectorCollector;
 import br.com.anteros.iot.actuators.collectors.RFIDReaderCollector;
 import br.com.anteros.iot.actuators.collectors.TemperatureOneWireCollector;
+import br.com.anteros.iot.actuators.collectors.VehicleEntranceTriggerCollector;
 
 public class DefaultActuators implements Actuators {
 
@@ -37,6 +38,7 @@ public class DefaultActuators implements Actuators {
 		registerActuator(PlcColletor.class);
 		registerActuator(MemoryPlcActuator.class);
 		registerActuator(RingStripLED12Actuator.class);
+		registerActuator(VehicleEntranceTriggerCollector.class);
 	}
 
 	public DefaultActuators registerActuator(Class<? extends Actuable> actuable) {
@@ -54,17 +56,12 @@ public class DefaultActuators implements Actuators {
 		try {
 			for (Class<? extends Actuable> actuable : actuators) {
 				Actuable collector = null;
-					
-//				if (cacheColletors.containsKey(thing)) {
-//					collector = cacheColletors.get(thing);
-//				} else {
-					collector = actuable.newInstance();
-//					cacheColletors.put(thing, collector);
-//				}
-					
+
+				collector = actuable.newInstance();
+
 				if (collector.isSupportedThing(thing)) {
 					if (collector instanceof Collector) {
-						((Collector) collector).setThing(thing);						
+						((Collector) collector).setThing(thing);
 						return (Collector) collector;
 					}
 				}

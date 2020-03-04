@@ -1,6 +1,7 @@
 package br.com.anteros.iot.domain.actions;
 
 import br.com.anteros.iot.Thing;
+import br.com.anteros.iot.actions.ExecutionCondition;
 import br.com.anteros.iot.domain.PartNode;
 import br.com.anteros.iot.domain.PlantItemNode;
 import br.com.anteros.iot.domain.ThingNode;
@@ -12,6 +13,7 @@ public class ActionNode extends PlantItemNode {
 	private String action;
 	private String message;
 	private String[] topics;
+	private ExecutionCondition executionCondition;
 	
 	public ActionNode(ThingNode thing, PartNode part, String action, String message, String[] topics) {
 		super();
@@ -75,14 +77,20 @@ public class ActionNode extends PlantItemNode {
 
 	@Override
 	protected boolean acceptThisTypeOfChild(Class<?> child) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public Thing getInstanceOfThing() {
-		// TODO Auto-generated method stub
 		return null;
+	}
+
+	public ExecutionCondition getExecutionCondition() {
+		return executionCondition;
+	}
+
+	public void setExecutionCondition(ExecutionCondition executionCondition) {
+		this.executionCondition = executionCondition;
 	}
 	
 	

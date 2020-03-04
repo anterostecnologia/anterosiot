@@ -12,12 +12,12 @@ import br.com.anteros.iot.domain.DeviceNode;
 import br.com.anteros.iot.domain.DeviceSlaveNode;
 import br.com.anteros.iot.domain.DomainConstants;
 import br.com.anteros.iot.domain.PlantItemNode;
-import br.com.anteros.iot.domain.things.config.Config;
 import br.com.anteros.iot.domain.things.config.General;
-import br.com.anteros.iot.domain.things.config.Hardware;
 import br.com.anteros.iot.domain.things.config.Mqtt;
 import br.com.anteros.iot.domain.things.config.NTP;
 import br.com.anteros.iot.domain.things.config.Network;
+import br.com.anteros.iot.domain.things.config.DigitalKey.Hardware;
+import br.com.anteros.iot.domain.things.config.DigitalKey.Config;
 import br.com.anteros.iot.things.DigitalKey;
 
 @JsonTypeName(DomainConstants.DIGITAL_KEY)
@@ -91,13 +91,11 @@ public class DigitalKeyNode extends ControllerNode implements Configurable {
 				mqtt.setPort(this.getPortMqtt());
 				mqtt.setUser(this.getUserMqtt());
 				mqtt.setPswd(this.getPasswordMqtt());
-				mqtt.setDataTopic(getTopics());
 			} else {
 				mqtt.setHost(deviceNode.getHostMqtt());
 				mqtt.setPort(deviceNode.getPortMqtt());
 				mqtt.setUser(deviceNode.getUserMqtt());
 				mqtt.setPswd(deviceNode.getPasswordMqtt());
-				mqtt.setDataTopic(getTopics());
 			}
 
 			if (this.getHostNtp() != null) {

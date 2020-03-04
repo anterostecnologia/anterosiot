@@ -2,6 +2,8 @@ package br.com.anteros.iot;
 
 public interface ThingController {
 	
+	public String getThingID(); // UUID
+	
 	public void beforePause();	
 	
 	public void beforeStart();
@@ -15,8 +17,6 @@ public interface ThingController {
 	public void afterStart();
 
 	public void afterRestart();
-
-	public String getThingID(); // UUID
 	
 	public void stop();
 

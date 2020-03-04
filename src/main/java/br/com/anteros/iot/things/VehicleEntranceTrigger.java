@@ -8,7 +8,6 @@ import java.util.Set;
 import br.com.anteros.iot.DeviceController;
 import br.com.anteros.iot.Part;
 import br.com.anteros.iot.Thing;
-import br.com.anteros.iot.ThingStatus;
 import br.com.anteros.iot.actuators.collectors.CollectResult;
 import br.com.anteros.iot.domain.PlantItemNode;
 import br.com.anteros.iot.domain.things.VehicleEntranceTriggerNode;
@@ -23,6 +22,8 @@ public class VehicleEntranceTrigger extends ControllerThing implements Publishab
 	protected String[] topics;
 	protected Set<Trigger> triggers = new HashSet<>();
 
+	protected String status;
+
 	public VehicleEntranceTrigger(PlantItemNode node) {
 		this.loadConfiguration(node);
 	}
@@ -31,8 +32,9 @@ public class VehicleEntranceTrigger extends ControllerThing implements Publishab
 		return itemId;
 	}
 
-	public ThingStatus getStatus() {
-		return null;
+	public String getStatus() {
+		String status = this.status;
+		return status;
 	}
 
 	public Set<Part> getParts() {
@@ -126,6 +128,10 @@ public class VehicleEntranceTrigger extends ControllerThing implements Publishab
 	@Override
 	public boolean needsPropagation() {
 		return needsPropagation ? true : false;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
 	}
 
 	

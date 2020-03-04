@@ -2,13 +2,13 @@ package br.com.anteros.iot.domain.things.config;
 
 public class Mqtt {
 
-	private String enabled;
+	private int enabled;
 
 	private String host;
 
 	private int port;
 
-	private String[] dataTopic;
+	private String dataTopic;
 
 	private String user;
 
@@ -16,17 +16,17 @@ public class Mqtt {
 
 	private String heartBeatTopic;
 
-	private int heartBeatIntervalSeconds;
+	private long heartBeatIntervalSeconds;
 
 	private String errorTopic;
 
 	private String bootTopic;
 
-	public String getEnabled() {
+	public int getEnabled() {
 		return enabled;
 	}
 
-	public void setEnabled(String enabled) {
+	public void setEnabled(int enabled) {
 		this.enabled = enabled;
 	}
 
@@ -46,6 +46,13 @@ public class Mqtt {
 		this.port = port;
 	}
 
+	public String getDataTopic() {
+		return dataTopic;
+	}
+
+	public void setDataTopic(String dataTopic) {
+		this.dataTopic = dataTopic;
+	}
 
 	public String getUser() {
 		return user;
@@ -71,11 +78,11 @@ public class Mqtt {
 		this.heartBeatTopic = heartBeatTopic;
 	}
 
-	public int getHeartBeatIntervalSeconds() {
+	public long getHeartBeatIntervalSeconds() {
 		return heartBeatIntervalSeconds;
 	}
 
-	public void setHeartBeatIntervalSeconds(int heartBeatIntervalSeconds) {
+	public void setHeartBeatIntervalSeconds(long heartBeatIntervalSeconds) {
 		this.heartBeatIntervalSeconds = heartBeatIntervalSeconds;
 	}
 
@@ -93,14 +100,6 @@ public class Mqtt {
 
 	public void setBootTopic(String bootTopic) {
 		this.bootTopic = bootTopic;
-	}
-
-	public String[] getDataTopic() {
-		return dataTopic;
-	}
-
-	public void setDataTopic(String[] dataTopic) {
-		this.dataTopic = dataTopic;
 	}
 
 }

@@ -7,6 +7,7 @@ import br.com.anteros.client.mqttv3.MqttMessage;
 import br.com.anteros.client.mqttv3.MqttPersistenceException;
 
 import br.com.anteros.core.utils.StringUtils;
+import br.com.anteros.iot.actions.Action;
 import br.com.anteros.iot.app.listeners.AnterosIOTServiceListener;
 
 public interface DeviceController extends ThingController {
