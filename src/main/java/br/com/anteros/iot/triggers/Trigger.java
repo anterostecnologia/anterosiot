@@ -3,6 +3,8 @@ package br.com.anteros.iot.triggers;
 import javax.json.Json;
 import javax.json.JsonObjectBuilder;
 
+import br.com.anteros.core.log.Logger;
+import br.com.anteros.core.log.LoggerProvider;
 import br.com.anteros.core.utils.StringUtils;
 import br.com.anteros.iot.actions.Action;
 import br.com.anteros.iot.actuators.collectors.CollectResult;
@@ -10,6 +12,8 @@ import br.com.anteros.iot.app.listeners.AnterosIOTServiceListener;
 import br.com.anteros.iot.plant.PlantItem;
 
 public class Trigger {
+	
+	private static final Logger LOG = LoggerProvider.getInstance().getLogger(Trigger.class.getName());
 
 	private String name;
 	private ShotMoment shotMoment;
@@ -34,7 +38,7 @@ public class Trigger {
 			try {
 				serviceListener.onFireTrigger(this, value);
 			} catch (Exception e) {
-				e.printStackTrace();
+				LOG.info(e.getMessage() + " - Running exception actions now");
 				if (exceptionActions != null) {
 					for (Action exceptionAction : exceptionActions) {
 						if (exceptionAction.getThing() instanceof PlantItem) {
