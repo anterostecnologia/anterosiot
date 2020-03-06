@@ -36,6 +36,10 @@ public class VehicleEntranceTrigger extends ControllerThing implements Publishab
 		String status = this.status;
 		return status;
 	}
+	
+	public void setStatus(String status) {
+		this.status = status;
+	}
 
 	public Set<Part> getParts() {
 		return Collections.unmodifiableSet(new HashSet<>());
@@ -128,10 +132,6 @@ public class VehicleEntranceTrigger extends ControllerThing implements Publishab
 	@Override
 	public boolean needsPropagation() {
 		return needsPropagation ? true : false;
-	}
-
-	public void setStatus(String status) {
-		this.status = status;
 	}
 
 	

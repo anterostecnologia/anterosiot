@@ -121,6 +121,7 @@ public class MasterControllerRPi extends AbstractDeviceController implements Mas
 		try {
 			this.clientMqtt.reconnect();
 		} catch (MqttException e) {
+			e.printStackTrace();
 		}
 	}	
 

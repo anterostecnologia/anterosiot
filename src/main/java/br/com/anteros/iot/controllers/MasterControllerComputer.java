@@ -126,28 +126,12 @@ public class MasterControllerComputer extends AbstractDeviceController implement
 				+ ((MqttException) cause).getCause() + "\"");
 		cause.printStackTrace();
 		
-//		try {
-//			clientMqtt = MqttHelper.createAndConnectMqttClient(clientMqtt.getServerURI(),
-//					device.getThingID() + "_controller", username, password, true, true);
-//		} catch (MqttException e1) {
-//			e1.printStackTrace();
-//		}
-//
-//		this.clientMqtt.setCallback(this);
-//		this.autoSubscribe();
+		try {
+			this.clientMqtt.reconnect();
+		} catch (MqttException e) {
+			e.printStackTrace();
+		}
 		
-//		device.getDeviceController().stop();
-
-//		try {
-//			clientMqtt = MqttHelper.createAndConnectMqttClient(clientMqtt.getServerURI(),
-//					device.getThingID() + "_controller", username, password, true, true);
-//		} catch (MqttException e1) {
-//			e1.printStackTrace();
-//		}
-//		
-//		this.clientMqtt.setCallback(this);
-//		
-//		device.getDeviceController().start();
 	}
 
 	public void deliveryComplete(IMqttDeliveryToken token) {

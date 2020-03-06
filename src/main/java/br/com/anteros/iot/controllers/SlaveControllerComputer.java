@@ -67,6 +67,12 @@ public class SlaveControllerComputer extends AbstractDeviceController implements
 				+ "\" Reason code " + ((MqttException) cause).getReasonCode() + "\" Cause \""
 				+ ((MqttException) cause).getCause() + "\"");
 		cause.printStackTrace();
+		
+		try {
+			this.clientMqtt.reconnect();
+		} catch (MqttException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public void deliveryComplete(IMqttDeliveryToken token) {

@@ -65,6 +65,12 @@ public class SlaveControllerRPi extends AbstractDeviceController implements Slav
 				+ "\" Reason code " + ((MqttException) cause).getReasonCode() + "\" Cause \""
 				+ ((MqttException) cause).getCause() + "\"");
 		cause.printStackTrace();
+		
+		try {
+			this.clientMqtt.reconnect();
+		} catch (MqttException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public void deliveryComplete(IMqttDeliveryToken token) {

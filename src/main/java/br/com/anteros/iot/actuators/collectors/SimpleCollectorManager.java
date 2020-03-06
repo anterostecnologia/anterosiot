@@ -180,7 +180,9 @@ public class SimpleCollectorManager implements CollectorManager, CollectorListen
 
 						MqttMessage message = new MqttMessage(jsonMessage.toString().getBytes());
 						message.setQos(1);
-						mqttClient.publish(topic, message);
+						if (mqttClient.isConnected()) {
+							mqttClient.publish(topic, message);							
+						}
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
