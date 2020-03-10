@@ -10,6 +10,7 @@ import br.com.anteros.iot.actuators.LedActuator;
 import br.com.anteros.iot.actuators.MagneticLockActuator;
 import br.com.anteros.iot.actuators.MemoryPlcActuator;
 import br.com.anteros.iot.actuators.RingStripLED12Actuator;
+import br.com.anteros.iot.actuators.collectors.BarrierSensorReaderCollector;
 import br.com.anteros.iot.actuators.collectors.CameraMotionDetectorCollector;
 import br.com.anteros.iot.actuators.collectors.CameraQRCodeCollector;
 import br.com.anteros.iot.actuators.collectors.DeviceSystemInfoCollector;
@@ -39,6 +40,7 @@ public class DefaultActuators implements Actuators {
 		registerActuator(MemoryPlcActuator.class);
 		registerActuator(RingStripLED12Actuator.class);
 		registerActuator(VehicleEntranceTriggerCollector.class);
+		registerActuator(BarrierSensorReaderCollector.class);
 	}
 
 	public DefaultActuators registerActuator(Class<? extends Actuable> actuable) {
