@@ -15,17 +15,15 @@ import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonReader;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import br.com.anteros.client.mqttv3.IMqttDeliveryToken;
 import br.com.anteros.client.mqttv3.MqttAsyncClient;
 import br.com.anteros.client.mqttv3.MqttCallback;
 import br.com.anteros.client.mqttv3.MqttCallbackExtended;
-import br.com.anteros.client.mqttv3.MqttClient;
 import br.com.anteros.client.mqttv3.MqttException;
 import br.com.anteros.client.mqttv3.MqttMessage;
 import br.com.anteros.client.mqttv3.MqttPersistenceException;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import br.com.anteros.core.log.Logger;
 import br.com.anteros.core.log.LoggerProvider;
 import br.com.anteros.core.utils.StringUtils;
@@ -40,7 +38,6 @@ import br.com.anteros.iot.Thing;
 import br.com.anteros.iot.actions.Action;
 import br.com.anteros.iot.actuators.collectors.CollectorManager;
 import br.com.anteros.iot.actuators.collectors.SimpleCollectorManager;
-import br.com.anteros.iot.app.AnterosIOTService;
 import br.com.anteros.iot.app.listeners.AnterosIOTServiceListener;
 import br.com.anteros.iot.domain.DeviceNode;
 import br.com.anteros.iot.domain.PlantItemNode;

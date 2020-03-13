@@ -115,11 +115,11 @@ public class CameraQRCodeCollector extends Collector implements Runnable {
 		frame1.setBounds(0, 0, largura, altura);
 		frame1.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-		JTextArea textArea = new JTextArea();
-		textArea.setFont(new Font("Serif", Font.ITALIC, 30));
-		textArea.setLineWrap(true);
-		textArea.setWrapStyleWord(true);
-		textArea.setSize(largura, 100);
+//		JTextArea textArea = new JTextArea();
+//		textArea.setFont(new Font("Serif", Font.ITALIC, 30));
+//		textArea.setLineWrap(true);
+//		textArea.setWrapStyleWord(true);
+//		textArea.setSize(largura, 100);
 
 		My_Panel my_panel = new My_Panel();
 		frame1.setContentPane(my_panel);
@@ -151,22 +151,22 @@ public class CameraQRCodeCollector extends Collector implements Runnable {
 			}
 		});
 
-		long startTime = System.currentTimeMillis();
+//		long startTime = System.currentTimeMillis();
 		running = true;
 
-		try {
-			Thread.sleep(3000);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
+//		try {
+//			Thread.sleep(3000);
+//		} catch (InterruptedException e) {
+//			e.printStackTrace();
+//		}
 
 		Mat image = new Mat();
 		if (webcam.isOpened()) {
 			webcam.read(image);			
 		}
 
-		BufferedImage bufferedImage = null;
-		int count = 0;
+//		BufferedImage bufferedImage = null;
+//		int count = 0;
 
 		boolean retrieve;
 		while (running) {
@@ -177,43 +177,43 @@ public class CameraQRCodeCollector extends Collector implements Runnable {
 			}
 			Core.flip(image, image, 1);
 			if (retrieve && !image.empty()) {
-				if (count == 0) {
-					try {
-						bufferedImage = matToBufferedImage(image);
-						Result result = decodeQRCode(bufferedImage);
-						if (result != null) {
-							drawResultPoints(bufferedImage, 1, result);
-							my_panel.setImage(bufferedImage);
-
-							long difference = System.currentTimeMillis() - startTime;
-
-							if (difference >= ((CameraQRCodeReader) thing).getIntervalToReadSameQrCode()){
-								lastValue = result.getText();
+//				if (count == 0) {
+//					try {
+//						bufferedImage = matToBufferedImage(image);
+//						Result result = decodeQRCode(bufferedImage);
+//						if (result != null) {
+//							drawResultPoints(bufferedImage, 1, result);
+//							my_panel.setImage(bufferedImage);
+//
+//							long difference = System.currentTimeMillis() - startTime;
+//
+//							if (difference >= ((CameraQRCodeReader) thing).getIntervalToReadSameQrCode()){
+//								lastValue = result.getText();
 //								textArea.setText(lastValue);
-								LOG.info(new Date() + "  " + lastValue);
-							    listener.onCollect(new SimpleResult(lastValue), thing);
-								startTime = System.currentTimeMillis();
-							}
-
-						} else {
-							my_panel.MatToBufferedImage(image);
-						}
-						my_panel.repaint();
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
-				} else {
-					if (count > 10) {
-						count = 0;
-					}
+//								LOG.info(new Date() + "  " + lastValue);
+//							    listener.onCollect(new SimpleResult(lastValue), thing);
+//								startTime = System.currentTimeMillis();
+//							}
+//
+//						} else {
+//							my_panel.MatToBufferedImage(image);
+//						}
+//						my_panel.repaint();
+//					} catch (IOException e) {
+//						e.printStackTrace();
+//					}
+//				} else {
+//					if (count > 10) {
+//						count = 0;
+//					}
 					try {
 						my_panel.MatToBufferedImage(image);
 					} catch (IOException e1) {
 						e1.printStackTrace();
 					}
 					my_panel.repaint();
-				}
-				count++;
+//				}
+//				count++;
 			}
 
 		}
@@ -234,31 +234,31 @@ public class CameraQRCodeCollector extends Collector implements Runnable {
 		return null;
 	}
 
-	private void drawResultPoints(BufferedImage barcode, float scaleFactor, Result rawResult) {
-		ResultPoint[] points = rawResult.getResultPoints();
-		if (points != null && points.length > 0) {
-			Graphics graphics = barcode.getGraphics();
-			graphics.setColor(Color.GREEN);
-			for (ResultPoint point : points) {
-				if (point != null) {
-					graphics.fillRect((int) point.getX() - 10, (int) point.getY() - 10, 20, 20);
-				}
+//	private void drawResultPoints(BufferedImage barcode, float scaleFactor, Result rawResult) {
+//		ResultPoint[] points = rawResult.getResultPoints();
+//		if (points != null && points.length > 0) {
+//			Graphics graphics = barcode.getGraphics();
+//			graphics.setColor(Color.GREEN);
+//			for (ResultPoint point : points) {
+//				if (point != null) {
+//					graphics.fillRect((int) point.getX() - 10, (int) point.getY() - 10, 20, 20);
+//				}
+//
+//			}
+//		}
+//	}
 
-			}
-		}
-	}
-
-	private static Result decodeQRCode(BufferedImage bufferedImage) throws IOException {
-		LuminanceSource source = new BufferedImageLuminanceSource(bufferedImage);
-		BinaryBitmap bitmap = new BinaryBitmap(new HybridBinarizer(source));
-
-		try {
-			Result result = new MultiFormatReader().decode(bitmap);
-			return result;
-		} catch (NotFoundException e) {
-			return null;
-		}
-	}
+//	private static Result decodeQRCode(BufferedImage bufferedImage) throws IOException {
+//		LuminanceSource source = new BufferedImageLuminanceSource(bufferedImage);
+//		BinaryBitmap bitmap = new BinaryBitmap(new HybridBinarizer(source));
+//
+//		try {
+//			Result result = new MultiFormatReader().decode(bitmap);
+//			return result;
+//		} catch (NotFoundException e) {
+//			return null;
+//		}
+//	}
 
 	@Override
 	public boolean isRunning() {
