@@ -138,11 +138,7 @@ public class SimpleCollectorManager implements CollectorManager, CollectorListen
 				LOG.info("Coletor de dados rodando...");
 				first = false;
 			}
-			try {
-				Thread.sleep(500);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
+			Thread.yield();
 		}
 		LOG.info("Parando coletor dados...");
 		for (Collector collector : collectorsRunning) {

@@ -65,6 +65,7 @@ public abstract class AbstractDeviceController
 	protected Map<String, Thing> subscribedTopics = new HashMap<>();
 
 	protected boolean sendMsgServiceStarted = false;
+	private boolean alreadyConnectedOnce = false;
 
 	private static final Logger LOG = LoggerProvider.getInstance().getLogger(AbstractDeviceController.class.getName());
 
@@ -237,10 +238,14 @@ public abstract class AbstractDeviceController
 				LOG.info("Device controller " + this.getThingID() + " rodando...");
 				first = false;
 			}
-			try {
-				Thread.sleep(500);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
+			if (this.clientMqtt != null && this.clientMqtt.isConnected()) {
+				Thread.yield();				
+			} else if (this.clientMqtt != null && alreadyConnectedOnce ) {
+				try {
+					this.clientMqtt.reconnect();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
 			}
 		}
 
@@ -434,6 +439,9 @@ public abstract class AbstractDeviceController
 			int[] qosArray = new int[filterArray.length];
 			Arrays.fill(qosArray, 1);
 			LOG.info(Arrays.toString(filter.toArray(new String[] {})));
+			while (!this.clientMqtt.isConnected()) {
+				Thread.yield();
+			}
 			this.clientMqtt.subscribe(filterArray, qosArray);
 		} catch (MqttException e) {
 			e.printStackTrace();
@@ -551,6 +559,9 @@ public abstract class AbstractDeviceController
 
 	@Override
 	public void connectComplete(boolean reconnect, String serverURI) {
+		if (!alreadyConnectedOnce) {
+			alreadyConnectedOnce = true;
+		}
 		/**
 		 * Ouvindo mensagens MQTT para todas as coisas sendo contraladas e mais o
 		 * próprio controlador

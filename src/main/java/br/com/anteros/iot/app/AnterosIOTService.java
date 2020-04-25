@@ -89,6 +89,8 @@ public class AnterosIOTService implements Runnable, MqttCallback, MqttCallbackEx
 
 	private ObjectMapper mapper;
 
+	private boolean alreadyConnectedOnce = false;
+
 	public AnterosIOTService(String deviceName, String deviceType, String hostMqtt, String port, String username,
 			String password, String configFilePath, File config, InputStream streamConfig,
 			AnterosIOTServiceListener serviceListener, Class<? extends Actuable>[] actuators) {
@@ -194,7 +196,7 @@ public class AnterosIOTService implements Runnable, MqttCallback, MqttCallbackEx
 
 		while (true) {
 
-			if (this.client.isConnected()) {
+			if (this.client != null && this.client.isConnected()) {
 				try {
 					Boolean controllerRunning = deviceController != null ? deviceController.getRunning() : false;
 					String hostAddress = null;
@@ -216,6 +218,12 @@ public class AnterosIOTService implements Runnable, MqttCallback, MqttCallbackEx
 					LOG.error("Falha ao publicar mensagem Heart Beat");
 					e.printStackTrace();
 				} catch (SocketException e) {
+					e.printStackTrace();
+				}
+			} else if (this.client != null && alreadyConnectedOnce ){
+				try {
+					this.client.reconnect();
+				} catch (MqttException e) {
 					e.printStackTrace();
 				}
 			}
@@ -450,6 +458,9 @@ public class AnterosIOTService implements Runnable, MqttCallback, MqttCallbackEx
 
 	@Override
 	public void connectComplete(boolean reconnect, String serverURI) {
+		if (!alreadyConnectedOnce) {
+			alreadyConnectedOnce = true;
+		}
 		try {
 			client.subscribe(actionsTopic, 1);
 		} catch (MqttException e) {

@@ -78,7 +78,7 @@ public class MqttHelper {
 		connOpts.setAutomaticReconnect(automaticReconnect);
 		connOpts.setCleanSession(cleanSession);	
 		connOpts.setConnectionTimeout(20);
-		connOpts.setMaxInflight(1000);
+		connOpts.setMaxInflight(2500);
 		connOpts.setMqttVersion(MqttConnectOptions.MQTT_VERSION_3_1_1);
 		connOpts.setKeepAliveInterval(7200);
 

@@ -30,11 +30,21 @@ public class BarrierSensorReaderCollector extends MqttCollector implements Runna
 	protected Thread thread;
 	private MqttAsyncClient mqttClient;
 
+	private boolean alreadyConnectedOnce = false;
+
 	@Override
 	public void run() {
 		LOG.info("Iniciando coletor do Leitor de sensor de barreira");
 		while (running) {
-			Thread.yield();
+			if (this.mqttClient != null && this.mqttClient.isConnected()) {
+				Thread.yield();				
+			} else if (this.mqttClient != null && alreadyConnectedOnce ) {
+				try {
+					this.mqttClient.reconnect();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
 		}
 	}
 
@@ -80,6 +90,9 @@ public class BarrierSensorReaderCollector extends MqttCollector implements Runna
 
 	@Override
 	public void connectComplete(boolean reconnect, String serverURI) {
+		if (!alreadyConnectedOnce) {
+			alreadyConnectedOnce = true;
+		}
 		try {
 			this.mqttClient.subscribe("/" + ((BarrierSensorReader) this.thing).getItemId() + "/data", 1);
 		} catch (MqttException e) {

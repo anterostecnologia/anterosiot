@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.TimeUnit;
 
 import javax.json.Json;
 import javax.json.JsonObject;
@@ -44,6 +45,8 @@ public class VehicleEntranceTriggerCollector extends MqttCollector
 	protected Boolean running = false;
 	protected Thread thread;
 	protected MqttAsyncClient mqttClient;
+
+	private boolean alreadyConnectedOnce = false;
 	
 
 	public VehicleEntranceTriggerCollector(CollectorListener listener, Thing thing) {
@@ -62,8 +65,14 @@ public class VehicleEntranceTriggerCollector extends MqttCollector
 		
 		while (running) {
 			try {
-				MqttMessage msg = queue.take();
-				this.mqttClient.publish("/" + itemId, msg);
+				if (this.mqttClient != null && this.mqttClient.isConnected()) {
+					MqttMessage msg = queue.poll(5000, TimeUnit.MILLISECONDS);
+					if (msg != null) {
+						this.mqttClient.publish("/" + itemId, msg);						
+					}
+				} else if (this.mqttClient != null && alreadyConnectedOnce ) {
+					this.mqttClient.reconnect();
+				}
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -114,6 +123,9 @@ public class VehicleEntranceTriggerCollector extends MqttCollector
 
 	@Override
 	public void connectComplete(boolean reconnect, String serverURI) {
+		if (!alreadyConnectedOnce) {
+			alreadyConnectedOnce = true;
+		}
 		try {
 			this.mqttClient.subscribe("/" + ((VehicleEntranceTrigger) this.thing).getItemId() + "/data", 1);
 		} catch (MqttException e) {
