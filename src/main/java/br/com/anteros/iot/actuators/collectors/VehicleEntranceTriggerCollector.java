@@ -12,6 +12,8 @@ import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonReader;
 
+import com.diozero.util.SleepUtil;
+
 import br.com.anteros.client.mqttv3.IMqttDeliveryToken;
 import br.com.anteros.client.mqttv3.MqttAsyncClient;
 import br.com.anteros.client.mqttv3.MqttCallback;
@@ -95,6 +97,10 @@ public class VehicleEntranceTriggerCollector extends MqttCollector
 		VehicleEntranceTriggerCollector.mapMqttMessage.remove(thing);
 		if (mqttClient != null) {
 			try {
+				if (this.mqttClient.isConnected()) {
+					this.mqttClient.disconnect();
+				}
+				SleepUtil.sleepMillis(500);
 				mqttClient.close();
 			} catch (MqttException e) {
 				e.printStackTrace();

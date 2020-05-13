@@ -15,13 +15,13 @@ public interface Thing {
 	public String getThingID(); // UUID
 
 	public String getStatus();
-	
+
 	public void setStatus(String status);
 
 	public Set<Part> getParts();
 
 	public boolean hasParts();
-	
+
 	public boolean needsPropagation();
 
 	public Thing addPart(Part part);
@@ -88,7 +88,4 @@ public interface Thing {
 		}
 		return result.toArray(new Trigger[] {});
 	}
-
-	
-
 }
