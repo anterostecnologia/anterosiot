@@ -120,7 +120,7 @@ public class SimpleCollectorManager implements CollectorManager, CollectorListen
 						clientCollector = MqttHelper.createAndConnectMqttClient(mqttClient.getServerURI(),
 								thing.getThingID().split("-")[0] + "_collector", username, password, true,
 								true, (MqttCallback) collector);
-					} catch (MqttException e1) {
+					} catch (Exception e1) {
 						e1.printStackTrace();
 					}
 
@@ -148,7 +148,7 @@ public class SimpleCollectorManager implements CollectorManager, CollectorListen
 		try {
 			if (mqttClient.isConnected())
 				mqttClient.disconnect();
-		} catch (MqttException e) {
+		} catch (Exception e) {
 			LOG.error("Ocorreu uma falha ao parar o coletor: " + e.getMessage());
 			e.printStackTrace();
 		}
@@ -191,7 +191,7 @@ public class SimpleCollectorManager implements CollectorManager, CollectorListen
 	public void connectionLost(Throwable cause) {
 		try {
 			this.mqttClient.reconnect();
-		} catch (MqttException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}

@@ -75,7 +75,7 @@ public class BarrierSensorReaderCollector extends MqttCollector implements Runna
 				}
 				SleepUtil.sleepMillis(500);
 				mqttClient.close();
-			} catch (MqttException e) {
+			} catch (Exception e) {
 				e.printStackTrace();
 			}			
 		}
@@ -101,7 +101,7 @@ public class BarrierSensorReaderCollector extends MqttCollector implements Runna
 		}
 		try {
 			this.mqttClient.subscribe("/" + ((BarrierSensorReader) this.thing).getItemId() + "/data", 1);
-		} catch (MqttException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
@@ -110,7 +110,7 @@ public class BarrierSensorReaderCollector extends MqttCollector implements Runna
 	public void connectionLost(Throwable cause) {
 		try {
 			this.mqttClient.reconnect();
-		} catch (MqttException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		
