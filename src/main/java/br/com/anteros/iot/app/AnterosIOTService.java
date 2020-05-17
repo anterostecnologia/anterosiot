@@ -23,6 +23,7 @@ import br.com.anteros.client.mqttv3.MqttMessage;
 import br.com.anteros.client.mqttv3.MqttPersistenceException;
 
 import com.diozero.util.SleepUtil;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -239,7 +240,7 @@ public class AnterosIOTService implements Runnable, MqttCallback, MqttCallbackEx
 			LOG.info("Lendo configuração e criando device controller...");
 			if (mapper == null) {
 				mapper = new ObjectMapper();
-				mapper.setSerializationInclusion(Include.NON_NULL);
+				mapper.setDefaultPropertyInclusion(JsonInclude.Include.NON_NULL);
 				mapper.enable(SerializationFeature.INDENT_OUTPUT);
 			}
 			if (serviceListener != null) {
