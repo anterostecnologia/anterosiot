@@ -36,12 +36,12 @@ public class VehicleEntranceTriggerCollector extends MqttCollector
 			.getLogger(VehicleEntranceTriggerCollector.class.getName());
 
 	public static Map<Thing, BlockingQueue<MqttMessage>> mapMqttMessage = new HashMap<>();
-	
+
 	private static final String STATUS = "status";
 	private static final String OPEN = "open";
 	private static final String CLOSE = "close";
 	private static final String TOGGLE = "toggle";
-	
+
 	protected BlockingQueue<MqttMessage> blockingQueue = new LinkedBlockingQueue<MqttMessage>();
 
 	protected Boolean running = false;
@@ -49,7 +49,6 @@ public class VehicleEntranceTriggerCollector extends MqttCollector
 	protected MqttAsyncClient mqttClient;
 
 	private boolean alreadyConnectedOnce = false;
-	
 
 	public VehicleEntranceTriggerCollector(CollectorListener listener, Thing thing) {
 		super(listener, thing);
@@ -64,15 +63,53 @@ public class VehicleEntranceTriggerCollector extends MqttCollector
 		VehicleEntranceTrigger vehicleEntranceTrigger = (VehicleEntranceTrigger) thing;
 		String itemId = vehicleEntranceTrigger.getItemId();
 		BlockingQueue<MqttMessage> queue = VehicleEntranceTriggerCollector.mapMqttMessage.get(thing);
-		
+
 		while (running) {
 			try {
 				if (this.mqttClient != null && this.mqttClient.isConnected()) {
 					MqttMessage msg = queue.poll(5000, TimeUnit.MILLISECONDS);
 					if (msg != null) {
-						this.mqttClient.publish("/" + itemId, msg);						
+						this.mqttClient.publish("/" + itemId, msg);
+
+						InputStream stream = new ByteArrayInputStream(msg.getPayload());
+						JsonObject message = null;
+						JsonReader jsonReader = Json.createReader(stream);
+						message = jsonReader.readObject();
+						jsonReader.close();
+
+						if (message != null && message.containsKey("receivedPayload")) {
+							String action = message.getString("action");
+
+							JsonObject receivedPayload = message.getJsonObject("receivedPayload");
+							String code = receivedPayload.getString("value");
+							JsonObject additionalInformation = null;
+							if (receivedPayload.containsKey("additionalInformation")) {
+								additionalInformation = receivedPayload.getJsonObject("additionalInformation");
+							}
+
+							String event = additionalInformation.getString("event", "");
+							Boolean isAuthorized = true;
+							String value = "toggle";
+
+							if ("openGate".equalsIgnoreCase(action)) {
+								value = "open";
+							} else if ("closeGate".equalsIgnoreCase(action)) {
+								value = "close";
+								if (additionalInformation.getBoolean("isException", false)) {
+									isAuthorized = false;
+								}
+							}
+
+							SimpleResult simpleResult = new SimpleResult("{ \"source\" : \"" + itemId
+									+ "\", \"value\" : \"" + value + "\", \"code\" : \"" + code + "\", \"event\" : \""
+									+ event + "\", \"isAuthorized\":\"" + isAuthorized.toString() + "\"}");
+
+							listener.onCollect(simpleResult, thing);
+							fireTriggers(ShotMoment.AFTER, thing, simpleResult);
+						}
+
 					}
-				} else if (this.mqttClient != null && alreadyConnectedOnce ) {
+				} else if (this.mqttClient != null && alreadyConnectedOnce) {
 					this.mqttClient.reconnect();
 				}
 			} catch (Exception e) {
@@ -104,9 +141,9 @@ public class VehicleEntranceTriggerCollector extends MqttCollector
 				mqttClient.close();
 			} catch (MqttException e) {
 				e.printStackTrace();
-			}			
+			}
 		}
-		
+
 		this.running = false;
 
 	}
@@ -159,11 +196,10 @@ public class VehicleEntranceTriggerCollector extends MqttCollector
 		JsonObject receivedPayload = jsonReader.readObject();
 		jsonReader.close();
 
-		String value = receivedPayload.getString("status");
-		SimpleResult collectResult = new SimpleResult(value);
-		thing.setStatus(value);
+		SimpleResult collectResult = new SimpleResult(receivedPayload.toString());
+		thing.setStatus(receivedPayload.getString("status"));
 		listener.onCollect(collectResult, thing);
-		
+
 		fireTriggers(ShotMoment.AFTER, thing, collectResult);
 
 	}
@@ -177,20 +213,20 @@ public class VehicleEntranceTriggerCollector extends MqttCollector
 		String action = receivedPayload.getString("action");
 		MqttMessage messageMQTT = null;
 		BlockingQueue<MqttMessage> queue = VehicleEntranceTriggerCollector.mapMqttMessage.get(thing);
+
+		String msg = null;
 		
 		if (STATUS.equalsIgnoreCase(action)) {
-			String msg = "{\"action\":\"status\"}";
-			messageMQTT = new MqttMessage(msg.getBytes());
+			msg = "{\"action\":\"status\", \"receivedPayload\":" + receivedPayload.toString() + "}";
 		} else if (OPEN.equalsIgnoreCase(action)) {
-			String msg = "{\"action\":\"openGate\"}";
-			messageMQTT = new MqttMessage(msg.getBytes());
+			msg = "{\"action\":\"openGate\", \"receivedPayload\":" + receivedPayload.toString() + "}";
 		} else if (CLOSE.equalsIgnoreCase(action)) {
-			String msg = "{\"action\":\"closeGate\"}";
-			messageMQTT = new MqttMessage(msg.getBytes());
+			msg = "{\"action\":\"closeGate\", \"receivedPayload\":" + receivedPayload.toString() + "}";
 		} else if (TOGGLE.equalsIgnoreCase(action)) {
-			String msg = "{\"action\":\"toggleGate\"}";
-			messageMQTT = new MqttMessage(msg.getBytes());
+			msg = "{\"action\":\"toggleGate\", \"receivedPayload\":" + receivedPayload.toString() + "}";
 		}
+		
+		messageMQTT = msg != null ? new MqttMessage(msg.getBytes()) : null;
 
 		if (messageMQTT != null) {
 			messageMQTT.setQos(1);

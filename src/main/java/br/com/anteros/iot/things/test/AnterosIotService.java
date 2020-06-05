@@ -4,6 +4,8 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.Set;
 
+import javax.json.JsonObject;
+
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -78,7 +80,7 @@ public class AnterosIotService implements AnterosIOTServiceListener {
 
 	}
 
-	public void onFireTrigger(Trigger source, Object value) {
+	public void onFireTrigger(Trigger source, Object value, JsonObject additionalInformation) {
 		throw new RuntimeException();
 	}
 

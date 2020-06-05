@@ -2,6 +2,8 @@ package br.com.anteros.iot.app.listeners;
 
 import java.util.Set;
 
+import javax.json.JsonObject;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import br.com.anteros.iot.Actuable;
@@ -19,7 +21,7 @@ public interface AnterosIOTServiceListener {
 	
 	public void onErrorConnectingMqttServer(String error);
 
-	public void onFireTrigger(Trigger source, Object value);
+	public void onFireTrigger(Trigger source, Object value, JsonObject additionalInformation);
 	
 	public void onAddSubTypeNames(ObjectMapper mapper);
 
