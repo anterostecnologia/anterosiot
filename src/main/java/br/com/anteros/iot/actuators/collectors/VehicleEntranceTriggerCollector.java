@@ -88,6 +88,7 @@ public class VehicleEntranceTriggerCollector extends MqttCollector
 							}
 
 							String event = additionalInformation.getString("event", "");
+							String tpToken = additionalInformation.getString("tpToken", "");
 							Boolean isAuthorized = true;
 							String value = "toggle";
 
@@ -100,9 +101,10 @@ public class VehicleEntranceTriggerCollector extends MqttCollector
 								}
 							}
 
-							SimpleResult simpleResult = new SimpleResult("{ \"source\" : \"" + itemId
-									+ "\", \"value\" : \"" + value + "\", \"code\" : \"" + code + "\", \"event\" : \""
-									+ event + "\", \"isAuthorized\":\"" + isAuthorized.toString() + "\"}");
+							SimpleResult simpleResult = new SimpleResult(
+									"{ \"source\" : \"" + itemId + "\", \"value\" : \"" + value + "\", \"code\" : \""
+											+ code + "\", \"event\" : \"" + event + "\", \"tpToken\" : \"" + tpToken
+											+ "\", \"isAuthorized\":\"" + isAuthorized.toString() + "\"}");
 
 							listener.onCollect(simpleResult, thing);
 							fireTriggers(ShotMoment.AFTER, thing, simpleResult);
@@ -215,7 +217,7 @@ public class VehicleEntranceTriggerCollector extends MqttCollector
 		BlockingQueue<MqttMessage> queue = VehicleEntranceTriggerCollector.mapMqttMessage.get(thing);
 
 		String msg = null;
-		
+
 		if (STATUS.equalsIgnoreCase(action)) {
 			msg = "{\"action\":\"status\", \"receivedPayload\":" + receivedPayload.toString() + "}";
 		} else if (OPEN.equalsIgnoreCase(action)) {
@@ -225,7 +227,7 @@ public class VehicleEntranceTriggerCollector extends MqttCollector
 		} else if (TOGGLE.equalsIgnoreCase(action)) {
 			msg = "{\"action\":\"toggleGate\", \"receivedPayload\":" + receivedPayload.toString() + "}";
 		}
-		
+
 		messageMQTT = msg != null ? new MqttMessage(msg.getBytes()) : null;
 
 		if (messageMQTT != null) {
