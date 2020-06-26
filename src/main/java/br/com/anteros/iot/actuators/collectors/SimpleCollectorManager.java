@@ -140,6 +140,7 @@ public class SimpleCollectorManager implements CollectorManager, CollectorListen
 			}
 			Thread.yield();
 		}
+		
 		LOG.info("Parando coletor dados...");
 		for (Collector collector : collectorsRunning) {
 			collector.stopCollect();
