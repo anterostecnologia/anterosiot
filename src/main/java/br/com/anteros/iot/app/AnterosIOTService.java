@@ -206,7 +206,7 @@ public class AnterosIOTService implements Runnable, MqttCallback, MqttCallbackEx
 					for (NetworkInterface netint : Collections.list(nets)) {
 						if (netint.getName().equals("eth0")) {
 							Enumeration<InetAddress> inetAddresses = netint.getInetAddresses();
-							InetAddress inetAddress = Collections.list(inetAddresses).get(1);
+							InetAddress inetAddress = inetAddresses.nextElement();
 							hostAddress = inetAddress.getHostAddress();
 							break;
 						}
@@ -221,11 +221,15 @@ public class AnterosIOTService implements Runnable, MqttCallback, MqttCallbackEx
 				} catch (SocketException e) {
 					e.printStackTrace();
 				}
-			} else if (this.client != null && alreadyConnectedOnce ){
+			} else if (this.client != null && alreadyConnectedOnce) {
 				try {
 					this.client.reconnect();
 				} catch (MqttException e) {
-					e.printStackTrace();
+					if (new Integer(e.getReasonCode()).equals(new Integer(32110))) {
+						SleepUtil.sleepMillis(5000);
+					} else {
+						e.printStackTrace();
+					}
 				}
 			}
 
@@ -235,7 +239,7 @@ public class AnterosIOTService implements Runnable, MqttCallback, MqttCallbackEx
 	}
 
 	private void startService() throws JsonParseException, JsonMappingException, IOException {
-		
+
 		if ((fileConfig != null || streamConfig != null)) {
 			LOG.info("Lendo configuração e criando device controller...");
 			if (mapper == null) {

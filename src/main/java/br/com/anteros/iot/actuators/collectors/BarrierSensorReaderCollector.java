@@ -43,8 +43,12 @@ public class BarrierSensorReaderCollector extends MqttCollector implements Runna
 			} else if (this.mqttClient != null && alreadyConnectedOnce ) {
 				try {
 					this.mqttClient.reconnect();
-				} catch (Exception e) {
-					e.printStackTrace();
+				} catch (MqttException e) {
+					if (new Integer(e.getReasonCode()).equals(new Integer(32110))) {
+						SleepUtil.sleepMillis(5000);
+					} else {
+						e.printStackTrace();
+					}
 				}
 			}
 		}
@@ -110,8 +114,12 @@ public class BarrierSensorReaderCollector extends MqttCollector implements Runna
 	public void connectionLost(Throwable cause) {
 		try {
 			this.mqttClient.reconnect();
-		} catch (Exception e) {
-			e.printStackTrace();
+		} catch (MqttException e) {
+			if (new Integer(e.getReasonCode()).equals(new Integer(32110))) {
+				SleepUtil.sleepMillis(5000);
+			} else {
+				e.printStackTrace();
+			}
 		}
 		
 	}

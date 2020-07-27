@@ -15,6 +15,7 @@ import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonReader;
 
+import com.diozero.util.SleepUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import br.com.anteros.client.mqttv3.IMqttDeliveryToken;
@@ -243,8 +244,12 @@ public abstract class AbstractDeviceController
 			} else if (this.clientMqtt != null && alreadyConnectedOnce ) {
 				try {
 					this.clientMqtt.reconnect();
-				} catch (Exception e) {
-					e.printStackTrace();
+				} catch (MqttException e) {
+					if (new Integer(e.getReasonCode()).equals(new Integer(32110))) {
+						SleepUtil.sleepMillis(5000);
+					} else {
+						e.printStackTrace();
+					}
 				}
 			}
 		}
@@ -576,6 +581,11 @@ public abstract class AbstractDeviceController
 			try {
 				this.clientMqtt.reconnect();
 			} catch (MqttException e) {
+				if (new Integer(e.getReasonCode()).equals(new Integer(32110))) {
+					SleepUtil.sleepMillis(5000);
+				} else {
+					e.printStackTrace();
+				}
 			}
 		}
 		if (this.sendMsgServiceStarted && this.clientMqtt.isConnected()) {

@@ -112,7 +112,15 @@ public class VehicleEntranceTriggerCollector extends MqttCollector
 
 					}
 				} else if (this.mqttClient != null && alreadyConnectedOnce) {
-					this.mqttClient.reconnect();
+					try {
+						this.mqttClient.reconnect();
+					} catch (MqttException e) {
+						if (new Integer(e.getReasonCode()).equals(new Integer(32110))) {
+							SleepUtil.sleepMillis(5000);
+						} else {
+							e.printStackTrace();
+						}
+					}
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
