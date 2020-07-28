@@ -169,27 +169,27 @@ public class AnterosIOTConfiguration {
 
 			if (deviceResult instanceof MasterDeviceController) {
 				LOG.info("Device criado é um MASTER...");
-				List<PlantItemNode> slaves = new ArrayList<>();
-				node.findNodesByType(DeviceSlaveNode.class, slaves);
-
-				for (PlantItemNode slave : slaves) {
-					if (slave instanceof DeviceSlaveNode) {
-						
-						serviceListener.onConnectingMqttServer();
-
-						MqttAsyncClient remoteClientMqtt = null;
-						try {
-							remoteClientMqtt = MqttHelper.createAndConnectMqttClient(broker,
-									deviceName.split("-")[0] + "_rController", username, password, true, true);
-						} catch (MqttException e1) {
-							serviceListener.onErrorConnectingMqttServer(e1.getMessage());
-							e1.printStackTrace();
-						}
-						((MasterDeviceController) deviceResult).addChildDeviceController(
-								RemoteDeviceControllerFactory.createSlaveFrom(remoteClientMqtt,
-										(MasterDeviceController) deviceResult, (DeviceSlaveNode) slave, currentPlant, username, password));
-					}
-				}
+//				List<PlantItemNode> slaves = new ArrayList<>();
+//				node.findNodesByType(DeviceSlaveNode.class, slaves);
+//
+//				for (PlantItemNode slave : slaves) {
+//					if (slave instanceof DeviceSlaveNode) {
+//						
+//						serviceListener.onConnectingMqttServer();
+//
+//						MqttAsyncClient remoteClientMqtt = null;
+//						try {
+//							remoteClientMqtt = MqttHelper.createAndConnectMqttClient(broker,
+//									deviceName.split("-")[0] + "_rController", username, password, true, true);
+//						} catch (MqttException e1) {
+//							serviceListener.onErrorConnectingMqttServer(e1.getMessage());
+//							e1.printStackTrace();
+//						}
+//						((MasterDeviceController) deviceResult).addChildDeviceController(
+//								RemoteDeviceControllerFactory.createSlaveFrom(remoteClientMqtt,
+//										(MasterDeviceController) deviceResult, (DeviceSlaveNode) slave, currentPlant, username, password));
+//					}
+//				}
 			} else {
 				List<PlantItemNode> masters = new ArrayList<>();
 				node.findNodesByType(DeviceMasterNode.class, masters);
@@ -198,22 +198,22 @@ public class AnterosIOTConfiguration {
 							"Não foi encontrado nenhum Device Master na árvore de configuração.");
 				}
 
-				DeviceMasterNode master = (DeviceMasterNode) masters.iterator().next();
-				serviceListener.onConnectingMqttServer();
-
-				MqttAsyncClient remoteClientMqtt = null;
-				try {
-					remoteClientMqtt = MqttHelper.createAndConnectMqttClient(broker, deviceName.split("-")[0] + "_rController",
-							"", "", true, true);
-				} catch (MqttException e1) {
-					serviceListener.onErrorConnectingMqttServer(e1.getMessage());
-					e1.printStackTrace();
-				}
-
-				RemoteMasterDeviceController remoteMaster = RemoteDeviceControllerFactory
-						.createMasterFrom(remoteClientMqtt, master, currentPlant, username, password);
-
-				((SlaveDeviceController) deviceResult).setMaster(remoteMaster);
+//				DeviceMasterNode master = (DeviceMasterNode) masters.iterator().next();
+//				serviceListener.onConnectingMqttServer();
+//
+//				MqttAsyncClient remoteClientMqtt = null;
+//				try {
+//					remoteClientMqtt = MqttHelper.createAndConnectMqttClient(broker, deviceName.split("-")[0] + "_rController",
+//							"", "", true, true);
+//				} catch (MqttException e1) {
+//					serviceListener.onErrorConnectingMqttServer(e1.getMessage());
+//					e1.printStackTrace();
+//				}
+//
+//				RemoteMasterDeviceController remoteMaster = RemoteDeviceControllerFactory
+//						.createMasterFrom(remoteClientMqtt, master, currentPlant, username, password);
+//
+//				((SlaveDeviceController) deviceResult).setMaster(remoteMaster);
 			}
 
 			for (ThingNode thingNode : deviceNode.getThings()) {

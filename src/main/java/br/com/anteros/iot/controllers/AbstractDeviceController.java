@@ -245,7 +245,8 @@ public abstract class AbstractDeviceController
 				try {
 					this.clientMqtt.reconnect();
 				} catch (MqttException e) {
-					if (new Integer(e.getReasonCode()).equals(new Integer(32110))) {
+					Integer code = new Integer(e.getReasonCode());
+					if (code.equals(new Integer(32110)) || code.equals(new Integer(32102))) {
 						SleepUtil.sleepMillis(5000);
 					} else {
 						e.printStackTrace();
