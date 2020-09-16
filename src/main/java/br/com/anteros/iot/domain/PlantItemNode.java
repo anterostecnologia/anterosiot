@@ -49,9 +49,6 @@ import br.com.anteros.iot.domain.things.parts.MemoryPlcNode;
 import br.com.anteros.iot.domain.things.parts.RedLEDSemaphorePartNode;
 import br.com.anteros.iot.domain.triggers.TriggerNode;
 import br.com.anteros.iot.domain.triggers.WhenConditionNode;
-import br.com.anteros.iot.things.BarrierSensorReader;
-import br.com.anteros.iot.things.GenericRelay;
-import br.com.anteros.iot.things.sensors.BarrierSensor;
 
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = As.PROPERTY, property = "type")
 @JsonIdentityInfo(generator = ObjectIdGenerators.UUIDGenerator.class, property = "@id")
