@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>br.com.anteros</groupId>
 	<artifactId>Anteros-IOT</artifactId>
-	<version>1.0.7</version>
+	<version>1.0.8</version>
 
 	<properties>
 		<java.versao>1.8</java.versao>
@@ -66,8 +66,6 @@
 			<artifactId>Anteros-Core</artifactId>
 			<version>[1.2.6,)</version>
 		</dependency>
-		<!-- <dependency> <groupId>br.com.anteros</groupId> <artifactId>br.com.anteros.client.mqttv3</artifactId> 
-			<version>1.2.2</version> </dependency> -->
 		<dependency>
 			<groupId>br.com.anteros</groupId>
 			<artifactId>br.com.anteros.client.mqttv3</artifactId>
@@ -76,12 +74,12 @@
 		<dependency>
 			<groupId>com.pi4j</groupId>
 			<artifactId>pi4j-core</artifactId>
-			<version>1.2-SNAPSHOT</version>
+			<version>1.2</version>
 		</dependency>
 		<dependency>
 			<groupId>com.pi4j</groupId>
 			<artifactId>pi4j-device</artifactId>
-			<version>1.1</version>
+			<version>1.2</version>
 		</dependency>
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
@@ -101,8 +99,9 @@
 		<dependency>
 			<groupId>com.diozero</groupId>
 			<artifactId>diozero-core</artifactId>
-			<version>0.11</version>
+			<version>1.1.9</version>
 		</dependency>
+
 		<dependency>
 			<groupId>org.rxtx</groupId>
 			<artifactId>rxtx</artifactId>
@@ -137,8 +136,13 @@
 		</dependency>
 		<dependency>
 			<groupId>com.diozero</groupId>
+			<artifactId>diozero-core</artifactId>
+			<version>1.1.9</version>
+		</dependency>
+		<dependency>
+			<groupId>com.diozero</groupId>
 			<artifactId>diozero-ws281x-java</artifactId>
-			<version>0.11</version>
+			<version>1.1.9</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.commons</groupId>
@@ -159,6 +163,11 @@
 			<groupId>com.google.zxing</groupId>
 			<artifactId>javase</artifactId>
 			<version>3.3.0</version>
+		</dependency>
+		<dependency>
+		    <groupId>org.tinylog</groupId>
+		    <artifactId>tinylog</artifactId>
+		    <version>1.3.6</version>
 		</dependency>
 	</dependencies>
 
@@ -229,38 +238,7 @@
 							</executions>
 							<configuration>
 								<doclint>none</doclint>
-							</configuration>
-						</plugin>
-						<plugin>
-							<groupId>org.apache.maven.plugins</groupId>
-							<artifactId>maven-dependency-plugin</artifactId>
-							<executions>
-								<execution>
-									<id>copy-dependencies</id>
-									<phase>prepare-package</phase>
-									<goals>
-										<goal>copy-dependencies</goal>
-									</goals>
-									<configuration>
-										<outputDirectory>${project.build.directory}/lib</outputDirectory>
-										<overWriteReleases>false</overWriteReleases>
-										<overWriteSnapshots>false</overWriteSnapshots>
-										<overWriteIfNewer>true</overWriteIfNewer>
-									</configuration>
-								</execution>
-							</executions>
-						</plugin>
-						<plugin>
-							<groupId>org.apache.maven.plugins</groupId>
-							<artifactId>maven-jar-plugin</artifactId>
-							<configuration>
-								<archive>
-									<manifest>
-										<addClasspath>true</addClasspath>
-										<classpathPrefix>lib/</classpathPrefix>
-										<mainClass>br.com.anteros.iot.actuators.collectors.CameraQRCodeCollector</mainClass>
-									</manifest>
-								</archive>
+								<javadocExecutable>${java.home}/bin/javadoc</javadocExecutable>
 							</configuration>
 						</plugin>
 					</plugins>
@@ -337,41 +315,9 @@
 							</executions>
 							<configuration>
 								<doclint>none</doclint>
+								<javadocExecutable>${java.home}/bin/javadoc</javadocExecutable>
 							</configuration>
 						</plugin>
-						<plugin>
-							<groupId>org.apache.maven.plugins</groupId>
-							<artifactId>maven-dependency-plugin</artifactId>
-							<executions>
-								<execution>
-									<id>copy-dependencies</id>
-									<phase>prepare-package</phase>
-									<goals>
-										<goal>copy-dependencies</goal>
-									</goals>
-									<configuration>
-										<outputDirectory>${project.build.directory}/lib</outputDirectory>
-										<overWriteReleases>false</overWriteReleases>
-										<overWriteSnapshots>false</overWriteSnapshots>
-										<overWriteIfNewer>true</overWriteIfNewer>
-									</configuration>
-								</execution>
-							</executions>
-						</plugin>
-						<plugin>
-							<groupId>org.apache.maven.plugins</groupId>
-							<artifactId>maven-jar-plugin</artifactId>
-							<configuration>
-								<archive>
-									<manifest>
-										<addClasspath>true</addClasspath>
-										<classpathPrefix>lib/</classpathPrefix>
-										<mainClass>br.com.anteros.iot.actuators.collectors.CameraQRCodeCollector</mainClass>
-									</manifest>
-								</archive>
-							</configuration>
-						</plugin>
-
 					</plugins>
 				</pluginManagement>
 			</build>
@@ -424,40 +370,9 @@
 							</executions>
 							<configuration>
 								<doclint>none</doclint>
+								<javadocExecutable>${java.home}/bin/javadoc</javadocExecutable>
 							</configuration>
-						</plugin>
-						<plugin>
-							<groupId>org.apache.maven.plugins</groupId>
-							<artifactId>maven-dependency-plugin</artifactId>
-							<executions>
-								<execution>
-									<id>copy-dependencies</id>
-									<phase>prepare-package</phase>
-									<goals>
-										<goal>copy-dependencies</goal>
-									</goals>
-									<configuration>
-										<outputDirectory>${project.build.directory}/lib</outputDirectory>
-										<overWriteReleases>false</overWriteReleases>
-										<overWriteSnapshots>false</overWriteSnapshots>
-										<overWriteIfNewer>true</overWriteIfNewer>
-									</configuration>
-								</execution>
-							</executions>
-						</plugin>
-						<plugin>
-							<groupId>org.apache.maven.plugins</groupId>
-							<artifactId>maven-jar-plugin</artifactId>
-							<configuration>
-								<archive>
-									<manifest>
-										<addClasspath>true</addClasspath>
-										<classpathPrefix>lib/</classpathPrefix>
-										<mainClass>br.com.anteros.iot.actuators.collectors.CameraQRCodeCollector</mainClass>
-									</manifest>
-								</archive>
-							</configuration>
-						</plugin>
+						</plugin>						
 					</plugins>
 				</pluginManagement>
 			</build>

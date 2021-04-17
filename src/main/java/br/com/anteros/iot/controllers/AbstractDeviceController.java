@@ -39,6 +39,7 @@ import br.com.anteros.iot.Thing;
 import br.com.anteros.iot.actions.Action;
 import br.com.anteros.iot.actuators.collectors.CollectorManager;
 import br.com.anteros.iot.actuators.collectors.SimpleCollectorManager;
+import br.com.anteros.iot.app.AnterosIOTService;
 import br.com.anteros.iot.app.listeners.AnterosIOTServiceListener;
 import br.com.anteros.iot.domain.DeviceNode;
 import br.com.anteros.iot.domain.PlantItemNode;
@@ -610,6 +611,21 @@ public abstract class AbstractDeviceController
 
 	public void setNode(PlantItemNode node) {
 		this.node = node;
+	}
+	
+	
+
+	public IMqttDeliveryToken publishError(Exception ex, String deviceName) throws MqttPersistenceException, MqttException {		
+		return MqttHelper.publishError(ex, deviceName, clientMqtt);
+	}
+	
+	public IMqttDeliveryToken publishBoot(String deviceName) throws MqttPersistenceException, MqttException {
+		return MqttHelper.publishBoot(deviceName, clientMqtt);
+	}
+
+
+	public IMqttDeliveryToken publishHeartBeat(String deviceName, String deviceType, String status, Boolean controllerRunning, String hostAddress, MqttAsyncClient client) throws MqttPersistenceException, MqttException {
+		return MqttHelper.publishHeartBeat(deviceName, deviceType, status, controllerRunning, hostAddress, clientMqtt);		
 	}
 
 }
