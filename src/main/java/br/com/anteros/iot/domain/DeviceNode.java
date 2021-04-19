@@ -3,8 +3,6 @@ package br.com.anteros.iot.domain;
 import java.util.HashSet;
 import java.util.Set;
 
-import br.com.anteros.client.mqttv3.MqttAsyncClient;
-
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -14,6 +12,7 @@ import br.com.anteros.iot.Actuators;
 import br.com.anteros.iot.app.listeners.AnterosIOTServiceListener;
 import br.com.anteros.iot.controllers.AbstractDeviceController;
 import br.com.anteros.iot.plant.Plant;
+import br.com.anteros.iot.support.AnterosMqttClient;
 import br.com.anteros.iot.things.devices.IpAddress;
 
 public abstract class DeviceNode extends PlantItemNode implements Configurable {
@@ -59,7 +58,7 @@ public abstract class DeviceNode extends PlantItemNode implements Configurable {
 	
 	public abstract String parseConfig(ObjectMapper mapper, PlantItemNode node) throws JsonProcessingException;
 
-	public abstract AbstractDeviceController getInstanceOfDeviceController(MqttAsyncClient clientMqtt, Plant currentPlant,
+	public abstract AbstractDeviceController getInstanceOfDeviceController(AnterosMqttClient clientMqtt, Plant currentPlant,
 			Actuators actuators, AnterosIOTServiceListener serviceListener, String username, String password);
 
 	public Set<ThingNode> getThings() {

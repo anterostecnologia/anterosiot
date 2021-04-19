@@ -8,30 +8,23 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import br.com.anteros.client.mqttv3.MqttAsyncClient;
-import br.com.anteros.client.mqttv3.MqttClient;
-import br.com.anteros.client.mqttv3.MqttException;
-
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import br.com.anteros.client.mqttv3.MqttException;
 import br.com.anteros.core.log.Logger;
 import br.com.anteros.core.log.LoggerProvider;
 import br.com.anteros.iot.Actuable;
 import br.com.anteros.iot.DefaultActuators;
 import br.com.anteros.iot.MasterDeviceController;
 import br.com.anteros.iot.Part;
-import br.com.anteros.iot.RemoteMasterDeviceController;
-import br.com.anteros.iot.SlaveDeviceController;
 import br.com.anteros.iot.Thing;
 import br.com.anteros.iot.actions.Action;
 import br.com.anteros.iot.app.listeners.AnterosIOTServiceListener;
 import br.com.anteros.iot.controllers.AbstractDeviceController;
-import br.com.anteros.iot.controllers.remote.RemoteDeviceControllerFactory;
 import br.com.anteros.iot.domain.DeviceMasterNode;
 import br.com.anteros.iot.domain.DeviceNode;
-import br.com.anteros.iot.domain.DeviceSlaveNode;
 import br.com.anteros.iot.domain.PlantItemNode;
 import br.com.anteros.iot.domain.ThingNode;
 import br.com.anteros.iot.domain.actions.ActionNode;
@@ -41,6 +34,7 @@ import br.com.anteros.iot.domain.triggers.TriggerNode;
 import br.com.anteros.iot.plant.Place;
 import br.com.anteros.iot.plant.Plant;
 import br.com.anteros.iot.plant.PlantItem;
+import br.com.anteros.iot.support.AnterosMqttClient;
 import br.com.anteros.iot.support.MqttHelper;
 import br.com.anteros.iot.support.utils.StaticUtil;
 import br.com.anteros.iot.triggers.Trigger;
@@ -55,7 +49,7 @@ public class AnterosIOTConfiguration {
 	private String configFilePath;
 	private ObjectMapper mapper;
 	private String deviceName;
-	private MqttClient clientMqtt;
+	private AnterosMqttClient clientMqtt;
 	private String hostMqtt;
 	private String port;
 	private String username;
@@ -147,9 +141,9 @@ public class AnterosIOTConfiguration {
 			
 			serviceListener.onConnectingMqttServer();
 
-			MqttAsyncClient clientMqtt = null;
+			AnterosMqttClient clientMqtt = null;
 			try {
-				clientMqtt = MqttHelper.createAndConnectMqttClient(broker, clientId, username, password, false, true);
+				clientMqtt = MqttHelper.createMqttClient(broker, clientId, username, password, false, true);
 			} catch (MqttException e1) {
 				serviceListener.onErrorConnectingMqttServer(e1.getMessage());
 				e1.printStackTrace();
@@ -177,9 +171,9 @@ public class AnterosIOTConfiguration {
 //						
 //						serviceListener.onConnectingMqttServer();
 //
-//						MqttAsyncClient remoteClientMqtt = null;
+//						AnterosMqttClient remoteClientMqtt = null;
 //						try {
-//							remoteClientMqtt = MqttHelper.createAndConnectMqttClient(broker,
+//							remoteClientMqtt = MqttHelper.createAndConnectAnterosMqttClient(broker,
 //									deviceName.split("-")[0] + "_rController", username, password, true, true);
 //						} catch (MqttException e1) {
 //							serviceListener.onErrorConnectingMqttServer(e1.getMessage());
@@ -201,9 +195,9 @@ public class AnterosIOTConfiguration {
 //				DeviceMasterNode master = (DeviceMasterNode) masters.iterator().next();
 //				serviceListener.onConnectingMqttServer();
 //
-//				MqttAsyncClient remoteClientMqtt = null;
+//				AnterosMqttClient remoteClientMqtt = null;
 //				try {
-//					remoteClientMqtt = MqttHelper.createAndConnectMqttClient(broker, deviceName.split("-")[0] + "_rController",
+//					remoteClientMqtt = MqttHelper.createAndConnectAnterosMqttClient(broker, deviceName.split("-")[0] + "_rController",
 //							"", "", true, true);
 //				} catch (MqttException e1) {
 //					serviceListener.onErrorConnectingMqttServer(e1.getMessage());
@@ -322,7 +316,7 @@ public class AnterosIOTConfiguration {
 		return this;
 	}
 
-	public AnterosIOTConfiguration clientMqtt(MqttClient clientMqtt) {
+	public AnterosIOTConfiguration clientMqtt(AnterosMqttClient clientMqtt) {
 		this.clientMqtt = clientMqtt;
 		return this;
 	}

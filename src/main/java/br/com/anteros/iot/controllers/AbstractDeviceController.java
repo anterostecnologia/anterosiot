@@ -19,7 +19,6 @@ import com.diozero.util.SleepUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import br.com.anteros.client.mqttv3.IMqttDeliveryToken;
-import br.com.anteros.client.mqttv3.MqttAsyncClient;
 import br.com.anteros.client.mqttv3.MqttCallback;
 import br.com.anteros.client.mqttv3.MqttCallbackExtended;
 import br.com.anteros.client.mqttv3.MqttException;
@@ -39,13 +38,13 @@ import br.com.anteros.iot.Thing;
 import br.com.anteros.iot.actions.Action;
 import br.com.anteros.iot.actuators.collectors.CollectorManager;
 import br.com.anteros.iot.actuators.collectors.SimpleCollectorManager;
-import br.com.anteros.iot.app.AnterosIOTService;
 import br.com.anteros.iot.app.listeners.AnterosIOTServiceListener;
 import br.com.anteros.iot.domain.DeviceNode;
 import br.com.anteros.iot.domain.PlantItemNode;
 import br.com.anteros.iot.plant.Place;
 import br.com.anteros.iot.plant.Plant;
 import br.com.anteros.iot.plant.PlantItem;
+import br.com.anteros.iot.support.AnterosMqttClient;
 import br.com.anteros.iot.support.MqttHelper;
 import br.com.anteros.iot.things.devices.IpAddress;
 
@@ -55,7 +54,7 @@ public abstract class AbstractDeviceController
 	private PlantItemNode node;
 	protected Device device;
 	protected Set<Thing> things = new HashSet<Thing>();
-	protected MqttAsyncClient clientMqtt;
+	protected AnterosMqttClient clientMqtt;
 	protected String username;
 	protected String password;
 	protected Boolean running = false;
@@ -75,7 +74,7 @@ public abstract class AbstractDeviceController
 
 	}
 
-	public AbstractDeviceController(MqttAsyncClient remoteClientMqtt, DeviceNode node, Actuators actuators,
+	public AbstractDeviceController(AnterosMqttClient remoteClientMqtt, DeviceNode node, Actuators actuators,
 			AnterosIOTServiceListener serviceListener, String username, String password) {
 		this.clientMqtt = remoteClientMqtt;
 		this.username = username;
@@ -95,7 +94,7 @@ public abstract class AbstractDeviceController
 		this.actuators = actuators;
 	}
 
-	protected AbstractDeviceController(MqttAsyncClient clientMqtt, Device device, Actuators actuators, String username,
+	protected AbstractDeviceController(AnterosMqttClient clientMqtt, Device device, Actuators actuators, String username,
 			String password) {
 		this(device, actuators);
 		this.clientMqtt = clientMqtt;
@@ -474,7 +473,7 @@ public abstract class AbstractDeviceController
 		}
 	}
 
-	public MqttAsyncClient getClientMqtt() {
+	public AnterosMqttClient getClientMqtt() {
 		return clientMqtt;
 	}
 
@@ -552,7 +551,7 @@ public abstract class AbstractDeviceController
 		this.subscribedTopics = subscribedTopics;
 	}
 
-	public void setClientMqtt(MqttAsyncClient clientMqtt) {
+	public void setClientMqtt(AnterosMqttClient clientMqtt) {
 		this.clientMqtt = clientMqtt;
 	}
 
@@ -615,17 +614,17 @@ public abstract class AbstractDeviceController
 	
 	
 
-	public IMqttDeliveryToken publishError(Exception ex, String deviceName) throws MqttPersistenceException, MqttException {		
-		return MqttHelper.publishError(ex, deviceName, clientMqtt);
+	public void publishError(Exception ex, String deviceName) throws MqttPersistenceException, MqttException {		
+		MqttHelper.publishError(ex, deviceName, clientMqtt);
 	}
 	
-	public IMqttDeliveryToken publishBoot(String deviceName) throws MqttPersistenceException, MqttException {
-		return MqttHelper.publishBoot(deviceName, clientMqtt);
+	public void publishBoot(String deviceName) throws MqttPersistenceException, MqttException {
+		MqttHelper.publishBoot(deviceName, clientMqtt);
 	}
 
 
-	public IMqttDeliveryToken publishHeartBeat(String deviceName, String deviceType, String status, Boolean controllerRunning, String hostAddress, MqttAsyncClient client) throws MqttPersistenceException, MqttException {
-		return MqttHelper.publishHeartBeat(deviceName, deviceType, status, controllerRunning, hostAddress, clientMqtt);		
+	public void publishHeartBeat(String deviceName, String deviceType, String status, Boolean controllerRunning, String hostAddress, AnterosMqttClient client) throws MqttPersistenceException, MqttException {
+		MqttHelper.publishHeartBeat(deviceName, deviceType, status, controllerRunning, hostAddress, clientMqtt);		
 	}
 
 }

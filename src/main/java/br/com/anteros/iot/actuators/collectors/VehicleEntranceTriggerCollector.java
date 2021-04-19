@@ -15,7 +15,6 @@ import javax.json.JsonReader;
 import com.diozero.util.SleepUtil;
 
 import br.com.anteros.client.mqttv3.IMqttDeliveryToken;
-import br.com.anteros.client.mqttv3.MqttAsyncClient;
 import br.com.anteros.client.mqttv3.MqttCallback;
 import br.com.anteros.client.mqttv3.MqttCallbackExtended;
 import br.com.anteros.client.mqttv3.MqttException;
@@ -26,6 +25,7 @@ import br.com.anteros.core.utils.Assert;
 import br.com.anteros.iot.Actuator;
 import br.com.anteros.iot.Collector;
 import br.com.anteros.iot.Thing;
+import br.com.anteros.iot.support.AnterosMqttClient;
 import br.com.anteros.iot.things.VehicleEntranceTrigger;
 import br.com.anteros.iot.triggers.ShotMoment;
 
@@ -46,7 +46,7 @@ public class VehicleEntranceTriggerCollector extends MqttCollector
 
 	protected Boolean running = false;
 	protected Thread thread;
-	protected MqttAsyncClient mqttClient;
+	protected AnterosMqttClient AnterosMqttClient;
 
 	private boolean alreadyConnectedOnce = false;
 
@@ -66,10 +66,10 @@ public class VehicleEntranceTriggerCollector extends MqttCollector
 
 		while (running) {
 			try {
-				if (this.mqttClient != null && this.mqttClient.isConnected()) {
+				if (this.AnterosMqttClient != null && this.AnterosMqttClient.isConnected()) {
 					MqttMessage msg = queue.poll(5000, TimeUnit.MILLISECONDS);
 					if (msg != null) {
-						this.mqttClient.publish("/" + itemId, msg);
+						this.AnterosMqttClient.publish("/" + itemId, msg);
 
 						InputStream stream = new ByteArrayInputStream(msg.getPayload());
 						JsonObject message = null;
@@ -111,9 +111,9 @@ public class VehicleEntranceTriggerCollector extends MqttCollector
 						}
 
 					}
-				} else if (this.mqttClient != null && alreadyConnectedOnce) {
+				} else if (this.AnterosMqttClient != null && alreadyConnectedOnce) {
 					try {
-						this.mqttClient.reconnect();
+						this.AnterosMqttClient.reconnect();
 					} catch (MqttException e) {
 						if (new Integer(e.getReasonCode()).equals(new Integer(32110))) {
 							SleepUtil.sleepMillis(5000);
@@ -142,13 +142,13 @@ public class VehicleEntranceTriggerCollector extends MqttCollector
 	@Override
 	public void stopCollect() {
 		VehicleEntranceTriggerCollector.mapMqttMessage.remove(thing);
-		if (mqttClient != null) {
+		if (AnterosMqttClient != null) {
 			try {
-				if (this.mqttClient.isConnected()) {
-					this.mqttClient.disconnect();
+				if (this.AnterosMqttClient.isConnected()) {
+					this.AnterosMqttClient.disconnect();
 				}
 				SleepUtil.sleepMillis(500);
-				mqttClient.close();
+				AnterosMqttClient.close();
 			} catch (MqttException e) {
 				e.printStackTrace();
 			}
@@ -169,8 +169,8 @@ public class VehicleEntranceTriggerCollector extends MqttCollector
 	}
 
 	@Override
-	protected Collector setMqttClient(MqttAsyncClient client) {
-		this.mqttClient = client;
+	protected Collector setAnterosMqttClient(AnterosMqttClient client) {
+		this.AnterosMqttClient = client;
 		return this;
 	}
 
@@ -180,7 +180,7 @@ public class VehicleEntranceTriggerCollector extends MqttCollector
 			alreadyConnectedOnce = true;
 		}
 		try {
-			this.mqttClient.subscribe("/" + ((VehicleEntranceTrigger) this.thing).getItemId() + "/data", 1);
+			this.AnterosMqttClient.subscribe("/" + ((VehicleEntranceTrigger) this.thing).getItemId() + "/data", 1);
 		} catch (MqttException e) {
 			e.printStackTrace();
 		}
@@ -190,7 +190,7 @@ public class VehicleEntranceTriggerCollector extends MqttCollector
 	@Override
 	public void connectionLost(Throwable cause) {
 		try {
-			this.mqttClient.reconnect();
+			this.AnterosMqttClient.reconnect();
 		} catch (MqttException e) {
 			e.printStackTrace();
 		}

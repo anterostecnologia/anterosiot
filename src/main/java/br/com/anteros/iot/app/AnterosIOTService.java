@@ -14,14 +14,6 @@ import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Set;
 
-import br.com.anteros.client.mqttv3.IMqttDeliveryToken;
-import br.com.anteros.client.mqttv3.MqttAsyncClient;
-import br.com.anteros.client.mqttv3.MqttCallback;
-import br.com.anteros.client.mqttv3.MqttCallbackExtended;
-import br.com.anteros.client.mqttv3.MqttException;
-import br.com.anteros.client.mqttv3.MqttMessage;
-import br.com.anteros.client.mqttv3.MqttPersistenceException;
-
 import com.diozero.util.SleepUtil;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
@@ -32,6 +24,12 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
+import br.com.anteros.client.mqttv3.IMqttDeliveryToken;
+import br.com.anteros.client.mqttv3.MqttCallback;
+import br.com.anteros.client.mqttv3.MqttCallbackExtended;
+import br.com.anteros.client.mqttv3.MqttException;
+import br.com.anteros.client.mqttv3.MqttMessage;
+import br.com.anteros.client.mqttv3.MqttPersistenceException;
 import br.com.anteros.core.log.Logger;
 import br.com.anteros.core.log.LoggerProvider;
 import br.com.anteros.core.utils.Assert;
@@ -45,6 +43,7 @@ import br.com.anteros.iot.domain.PlantItemNode;
 import br.com.anteros.iot.domain.ThingNode;
 import br.com.anteros.iot.domain.plant.PlaceNode;
 import br.com.anteros.iot.domain.plant.PlantNode;
+import br.com.anteros.iot.support.AnterosMqttClient;
 import br.com.anteros.iot.support.MqttHelper;
 import br.com.anteros.iot.support.utils.StaticUtil;
 
@@ -78,7 +77,7 @@ public class AnterosIOTService implements Runnable, MqttCallback, MqttCallbackEx
 	private String port;
 	private String username;
 	private String password;
-	private MqttAsyncClient client;
+	private AnterosMqttClient client;
 	private AnterosIOTServiceListener serviceListener;
 	private Set<Class<? extends Actuable>> actuators = new HashSet<>();
 
@@ -171,7 +170,8 @@ public class AnterosIOTService implements Runnable, MqttCallback, MqttCallbackEx
 		LOG.info("Conectando servidor broker MQTT do device controller... " + broker);
 
 		try {
-			client = MqttHelper.createAndConnectMqttClient(broker, clientId, username, password, false, true, this);
+			client = MqttHelper.createMqttClient(broker, clientId, username, password, false, true, this);
+			client.connect();
 		} catch (MqttException e1) {
 			String msg = "Ocorreu uma falha ao criar um cliente mqtt. O Sistema não continuará a inicialização.";
 			LOG.error(msg);

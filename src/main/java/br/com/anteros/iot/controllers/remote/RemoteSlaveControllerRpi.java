@@ -1,9 +1,8 @@
 package br.com.anteros.iot.controllers.remote;
 
-import br.com.anteros.client.mqttv3.MqttAsyncClient;
-import br.com.anteros.client.mqttv3.MqttClient;
-import br.com.anteros.client.mqttv3.MqttMessage;
 
+
+import br.com.anteros.client.mqttv3.MqttMessage;
 import br.com.anteros.core.utils.Assert;
 import br.com.anteros.iot.Device;
 import br.com.anteros.iot.MasterDeviceController;
@@ -14,6 +13,7 @@ import br.com.anteros.iot.domain.DeviceNode;
 import br.com.anteros.iot.plant.Place;
 import br.com.anteros.iot.plant.Plant;
 import br.com.anteros.iot.plant.PlantItem;
+import br.com.anteros.iot.support.AnterosMqttClient;
 
 public class RemoteSlaveControllerRpi extends SlaveControllerRPi implements RemoteSlaveDeviceController {
 
@@ -21,7 +21,7 @@ public class RemoteSlaveControllerRpi extends SlaveControllerRPi implements Remo
 		super(master, device,null);
 	}
 
-	public RemoteSlaveControllerRpi(MqttAsyncClient remoteClientMqtt, DeviceNode node, MasterDeviceController master,
+	public RemoteSlaveControllerRpi(AnterosMqttClient remoteClientMqtt, DeviceNode node, MasterDeviceController master,
 			Plant plant, String username, String password) {
 		super(remoteClientMqtt, node, master, plant,null, null, username, password);
 	}
@@ -70,7 +70,7 @@ public class RemoteSlaveControllerRpi extends SlaveControllerRPi implements Remo
 		return new RemoteSlaveControllerRpi(master, device);
 	}
 
-	public static RemoteSlaveControllerRpi of(MqttAsyncClient remoteClientMqtt, DeviceNode node, MasterDeviceController master,
+	public static RemoteSlaveControllerRpi of(AnterosMqttClient remoteClientMqtt, DeviceNode node, MasterDeviceController master,
 			Plant plant, String username, String password) {
 		return new RemoteSlaveControllerRpi(remoteClientMqtt, node, master, plant, username, password);
 	}

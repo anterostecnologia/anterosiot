@@ -4,10 +4,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import br.com.anteros.client.mqttv3.IMqttDeliveryToken;
-import br.com.anteros.client.mqttv3.MqttAsyncClient;
-import br.com.anteros.client.mqttv3.MqttClient;
 import br.com.anteros.client.mqttv3.MqttException;
-
 import br.com.anteros.core.log.Logger;
 import br.com.anteros.core.log.LoggerProvider;
 import br.com.anteros.core.utils.Assert;
@@ -19,7 +16,7 @@ import br.com.anteros.iot.SlaveDeviceController;
 import br.com.anteros.iot.app.listeners.AnterosIOTServiceListener;
 import br.com.anteros.iot.domain.DeviceNode;
 import br.com.anteros.iot.plant.Plant;
-import br.com.anteros.iot.support.MqttHelper;
+import br.com.anteros.iot.support.AnterosMqttClient;
 import br.com.anteros.iot.things.devices.Computer;
 import br.com.anteros.iot.things.devices.IpAddress;
 
@@ -34,17 +31,17 @@ public class MasterControllerComputer extends AbstractDeviceController implement
 		super(device, actuators);
 	}
 
-	protected MasterControllerComputer(MqttAsyncClient clientMqtt, Device device, Actuators actuators, String username, String password) {
+	protected MasterControllerComputer(AnterosMqttClient clientMqtt, Device device, Actuators actuators, String username, String password) {
 		super(clientMqtt, device, actuators, username, password);
 	}
 
-	protected MasterControllerComputer(MqttAsyncClient clientMqtt, Device device, Actuators actuators,
+	protected MasterControllerComputer(AnterosMqttClient clientMqtt, Device device, Actuators actuators,
 			Set<DeviceController> slaves, String username, String password) {
 		super(clientMqtt, device, actuators, username, password);
 		this.devices.addAll(slaves);
 	}
 
-	public MasterControllerComputer(MqttAsyncClient clientMqtt, DeviceNode node, Plant plant, Actuators actuators,
+	public MasterControllerComputer(AnterosMqttClient clientMqtt, DeviceNode node, Plant plant, Actuators actuators,
 			AnterosIOTServiceListener serviceListener, String username, String password) {
 		super(clientMqtt, node, actuators, serviceListener, username, password);
 		loadConfiguration(node, plant);
@@ -64,7 +61,7 @@ public class MasterControllerComputer extends AbstractDeviceController implement
 		private Device device;
 		private Actuators actuators;
 		private Set<DeviceController> slaves = new HashSet<>();
-		private MqttAsyncClient clientMqtt;
+		private AnterosMqttClient clientMqtt;
 		private String username; 
 		private String password;
 
@@ -94,14 +91,14 @@ public class MasterControllerComputer extends AbstractDeviceController implement
 			return MasterControllerComputer.of(clientMqtt, device, actuators, slaves, username, password);
 		}
 
-		public Builder clientMqtt(MqttAsyncClient clientMqtt) {
+		public Builder clientMqtt(AnterosMqttClient clientMqtt) {
 			this.clientMqtt = clientMqtt;
 			return this;
 		}
 
 	}
 
-	public static MasterDeviceController of(MqttAsyncClient clientMqtt, Device device, Actuators actuators,
+	public static MasterDeviceController of(AnterosMqttClient clientMqtt, Device device, Actuators actuators,
 			Set<DeviceController> slaves, String username, String password) {
 		return new MasterControllerComputer(clientMqtt, device, actuators, slaves, username, password);
 	}
@@ -148,7 +145,7 @@ public class MasterControllerComputer extends AbstractDeviceController implement
 		super.loadConfiguration(itemNode, plant);
 	}
 
-	public static MasterControllerComputer of(MqttAsyncClient clientMqtt, DeviceNode node, Plant plant, Actuators actuators,
+	public static MasterControllerComputer of(AnterosMqttClient clientMqtt, DeviceNode node, Plant plant, Actuators actuators,
 			AnterosIOTServiceListener serviceListener, String username, String password) {
 		return new MasterControllerComputer(clientMqtt, node, plant, actuators, serviceListener, username, password);
 	}

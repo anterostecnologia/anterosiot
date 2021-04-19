@@ -4,9 +4,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import br.com.anteros.client.mqttv3.IMqttDeliveryToken;
-import br.com.anteros.client.mqttv3.MqttAsyncClient;
 import br.com.anteros.client.mqttv3.MqttException;
-
 import br.com.anteros.core.log.Logger;
 import br.com.anteros.core.log.LoggerProvider;
 import br.com.anteros.core.utils.Assert;
@@ -18,6 +16,7 @@ import br.com.anteros.iot.SlaveDeviceController;
 import br.com.anteros.iot.app.listeners.AnterosIOTServiceListener;
 import br.com.anteros.iot.domain.DeviceNode;
 import br.com.anteros.iot.plant.Plant;
+import br.com.anteros.iot.support.AnterosMqttClient;
 import br.com.anteros.iot.things.devices.IpAddress;
 import br.com.anteros.iot.things.devices.RaspberryPI;
 
@@ -31,17 +30,17 @@ public class MasterControllerRPi extends AbstractDeviceController implements Mas
 		super(device, actuators);
 	}
 
-	protected MasterControllerRPi(MqttAsyncClient clientMqtt, Device device, Actuators actuators, String username, String password) {
+	protected MasterControllerRPi(AnterosMqttClient clientMqtt, Device device, Actuators actuators, String username, String password) {
 		super(clientMqtt, device, actuators, username, password);
 	}
 
-	protected MasterControllerRPi(MqttAsyncClient clientMqtt, Device device, Actuators actuators,
+	protected MasterControllerRPi(AnterosMqttClient clientMqtt, Device device, Actuators actuators,
 			Set<DeviceController> slaves, String username, String password) {
 		super(clientMqtt, device, actuators, username, password);
 		this.devices.addAll(slaves);
 	}
 
-	public MasterControllerRPi(MqttAsyncClient remoteClientMqtt, DeviceNode node, Plant plant, Actuators actuators,
+	public MasterControllerRPi(AnterosMqttClient remoteClientMqtt, DeviceNode node, Plant plant, Actuators actuators,
 			AnterosIOTServiceListener serviceListener, String username, String password) {
 		super(remoteClientMqtt, node, actuators, serviceListener, username, password);
 		loadConfiguration(node, plant);
@@ -61,7 +60,7 @@ public class MasterControllerRPi extends AbstractDeviceController implements Mas
 		private Device device;
 		private Actuators actuators;
 		private Set<DeviceController> slaves = new HashSet<>();
-		private MqttAsyncClient clientMqtt;
+		private AnterosMqttClient clientMqtt;
 		private String username; 
 		private String password;
 
@@ -91,14 +90,14 @@ public class MasterControllerRPi extends AbstractDeviceController implements Mas
 			return MasterControllerRPi.of(clientMqtt, device, actuators, slaves, username, password);
 		}
 
-		public Builder clientMqtt(MqttAsyncClient clientMqtt) {
+		public Builder clientMqtt(AnterosMqttClient clientMqtt) {
 			this.clientMqtt = clientMqtt;
 			return this;
 		}
 
 	}
 
-	public static MasterDeviceController of(MqttAsyncClient clientMqtt, Device device, Actuators actuators,
+	public static MasterDeviceController of(AnterosMqttClient clientMqtt, Device device, Actuators actuators,
 			Set<DeviceController> slaves, String username, String password) {
 		return new MasterControllerRPi(clientMqtt, device, actuators, slaves, username, password);
 	}
@@ -139,7 +138,7 @@ public class MasterControllerRPi extends AbstractDeviceController implements Mas
 		super.loadConfiguration(itemNode, plant);
 	}
 
-	public static MasterControllerRPi of(MqttAsyncClient clientMqtt, DeviceNode node, Plant plant, Actuators actuators,
+	public static MasterControllerRPi of(AnterosMqttClient clientMqtt, DeviceNode node, Plant plant, Actuators actuators,
 			AnterosIOTServiceListener serviceListener, String username, String password) {
 		return new MasterControllerRPi(clientMqtt, node, plant, actuators, serviceListener, username, password);
 	}

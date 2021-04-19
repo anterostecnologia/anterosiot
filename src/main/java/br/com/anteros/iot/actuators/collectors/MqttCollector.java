@@ -1,10 +1,11 @@
 package br.com.anteros.iot.actuators.collectors;
 
-import br.com.anteros.client.mqttv3.MqttAsyncClient;
-import br.com.anteros.client.mqttv3.MqttClient;
+
+
 
 import br.com.anteros.iot.Collector;
 import br.com.anteros.iot.Thing;
+import br.com.anteros.iot.support.AnterosMqttClient;
 
 public abstract class MqttCollector extends Collector {
 
@@ -16,6 +17,6 @@ public abstract class MqttCollector extends Collector {
 		super(listener, thing);
 	}
 
-	protected abstract Collector setMqttClient(MqttAsyncClient clientCollector);
+	protected abstract Collector setAnterosMqttClient(AnterosMqttClient clientCollector);
 
 }

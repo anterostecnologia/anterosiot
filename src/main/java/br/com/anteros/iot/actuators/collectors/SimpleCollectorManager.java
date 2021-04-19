@@ -11,9 +11,7 @@ import javax.json.JsonObjectBuilder;
 import javax.json.stream.JsonGenerator;
 
 import br.com.anteros.client.mqttv3.IMqttDeliveryToken;
-import br.com.anteros.client.mqttv3.MqttAsyncClient;
 import br.com.anteros.client.mqttv3.MqttCallback;
-import br.com.anteros.client.mqttv3.MqttException;
 import br.com.anteros.client.mqttv3.MqttMessage;
 import br.com.anteros.core.log.Logger;
 import br.com.anteros.core.log.LoggerProvider;
@@ -21,12 +19,13 @@ import br.com.anteros.iot.Actuators;
 import br.com.anteros.iot.Collector;
 import br.com.anteros.iot.Device;
 import br.com.anteros.iot.Thing;
+import br.com.anteros.iot.support.AnterosMqttClient;
 import br.com.anteros.iot.support.MqttHelper;
 import br.com.anteros.iot.things.Publishable;
 
 public class SimpleCollectorManager implements CollectorManager, CollectorListener {
 
-	private MqttAsyncClient mqttClient;
+	private AnterosMqttClient AnterosMqttClient;
 	private Thread thread;
 	private Thing[] things;
 	private Boolean running = false;
@@ -39,9 +38,9 @@ public class SimpleCollectorManager implements CollectorManager, CollectorListen
 	
 	private static final Logger LOG = LoggerProvider.getInstance().getLogger(SimpleCollectorManager.class.getName());
 
-	protected SimpleCollectorManager(MqttAsyncClient clientMqtt, Thing[] things, Actuators actuators, Device device,
+	protected SimpleCollectorManager(AnterosMqttClient clientMqtt, Thing[] things, Actuators actuators, Device device,
 			String username, String password) {
-		this.mqttClient = clientMqtt;
+		this.AnterosMqttClient = clientMqtt;
 		this.thread = new Thread(this);
 		thread.setName("Coletor de dados");
 		this.things = things;
@@ -75,7 +74,7 @@ public class SimpleCollectorManager implements CollectorManager, CollectorListen
 		}
 	}
 
-	public static SimpleCollectorManager of(MqttAsyncClient clientMqtt, Thing[] things, Actuators actuators, Device device,
+	public static SimpleCollectorManager of(AnterosMqttClient clientMqtt, Thing[] things, Actuators actuators, Device device,
 			String username, String password) {
 		return new SimpleCollectorManager(clientMqtt, things, actuators, device, username, password);
 	}
@@ -115,16 +114,17 @@ public class SimpleCollectorManager implements CollectorManager, CollectorListen
 				}
 				
 				if (collector instanceof MqttCollector) {
-					MqttAsyncClient clientCollector = null;
+					AnterosMqttClient clientCollector = null;
 					try {
-						clientCollector = MqttHelper.createAndConnectMqttClient(mqttClient.getServerURI(),
+						clientCollector = MqttHelper.createMqttClient(AnterosMqttClient.getServerURI(),
 								thing.getThingID().split("-")[0] + "_collector", username, password, true,
 								true, (MqttCallback) collector);
+						clientCollector.connect();
 					} catch (Exception e1) {
 						e1.printStackTrace();
 					}
 
-					((MqttCollector) collector).setMqttClient(clientCollector);
+					((MqttCollector) collector).setAnterosMqttClient(clientCollector);
 				}
 				
 				
@@ -147,8 +147,8 @@ public class SimpleCollectorManager implements CollectorManager, CollectorListen
 		}
 
 		try {
-			if (mqttClient.isConnected())
-				mqttClient.disconnect();
+			if (AnterosMqttClient.isConnected())
+				AnterosMqttClient.disconnect();
 		} catch (Exception e) {
 			LOG.error("Ocorreu uma falha ao parar o coletor: " + e.getMessage());
 			e.printStackTrace();
@@ -177,8 +177,8 @@ public class SimpleCollectorManager implements CollectorManager, CollectorListen
 
 						MqttMessage message = new MqttMessage(jsonMessage.toString().getBytes());
 						message.setQos(1);
-						if (mqttClient.isConnected()) {
-							mqttClient.publish(topic, message);							
+						if (AnterosMqttClient.isConnected()) {
+							AnterosMqttClient.publish(topic, message);							
 						}
 					} catch (Exception e) {
 						e.printStackTrace();
@@ -191,7 +191,7 @@ public class SimpleCollectorManager implements CollectorManager, CollectorListen
 	@Override
 	public void connectionLost(Throwable cause) {
 		try {
-			this.mqttClient.reconnect();
+			this.AnterosMqttClient.reconnect();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

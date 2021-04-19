@@ -1,7 +1,7 @@
 package br.com.anteros.iot.domain.devices;
 
-import br.com.anteros.client.mqttv3.MqttAsyncClient;
-import br.com.anteros.client.mqttv3.MqttClient;
+
+
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -16,6 +16,7 @@ import br.com.anteros.iot.domain.DeviceMasterNode;
 import br.com.anteros.iot.domain.DomainConstants;
 import br.com.anteros.iot.domain.PlantItemNode;
 import br.com.anteros.iot.plant.Plant;
+import br.com.anteros.iot.support.AnterosMqttClient;
 
 @JsonTypeName(DomainConstants.MASTER_RPI)
 public class MasterDeviceRPiNode extends DeviceMasterNode {
@@ -34,7 +35,7 @@ public class MasterDeviceRPiNode extends DeviceMasterNode {
 	}
 
 	@Override
-	public AbstractDeviceController getInstanceOfDeviceController(MqttAsyncClient clientMqtt, Plant plant,
+	public AbstractDeviceController getInstanceOfDeviceController(AnterosMqttClient clientMqtt, Plant plant,
 			Actuators actuators, AnterosIOTServiceListener serviceListener, String username, String password) {
 		return MasterControllerRPi.of(clientMqtt, this, plant, actuators, serviceListener, username, password);
 	}
