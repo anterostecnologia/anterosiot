@@ -150,7 +150,6 @@ public class Computer extends PlantItem implements Device {
 
 	@Override
 	public TelemetryStrategy[] getTelemetriesByInterval(long ellapsedTime) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
