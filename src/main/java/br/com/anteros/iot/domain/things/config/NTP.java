@@ -6,7 +6,7 @@ public class NTP {
 	
 	private int interval;
 	
-	private int timezone;
+	private String timezone;
 
 	public String getServer() {
 		return server;
@@ -24,11 +24,11 @@ public class NTP {
 		this.interval = interval;
 	}
 
-	public int getTimezone() {
+	public String getTimezone() {
 		return timezone;
 	}
 
-	public void setTimezone(int timezone) {
+	public void setTimezone(String timezone) {
 		this.timezone = timezone;
 	}
 	

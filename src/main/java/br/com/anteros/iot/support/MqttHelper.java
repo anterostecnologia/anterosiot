@@ -33,10 +33,10 @@ public class MqttHelper {
 		}
 		connOpts.setAutomaticReconnect(automaticReconnect);
 		connOpts.setCleanSession(cleanSession);
-		connOpts.setConnectionTimeout(20);
+		connOpts.setConnectionTimeout(30);
 		connOpts.setMaxInflight(2000);
 		connOpts.setMqttVersion(MqttConnectOptions.MQTT_VERSION_3_1_1);
-		connOpts.setKeepAliveInterval(7200);
+		connOpts.setKeepAliveInterval(20);
 
 		MemoryPersistence memoryPersistence = new MemoryPersistence();
 		client = new AnterosMqttClient(uri, name, memoryPersistence, connOpts);
@@ -65,10 +65,10 @@ public class MqttHelper {
 		}
 		connOpts.setAutomaticReconnect(automaticReconnect);
 		connOpts.setCleanSession(cleanSession);
-		connOpts.setConnectionTimeout(20);
+		connOpts.setConnectionTimeout(30);
 		connOpts.setMaxInflight(2500);
 		connOpts.setMqttVersion(MqttConnectOptions.MQTT_VERSION_3_1_1);
-		connOpts.setKeepAliveInterval(7200);
+		connOpts.setKeepAliveInterval(20);
 
 		MemoryPersistence memoryPersistence = new MemoryPersistence();
 		client = new AnterosMqttClient(uri, name, memoryPersistence, connOpts);

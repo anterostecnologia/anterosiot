@@ -88,4 +88,6 @@ public interface Thing {
 		}
 		return result.toArray(new Trigger[] {});
 	}
+
+
 }

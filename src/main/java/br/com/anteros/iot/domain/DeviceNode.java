@@ -23,7 +23,7 @@ public abstract class DeviceNode extends PlantItemNode implements Configurable {
 	protected boolean needsPropagation;
 	protected Integer intervalPublishingTelemetry;
 	protected String hostNtp;
-	protected int timezoneNtp;	
+	protected String timezoneNtp;
 	protected String hostMqtt;
 	protected int portMqtt;
 	protected String userMqtt;
@@ -140,11 +140,11 @@ public abstract class DeviceNode extends PlantItemNode implements Configurable {
 		this.hostNtp = hostNtp;
 	}
 
-	public int getTimezoneNtp() {
+	public String getTimezoneNtp() {
 		return timezoneNtp;
 	}
 
-	public void setTimezoneNtp(int timezoneNtp) {
+	public void setTimezoneNtp(String timezoneNtp) {
 		this.timezoneNtp = timezoneNtp;
 	}
 

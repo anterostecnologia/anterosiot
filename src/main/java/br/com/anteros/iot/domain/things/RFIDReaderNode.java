@@ -222,11 +222,11 @@ public class RFIDReaderNode extends ControllerNode implements Configurable {
 		this.hostNtp = hostNtp;
 	}
 
-	public int getTimezoneNtp() {
+	public String getTimezoneNtp() {
 		return timezoneNtp;
 	}
 
-	public void setTimezoneNtp(int timezoneNtp) {
+	public void setTimezoneNtp(String timezoneNtp) {
 		this.timezoneNtp = timezoneNtp;
 	}
 

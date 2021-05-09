@@ -197,7 +197,10 @@ public abstract class AbstractDeviceController
 
 	public Thing getThingById(String thingId) {
 		for (Thing thing : things) {
-			if (thing.getThingID().equals(thingId)) {
+			if (thing.getThingID() == null){
+				throw new IllegalArgumentException("O Id da coisa "+thing+" não foi informado.");
+			}
+			if (thingId.equals(thing.getThingID())) {
 				return thing;
 			}
 		}

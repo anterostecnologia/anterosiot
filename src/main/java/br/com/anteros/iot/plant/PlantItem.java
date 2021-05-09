@@ -66,11 +66,11 @@ public abstract class PlantItem {
 	}
 
 	public PlantItem getItemByName(String itemId) {
-		if (this.itemId.equals(itemId)) {
+		if (itemId.equals(this.itemId)) {
 			return this;
 		}
 		for (PlantItem item : items) {
-			if (item.getItemId().equals(itemId)) {
+			if (itemId.equals(item.getItemId())) {
 				return item;
 			}
 			PlantItem result = item.getItemByName(itemId);

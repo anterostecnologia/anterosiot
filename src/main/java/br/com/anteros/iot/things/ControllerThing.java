@@ -10,7 +10,7 @@ public abstract class ControllerThing extends PlantItem implements Thing {
 	protected String secondarySSID;
 	protected String secondaryPassword;
 	protected String hostNtp;
-	protected int timezoneNtp;	
+	protected String timezoneNtp;
 	protected String hostMqtt;
 	protected int portMqtt;
 	protected String userMqtt;
@@ -45,10 +45,10 @@ public abstract class ControllerThing extends PlantItem implements Thing {
 	public void setHostNtp(String hostNtp) {
 		this.hostNtp = hostNtp;
 	}
-	public int getTimezoneNtp() {
+	public String getTimezoneNtp() {
 		return timezoneNtp;
 	}
-	public void setTimezoneNtp(int timezoneNtp) {
+	public void setTimezoneNtp(String timezoneNtp) {
 		this.timezoneNtp = timezoneNtp;
 	}
 	public String getHostMqtt() {

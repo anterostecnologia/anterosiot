@@ -7,7 +7,7 @@ public abstract class ControllerNode extends ThingNode {
 	protected String secondarySSID;
 	protected String secondaryPassword;
 	protected String hostNtp;
-	protected int timezoneNtp;	
+	protected String timezoneNtp;
 	protected String hostMqtt;
 	protected int portMqtt;
 	protected String userMqtt;
@@ -67,11 +67,11 @@ public abstract class ControllerNode extends ThingNode {
 		this.hostNtp = hostNtp;
 	}
 
-	public int getTimezoneNtp() {
+	public String getTimezoneNtp() {
 		return timezoneNtp;
 	}
 
-	public void setTimezoneNtp(int timezoneNtp) {
+	public void setTimezoneNtp(String timezoneNtp) {
 		this.timezoneNtp = timezoneNtp;
 	}
 

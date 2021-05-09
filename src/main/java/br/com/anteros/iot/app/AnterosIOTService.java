@@ -13,6 +13,7 @@ import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import com.diozero.util.SleepUtil;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -66,6 +67,8 @@ public class AnterosIOTService implements Runnable, MqttCallback, MqttCallbackEx
 	private static final String MASTER = "master";
 
 	public static final Logger LOG = LoggerProvider.getInstance().getLogger(AnterosIOTService.class.getName());
+
+	public AtomicBoolean running = new AtomicBoolean(false);
 
 	private String deviceName;
 	private String deviceType;
@@ -156,9 +159,14 @@ public class AnterosIOTService implements Runnable, MqttCallback, MqttCallbackEx
 		return null;
 	}
 
+	public void stop(){
+		running.set(false);
+	}
+
 	@Override
 	public void run() {
 
+		running.set(true);
 		LOG.debug("Iniciando Anteros IOT Service...");
 
 		serviceListener.onConnectingMqttServer();
@@ -195,7 +203,7 @@ public class AnterosIOTService implements Runnable, MqttCallback, MqttCallbackEx
 			}
 		}
 
-		while (true) {
+		while (running.get()) {
 
 			if (this.client != null && this.client.isConnected()) {
 				try {
