@@ -44,6 +44,10 @@ public interface Thing {
 
 	public Trigger[] getTriggers();
 
+	public Object getUserData();
+
+	public void setUserData(Object data);
+
 	default public boolean hasTriggers(ShotMoment type, String actionOrValue) {
 		for (Trigger trigger : getTriggers()) {
 			if (StringUtils.isEmpty(trigger.getWhenCondition().getActionOrValue())
@@ -88,6 +92,12 @@ public interface Thing {
 		}
 		return result.toArray(new Trigger[] {});
 	}
+
+	default public Boolean showLog(){
+		return true;
+	}
+
+
 
 
 }

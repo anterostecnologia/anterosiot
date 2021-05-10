@@ -26,6 +26,7 @@ public class TemperatureSensorOneWire extends PlantItem implements Sensor {
 	protected DeviceController deviceController;
 	protected boolean needsPropagation;
 	protected Set<Trigger> triggers = new HashSet<>();
+	private Object userData;
 
 	protected TemperatureSensorOneWire(String id, String sensorId, String[] topics,
 			TemperatureScale scale) {
@@ -53,6 +54,16 @@ public class TemperatureSensorOneWire extends PlantItem implements Sensor {
 	
 	public void setStatus(java.lang.String status) {
 		
+	}
+
+	@Override
+	public Object getUserData() {
+		return userData;
+	}
+
+	@Override
+	public void setUserData(Object data){
+		this.userData = data;
 	}
 
 	public Set<Part> getParts() {

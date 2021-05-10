@@ -15,6 +15,8 @@ public abstract class ControllerThing extends PlantItem implements Thing {
 	protected int portMqtt;
 	protected String userMqtt;
 	protected String passwordMqtt;
+	protected Object userData;
+
 	public String getPrimarySSID() {
 		return primarySSID;
 	}
@@ -75,8 +77,16 @@ public abstract class ControllerThing extends PlantItem implements Thing {
 	public void setPasswordMqtt(String passwordMqtt) {
 		this.passwordMqtt = passwordMqtt;
 	}
-	
-	
+
+	@Override
+	public Object getUserData() {
+		return userData;
+	}
+
+	@Override
+	public void setUserData(Object data){
+		this.userData = data;
+	}
 
 	
 }

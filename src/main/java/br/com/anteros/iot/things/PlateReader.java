@@ -16,6 +16,7 @@ public class PlateReader extends PlantItem implements Thing {
 	protected DeviceController deviceController;
 	protected boolean needsPropagation;
 	protected Set<Trigger> triggers = new HashSet<>();
+	protected Object userData = "TAG_VEICULAR";
 
 	public PlateReader() {
 	}
@@ -35,6 +36,16 @@ public class PlateReader extends PlantItem implements Thing {
 	
 	public void setStatus(java.lang.String status) {
 		
+	}
+
+	@Override
+	public Object getUserData() {
+		return userData;
+	}
+
+	@Override
+	public void setUserData(Object data){
+		this.userData = data;
 	}
 
 	public Set<Part> getParts() {

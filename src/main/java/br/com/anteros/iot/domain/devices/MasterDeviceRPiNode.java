@@ -44,4 +44,6 @@ public class MasterDeviceRPiNode extends DeviceMasterNode {
 	public String parseConfig(ObjectMapper mapper, PlantItemNode node) throws JsonProcessingException {
 		return mapper.writeValueAsString(node);
 	}
+
+
 }

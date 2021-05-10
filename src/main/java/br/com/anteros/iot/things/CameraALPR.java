@@ -15,6 +15,7 @@ public class CameraALPR extends PlantItem implements Thing {
 	protected DeviceController deviceController;
 	protected boolean needsPropagation;
 	protected Set<Trigger> triggers = new HashSet<>();
+	protected Object userData;
 	
 	public CameraALPR() {
 	}
@@ -49,6 +50,16 @@ public class CameraALPR extends PlantItem implements Thing {
 
 	public Part getPartById(String part) {
 		return null;
+	}
+
+	@Override
+	public Object getUserData() {
+		return userData;
+	}
+
+	@Override
+	public void setUserData(Object data){
+		this.userData = data;
 	}
 
 	@Override

@@ -284,7 +284,7 @@ public class AnterosIOTService implements Runnable, MqttCallback, MqttCallbackEx
 			}
 
 		} else {
-			LOG.warn(
+			LOG.error(
 					"Nenhuma configuração foi encontrada para criar o device controller ou o client mqtt não está conectado.");
 		}
 
@@ -371,8 +371,12 @@ public class AnterosIOTService implements Runnable, MqttCallback, MqttCallbackEx
 		try {
 			if (mapper == null) {
 				mapper = new ObjectMapper();
-				mapper.setSerializationInclusion(Include.NON_NULL);
+				mapper.setDefaultPropertyInclusion(JsonInclude.Include.NON_NULL);
 				mapper.enable(SerializationFeature.INDENT_OUTPUT);
+
+				if (serviceListener != null) {
+					serviceListener.onAddSubTypeNames(mapper);
+				}
 			}
 			jsonMessage = mapper.readTree(message.getPayload());
 		} catch (Exception e) {
@@ -459,7 +463,7 @@ public class AnterosIOTService implements Runnable, MqttCallback, MqttCallbackEx
 					MqttHelper.publishError(e, deviceName, client);
 				}
 			} else {
-				LOG.info("Ação '" + action + "' inválida");
+				LOG.error("Ação '" + action + "' inválida");
 			}
 		}
 

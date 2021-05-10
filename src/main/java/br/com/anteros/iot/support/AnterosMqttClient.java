@@ -11,6 +11,7 @@ import br.com.anteros.client.mqttv3.MqttSecurityException;
 public class AnterosMqttClient extends MqttClient {
 	
 	private MqttConnectOptions options;
+	private Boolean triedToConnect = false;
 
 	public AnterosMqttClient(String serverURI, String clientId, MqttClientPersistence persistence,
 			ScheduledExecutorService executorService, MqttConnectOptions options) throws MqttException {
@@ -31,9 +32,19 @@ public class AnterosMqttClient extends MqttClient {
 
 	@Override
 	public void connect() throws MqttSecurityException, MqttException {
+		triedToConnect = true;
 		super.connect(this.options);
 	}
-	
+
+	@Override
+	public void reconnect() throws MqttException {
+		if (!triedToConnect) {
+			super.connect(this.options);
+		} else {
+			super.reconnect();
+		}
+	}
+
 	public MqttConnectOptions getOptions() {
 		return options;
 	}

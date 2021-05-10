@@ -17,6 +17,7 @@ public class Beacon extends ControllerThing {
 	protected boolean needsPropagation;
 	protected Set<Trigger> triggers = new HashSet<>();
 	protected String[] topics;
+
 	
 
 	public Beacon() {

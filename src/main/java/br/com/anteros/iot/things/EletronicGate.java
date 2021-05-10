@@ -17,6 +17,7 @@ public class EletronicGate extends PlantItem implements Thing {
 	protected boolean needsPropagation;
 	protected Set<Trigger> triggers = new HashSet<>();
 	protected int pin;
+	protected Object userData = "TAG_PEDESTRE";
 
 	public EletronicGate() {
 	}
@@ -37,6 +38,16 @@ public class EletronicGate extends PlantItem implements Thing {
 	
 	public void setStatus(java.lang.String status) {
 		
+	}
+
+	@Override
+	public Object getUserData() {
+		return userData;
+	}
+
+	@Override
+	public void setUserData(Object data){
+		this.userData = data;
 	}
 
 	public Set<Part> getParts() {

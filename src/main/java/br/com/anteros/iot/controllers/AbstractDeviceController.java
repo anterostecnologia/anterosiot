@@ -154,9 +154,13 @@ public abstract class AbstractDeviceController
 	public void start() {
 		if (!running) {
 			this.beforeStart();
-			this.autoSubscribe();
-			this.thread.start();
-			this.afterStart();
+			try {
+				this.thread.start();
+				this.afterStart();
+			} catch (Exception ex){
+				ex.printStackTrace();
+			}
+
 		}
 	}
 
@@ -243,7 +247,7 @@ public abstract class AbstractDeviceController
 				first = false;
 			}
 			if (this.clientMqtt != null && this.clientMqtt.isConnected()) {
-				Thread.yield();				
+				SleepUtil.sleepMillis(200);
 			} else if (this.clientMqtt != null && alreadyConnectedOnce ) {
 				try {
 					this.clientMqtt.reconnect();
@@ -348,11 +352,12 @@ public abstract class AbstractDeviceController
 	public void dispatchMessage(String topic, String message) {
 		if ((StringUtils.isNotEmpty(topic) || StringUtils.isNotEmpty(message))) {
 			try {
-				LOG.info("Publicando mensagem para " + topic);
-				LOG.info("Mensagem: " + message);
+
 				MqttMessage msg = new MqttMessage(message.getBytes());
 				msg.setQos(1);
-				this.clientMqtt.publish("/" + topic, msg);
+				this.clientMqtt.publish(topic, msg);
+				LOG.info("Publicando mensagem para " + topic);
+				LOG.info("Mensagem: " + message);
 			} catch (MqttPersistenceException e) {
 				e.printStackTrace();
 			} catch (MqttException e) {
@@ -424,14 +429,13 @@ public abstract class AbstractDeviceController
 		for (Thing thing : things) {
 			if (thing instanceof PlantItem) {
 				String topic = ((PlantItem) thing).getPath();
-				filter.add("/" + topic);
-				subscribedTopics.put("/" + topic, thing);
+				filter.add(topic);
+				subscribedTopics.put(topic, thing);
 				if (thing.getParts() != null) {
 					for (Part part : thing.getParts()) {
 						String topicPart = ((PlantItem) part).getPath();
-						filter.add("/" + topicPart);
-						subscribedTopics.put("/" + topicPart, part);
-
+						filter.add(topicPart);
+						subscribedTopics.put(topicPart, part);
 					}
 				}
 			}
@@ -439,8 +443,8 @@ public abstract class AbstractDeviceController
 
 		if (this.getThing() instanceof PlantItem) {
 			String topic = ((PlantItem) this.getThing()).getPath();
-			filter.add("/" + topic);
-			subscribedTopics.put("/" + topic, this.getThing());
+			filter.add(topic);
+			subscribedTopics.put(topic, this.getThing());
 		}
 
 		try {
@@ -448,9 +452,6 @@ public abstract class AbstractDeviceController
 			int[] qosArray = new int[filterArray.length];
 			Arrays.fill(qosArray, 1);
 			LOG.info(Arrays.toString(filter.toArray(new String[] {})));
-			while (!this.clientMqtt.isConnected()) {
-				Thread.yield();
-			}
 			this.clientMqtt.subscribe(filterArray, qosArray);
 		} catch (MqttException e) {
 			e.printStackTrace();
@@ -576,7 +577,6 @@ public abstract class AbstractDeviceController
 		 * próprio controlador
 		 */
 		this.autoSubscribe();
-
 		notifyService();
 	}
 
@@ -590,6 +590,8 @@ public abstract class AbstractDeviceController
 				} else {
 					e.printStackTrace();
 				}
+			} catch (Exception ex){
+				ex.printStackTrace();
 			}
 		}
 		if (this.sendMsgServiceStarted && this.clientMqtt.isConnected()) {

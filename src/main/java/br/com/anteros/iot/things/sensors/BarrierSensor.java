@@ -23,6 +23,7 @@ public class BarrierSensor extends PlantItem implements Sensor {
 	protected DeviceController deviceController;
 	protected boolean needsPropagation;
 	protected Set<Trigger> triggers = new HashSet<>();
+	private Object userData;
 
 	public BarrierSensor(String itemId, int pin, String[] topics) {
 		super();
@@ -49,6 +50,16 @@ public class BarrierSensor extends PlantItem implements Sensor {
 	
 	public void setStatus(java.lang.String status) {
 		
+	}
+
+	@Override
+	public Object getUserData() {
+		return userData;
+	}
+
+	@Override
+	public void setUserData(Object data){
+		this.userData = data;
 	}
 
 	@Override

@@ -22,6 +22,7 @@ import br.com.anteros.iot.Thing;
 import br.com.anteros.iot.support.AnterosMqttClient;
 import br.com.anteros.iot.support.MqttHelper;
 import br.com.anteros.iot.things.Publishable;
+import com.diozero.util.SleepUtil;
 
 public class SimpleCollectorManager implements CollectorManager, CollectorListener {
 
@@ -93,7 +94,7 @@ public class SimpleCollectorManager implements CollectorManager, CollectorListen
 				
 				while(collector.isRunning()){
 					collector.stopCollect();
-					Thread.yield();
+					SleepUtil.sleepMillis(500);
 				}
 				
 				collector.setListener(this);
@@ -110,7 +111,7 @@ public class SimpleCollectorManager implements CollectorManager, CollectorListen
 				
 				while(collector.isRunning()){
 					collector.stopCollect();
-					Thread.yield();
+					SleepUtil.sleepMillis(500);
 				}
 				
 				if (collector instanceof MqttCollector) {
@@ -138,7 +139,7 @@ public class SimpleCollectorManager implements CollectorManager, CollectorListen
 				LOG.info("Coletor de dados rodando...");
 				first = false;
 			}
-			Thread.yield();
+			SleepUtil.sleepMillis(200);
 		}
 		
 		LOG.info("Parando coletor dados...");
@@ -162,8 +163,8 @@ public class SimpleCollectorManager implements CollectorManager, CollectorListen
 	@Override
 	public void onCollect(CollectResult result, Thing thing) {
 		if (!paused) {
-			if (thing instanceof Publishable) {
 
+			if (thing instanceof Publishable) {
 				String[] topics = ((Publishable) thing).getTopicsToPublishValue(result);
 
 				for (String topic : topics) {
@@ -178,7 +179,10 @@ public class SimpleCollectorManager implements CollectorManager, CollectorListen
 						MqttMessage message = new MqttMessage(jsonMessage.toString().getBytes());
 						message.setQos(1);
 						if (AnterosMqttClient.isConnected()) {
-							AnterosMqttClient.publish(topic, message);							
+							AnterosMqttClient.publish(topic, message);
+							if (thing.showLog()) {
+								LOG.info("Coletado dado da coisa " + thing.getThingID() + " e enviado para o tópico " + topic+" => Value "+jsonMessage.toString());
+							}
 						}
 					} catch (Exception e) {
 						e.printStackTrace();

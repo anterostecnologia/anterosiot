@@ -39,7 +39,7 @@ public class BarrierSensorReaderCollector extends MqttCollector implements Runna
 		LOG.info("Iniciando coletor do Leitor de sensor de barreira");
 		while (running) {
 			if (this.AnterosMqttClient != null && this.AnterosMqttClient.isConnected()) {
-				Thread.yield();				
+				SleepUtil.sleepMillis(200);
 			} else if (this.AnterosMqttClient != null && alreadyConnectedOnce ) {
 				try {
 					this.AnterosMqttClient.reconnect();

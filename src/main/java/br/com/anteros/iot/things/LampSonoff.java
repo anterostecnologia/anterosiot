@@ -18,6 +18,7 @@ public class LampSonoff extends PlantItem implements Thing {
 	protected boolean needsPropagation;
 	protected String topic;
 	protected Set<Trigger> triggers = new HashSet<>();
+	protected Object userData;
 
 	protected LampSonoff(String id, String topic) {
 		this.itemId = id;
@@ -27,6 +28,16 @@ public class LampSonoff extends PlantItem implements Thing {
 	public LampSonoff(LampSonoffNode node) {
 		this.topic = node.getTopic();
 		this.itemId = node.getItemName();
+	}
+
+	@Override
+	public Object getUserData() {
+		return userData;
+	}
+
+	@Override
+	public void setUserData(Object data){
+		this.userData = data;
 	}
 
 	public String getThingID() {

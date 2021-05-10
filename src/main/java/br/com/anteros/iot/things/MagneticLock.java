@@ -17,6 +17,7 @@ public class MagneticLock extends PlantItem implements Thing {
 	protected DeviceController deviceController;
 	protected boolean needsPropagation;
 	protected Set<Trigger> triggers = new HashSet<>();
+	protected Object userData = "TAG_PEDESTRE";
 
 	protected int pin;
 	protected int timeWaitOpening;
@@ -31,6 +32,16 @@ public class MagneticLock extends PlantItem implements Thing {
 		this.pin = node.getPin();
 		this.timeWaitOpening = node.getTimeWaitOpening();
 		this.itemId = node.getItemName();
+	}
+
+	@Override
+	public Object getUserData() {
+		return userData;
+	}
+
+	@Override
+	public void setUserData(Object data){
+		this.userData = data;
 	}
 
 	public String getThingID() {

@@ -17,6 +17,7 @@ public class EletronicLock extends PlantItem implements Thing {
 	protected boolean needsPropagation;
 	protected Set<Trigger> triggers = new HashSet<>();
 	protected int pin;
+	protected Object userData = "TAG_PEDESTRE";
 	
 	public EletronicLock() {
 	}
@@ -25,6 +26,16 @@ public class EletronicLock extends PlantItem implements Thing {
 		this.itemId = node.getItemName();
 		this.description = node.getDescription();
 		this.pin = node.getPin();
+	}
+
+	@Override
+	public Object getUserData() {
+		return userData;
+	}
+
+	@Override
+	public void setUserData(Object data){
+		this.userData = data;
 	}
 
 	public String getThingID() {

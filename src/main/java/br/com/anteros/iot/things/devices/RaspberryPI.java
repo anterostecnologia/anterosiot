@@ -44,8 +44,9 @@ public class RaspberryPI extends PlantItem implements Device, Publishable   {
 	private DeviceController deviceController;
 	private boolean needsPropagation;
 	private TelemetryConfiguration telemetryConfiguration = TelemetryConfiguration.of(this);
-	
-		
+	private Object userData;
+
+
 	protected RaspberryPI(String id, IpAddress ipAddress,String description, String topicError, Integer intervalPublishingTelemetry, String hostnameACL) {
 		this.itemId = id;
 		this.ipAddress = ipAddress;
@@ -272,4 +273,18 @@ public class RaspberryPI extends PlantItem implements Device, Publishable   {
 		this.hostnameACL = hostnameACL;
 	}
 
+	@Override
+	public Boolean showLog() {
+		return Boolean.FALSE;
+	}
+
+	@Override
+	public Object getUserData() {
+		return userData;
+	}
+
+	@Override
+	public void setUserData(Object data){
+		this.userData = data;
+	}
 }

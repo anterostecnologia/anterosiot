@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>br.com.anteros</groupId>
 	<artifactId>Anteros-IOT</artifactId>
-	<version>1.0.10</version>
+	<version>1.0.12</version>
 
 	<properties>
 		<java.versao>1.8</java.versao>

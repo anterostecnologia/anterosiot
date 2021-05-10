@@ -23,6 +23,7 @@ public class RedLEDSemaphorePart extends PlantItem implements Part, LedSemaphore
 	protected boolean needsPropagation;
 	
 	protected Set<Trigger> triggers = new HashSet<>();
+	private Object userData;
 
 	private RedLEDSemaphorePart(String id, Semaphore owner, int pin) {
 		this.itemOwner = owner;
@@ -57,6 +58,16 @@ public class RedLEDSemaphorePart extends PlantItem implements Part, LedSemaphore
 
 	public Thing addPart(Part part) {
 		throw new IllegalPartException("Esta parte não permite a composição com mais partes.");
+	}
+
+	@Override
+	public Object getUserData() {
+		return userData;
+	}
+
+	@Override
+	public void setUserData(Object data){
+		this.userData = data;
 	}
 
 	public Thing removePart(Part part) {

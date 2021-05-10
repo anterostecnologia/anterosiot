@@ -27,6 +27,7 @@ public class MemoryPlc extends PlantItem implements Part, Publishable {
 	protected boolean needsPropagation;
 	protected Set<Trigger> triggers = new HashSet<>();
 	protected int multiple;
+	private Object userData;
 
 	public MemoryPlc(MemoryPlcNode node) {
 		this.itemId = node.getItemName();
@@ -52,6 +53,16 @@ public class MemoryPlc extends PlantItem implements Part, Publishable {
 	public void setStatus(java.lang.String status) {
 		
 	}
+	@Override
+	public Object getUserData() {
+		return userData;
+	}
+
+	@Override
+	public void setUserData(Object data){
+		this.userData = data;
+	}
+	
 
 	@Override
 	public Set<Part> getParts() {

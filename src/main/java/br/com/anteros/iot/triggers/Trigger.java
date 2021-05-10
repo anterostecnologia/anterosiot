@@ -43,14 +43,16 @@ public class Trigger {
 			try {
 				serviceListener.onFireTrigger(this, value, additionalInformation);
 			} catch (Exception e) {
-				LOG.info(e.getMessage() + " - Running exception actions now");
+				LOG.info(e.getMessage() + " - Executando ações de exceção agora...");
 				if (exceptionActions != null) {
 					for (Action exceptionAction : exceptionActions) {
 						if (exceptionAction.getThing() instanceof PlantItem) {
 							JsonObjectBuilder builder = Json.createObjectBuilder();
-							for (Entry<String, JsonValue> entry : additionalInformation.entrySet()) {
-								builder.add(entry.getKey(), entry.getValue());
-						    }
+							if (additionalInformation!=null) {
+								for (Entry<String, JsonValue> entry : additionalInformation.entrySet()) {
+									builder.add(entry.getKey(), entry.getValue());
+								}
+							}
 							builder.add("isException", true);
 							
 							internalDispatchMessage(value, exceptionAction, builder.build());

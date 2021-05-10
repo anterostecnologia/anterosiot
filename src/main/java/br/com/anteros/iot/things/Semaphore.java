@@ -23,6 +23,7 @@ public class Semaphore extends PlantItem implements Thing {
 	protected boolean needsPropagation;
 	protected Set<Part> leds = new LinkedHashSet<Part>();
 	protected Set<Trigger> triggers = new HashSet<>();
+	protected Object userData;
 
 	public Semaphore(String id) {
 		this.itemId = id;
@@ -45,6 +46,15 @@ public class Semaphore extends PlantItem implements Thing {
 	
 	public void setStatus(java.lang.String status) {
 		
+	}
+	@Override
+	public Object getUserData() {
+		return userData;
+	}
+
+	@Override
+	public void setUserData(Object data){
+		this.userData = data;
 	}
 
 	public Set<Part> getParts() {

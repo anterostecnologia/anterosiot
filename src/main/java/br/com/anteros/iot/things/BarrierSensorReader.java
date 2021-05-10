@@ -16,6 +16,7 @@ public class BarrierSensorReader extends ControllerThing {
 	protected boolean needsPropagation;
 	protected Set<Trigger> triggers = new HashSet<>();
 	protected String[] topics;
+	protected Object userData;
 	
 
 	public BarrierSensorReader() {
@@ -47,6 +48,16 @@ public class BarrierSensorReader extends ControllerThing {
 	
 	public void setStatus(java.lang.String status) {
 		
+	}
+
+	@Override
+	public Object getUserData() {
+		return userData;
+	}
+
+	@Override
+	public void setUserData(Object data){
+		this.userData = data;
 	}
 
 	public Set<Part> getParts() {

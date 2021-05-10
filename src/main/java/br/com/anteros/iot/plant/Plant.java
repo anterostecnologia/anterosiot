@@ -17,7 +17,7 @@ public class Plant extends PlantItem {
 	}
 	
 	public String getPath() {
-		return itemId;
+		return "/"+itemId;
 	}
 
 	public String getPlantId() {

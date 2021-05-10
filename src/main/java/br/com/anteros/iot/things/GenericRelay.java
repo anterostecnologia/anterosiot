@@ -17,6 +17,7 @@ public class GenericRelay extends PlantItem implements Thing {
 	protected boolean needsPropagation;
 	protected Set<Trigger> triggers = new HashSet<>();
 	protected int pin;
+	protected Object userData;
 
 	public GenericRelay() {
 	}
@@ -93,6 +94,15 @@ public class GenericRelay extends PlantItem implements Thing {
 		return triggers.toArray(new Trigger[] {});
 	}
 
+	@Override
+	public Object getUserData() {
+		return userData;
+	}
+
+	@Override
+	public void setUserData(Object data){
+		this.userData = data;
+	}
 
 	@Override
 	public Thing addTrigger(Trigger trigger) {

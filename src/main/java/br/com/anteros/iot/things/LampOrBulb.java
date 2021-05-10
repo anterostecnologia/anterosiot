@@ -18,6 +18,7 @@ public class LampOrBulb extends PlantItem implements Thing {
 	protected boolean needsPropagation;
 	protected int pin;
 	protected Set<Trigger> triggers = new HashSet<>();
+	protected Object userData;
 
 	protected LampOrBulb(String id, int pin) {
 		this.itemId = id;
@@ -28,6 +29,16 @@ public class LampOrBulb extends PlantItem implements Thing {
 		this.pin = node.getPin();
 		this.itemId = node.getItemName();
 		this.pin = node.getPin();
+	}
+
+	@Override
+	public Object getUserData() {
+		return userData;
+	}
+
+	@Override
+	public void setUserData(Object data){
+		this.userData = data;
 	}
 
 	public String getThingID() {

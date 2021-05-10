@@ -17,6 +17,7 @@ public class BarrierSensor extends PlantItem implements Thing {
 	protected boolean needsPropagation;
 	protected Set<Trigger> triggers = new HashSet<>();
 	protected int pin;
+	protected Object userData;
 
 	public BarrierSensor() {
 	}
@@ -24,6 +25,16 @@ public class BarrierSensor extends PlantItem implements Thing {
 	public BarrierSensor(BarrierSensorNode node) {
 		this.itemId = node.getItemName();
 		this.description = node.getDescription();
+	}
+
+	@Override
+	public Object getUserData() {
+		return userData;
+	}
+
+	@Override
+	public void setUserData(Object data){
+		this.userData = data;
 	}
 
 	public String getThingID() {

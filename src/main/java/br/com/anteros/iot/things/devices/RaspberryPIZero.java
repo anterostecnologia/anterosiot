@@ -43,6 +43,7 @@ public class RaspberryPIZero extends PlantItem implements Device, Publishable {
 	protected boolean needsPropagation;
 
 	private TelemetryConfiguration telemetryConfiguration = TelemetryConfiguration.of(this);
+	private Object userData;
 
 	protected RaspberryPIZero(String id, IpAddress ipAddress, String topicError, Integer intervalPublishingTelemetry) {
 		this.itemId = id;
@@ -256,6 +257,21 @@ public class RaspberryPIZero extends PlantItem implements Device, Publishable {
 
 	public void setHostnameACL(String hostnameACL) {
 		this.hostnameACL = hostnameACL;
+	}
+
+	@Override
+	public Boolean showLog() {
+		return Boolean.FALSE;
+	}
+
+	@Override
+	public Object getUserData() {
+		return userData;
+	}
+
+	@Override
+	public void setUserData(Object data){
+		this.userData = data;
 	}
 
 }

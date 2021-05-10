@@ -27,6 +27,7 @@ public class Plc extends PlantItem implements Thing {
 	protected boolean needsPropagation;
 	protected Set<Trigger> triggers = new HashSet<>();
 	protected Set<Part> memories = new LinkedHashSet<Part>();
+	protected Object userData;
 	
 	public Plc() {
 		super();
@@ -48,6 +49,17 @@ public class Plc extends PlantItem implements Thing {
 	public void setStatus(java.lang.String status) {
 		
 	}
+
+	@Override
+	public Object getUserData() {
+		return userData;
+	}
+
+	@Override
+	public void setUserData(Object data){
+		this.userData = data;
+	}
+
 	@Override
 	public Set<Part> getParts() {
 		return memories;

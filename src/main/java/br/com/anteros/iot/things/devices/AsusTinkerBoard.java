@@ -24,6 +24,7 @@ public class AsusTinkerBoard extends PlantItem implements Device {
 	private String primaryPassword;
 	private String secondarySSID;
 	private String secondaryPassword;
+	protected Object userData;
 	
 	protected DeviceController deviceController;
 	
@@ -217,6 +218,22 @@ public class AsusTinkerBoard extends PlantItem implements Device {
 
 	public void setHostnameACL(String hostnameACL) {
 		this.hostnameACL = hostnameACL;
+	}
+
+	@Override
+	public Boolean showLog() {
+		return Boolean.FALSE;
+	}
+
+
+	@Override
+	public Object getUserData() {
+		return userData;
+	}
+
+	@Override
+	public void setUserData(Object data){
+		this.userData = data;
 	}
 
 

@@ -36,7 +36,12 @@ public class VehicleEntranceTrigger extends ControllerThing implements Publishab
 		String status = this.status;
 		return status;
 	}
-	
+
+	@Override
+	public Object getUserData() {
+		return "TAG_PEDESTRE";
+	}
+
 	public void setStatus(String status) {
 		this.status = status;
 	}

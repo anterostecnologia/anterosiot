@@ -73,7 +73,7 @@ public class SlaveControllerRPi extends AbstractDeviceController implements Slav
 
 	public void deliveryComplete(IMqttDeliveryToken token) {
 		try {
-			LOG.info(
+			LOG.debug(
 					"Delivery token \"" + token.hashCode() + "\" received by instance \"" + getThingID() + "\"");
 		} catch (Exception e) {
 			e.printStackTrace();

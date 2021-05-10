@@ -60,7 +60,7 @@ public abstract class PlantItem {
 	
 	public String getPath() {
 		if (this.itemOwner==null) {
-			return itemId;
+			return "/"+itemId;
 		}
 		return itemOwner.getPath() + "/" + itemId;
 	}

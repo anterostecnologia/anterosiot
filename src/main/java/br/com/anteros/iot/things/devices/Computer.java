@@ -24,6 +24,7 @@ public class Computer extends PlantItem implements Device {
 	
 	protected DeviceController deviceController;
 	protected boolean needsPropagation;
+	private Object userData;
 
 	private Computer(String id, IpAddress ipAddress, String description, String topicError, AbstractDeviceController controller, Integer intervalPublishingTelemetry, String hostnameACL) {
 		this.itemId = id;
@@ -186,6 +187,21 @@ public class Computer extends PlantItem implements Device {
 
 	public void setNeedsPropagation(boolean needsPropagation) {
 		this.needsPropagation = needsPropagation;
-	}	
+	}
+
+	@Override
+	public Boolean showLog() {
+		return Boolean.FALSE;
+	}
+
+	@Override
+	public Object getUserData() {
+		return userData;
+	}
+
+	@Override
+	public void setUserData(Object data){
+		this.userData = data;
+	}
 
 }

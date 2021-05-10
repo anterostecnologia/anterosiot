@@ -20,6 +20,7 @@ public class YellowLEDSemaphorePart extends PlantItem implements Part, LedSemaph
 	protected DeviceController deviceController;
 	protected boolean needsPropagation;
 	protected Set<Trigger> triggers = new HashSet<>();
+	private Object userData;
 
 	private YellowLEDSemaphorePart(String id, Semaphore owner, int pin) {
 		this.itemOwner = owner;
@@ -37,6 +38,16 @@ public class YellowLEDSemaphorePart extends PlantItem implements Part, LedSemaph
 	
 	public void setStatus(java.lang.String status) {
 		
+	}
+
+	@Override
+	public Object getUserData() {
+		return userData;
+	}
+
+	@Override
+	public void setUserData(Object data){
+		this.userData = data;
 	}
 
 	public Set<Part> getParts() {

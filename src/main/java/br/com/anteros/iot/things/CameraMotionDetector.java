@@ -18,7 +18,8 @@ public class CameraMotionDetector extends PlantItem implements Thing, Publishabl
 
 	protected DeviceController deviceController;
 	protected boolean needsPropagation;
-	protected Set<Trigger> triggers = new HashSet<>();	
+	protected Set<Trigger> triggers = new HashSet<>();
+	protected Object userData;
 
 	protected String[] topics;
 	protected String url;
@@ -41,6 +42,16 @@ public class CameraMotionDetector extends PlantItem implements Thing, Publishabl
 	
 	public void setStatus(java.lang.String status) {
 		
+	}
+
+	@Override
+	public Object getUserData() {
+		return userData;
+	}
+
+	@Override
+	public void setUserData(Object data){
+		this.userData = data;
 	}
 
 	@Override

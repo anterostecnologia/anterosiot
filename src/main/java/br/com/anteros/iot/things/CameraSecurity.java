@@ -15,6 +15,7 @@ public class CameraSecurity extends PlantItem implements Thing {
 	protected DeviceController deviceController;
 	protected boolean needsPropagation;
 	protected Set<Trigger> triggers = new HashSet<>();
+	protected Object userData;
 
 	public CameraSecurity() {
 	}
@@ -29,6 +30,16 @@ public class CameraSecurity extends PlantItem implements Thing {
 	
 	public void setStatus(java.lang.String status) {
 		
+	}
+
+	@Override
+	public Object getUserData() {
+		return userData;
+	}
+
+	@Override
+	public void setUserData(Object data){
+		this.userData = data;
 	}
 
 	public Set<Part> getParts() {
