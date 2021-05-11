@@ -15,15 +15,10 @@ import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonReader;
 
+import br.com.anteros.client.mqttv3.*;
 import com.diozero.util.SleepUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import br.com.anteros.client.mqttv3.IMqttDeliveryToken;
-import br.com.anteros.client.mqttv3.MqttCallback;
-import br.com.anteros.client.mqttv3.MqttCallbackExtended;
-import br.com.anteros.client.mqttv3.MqttException;
-import br.com.anteros.client.mqttv3.MqttMessage;
-import br.com.anteros.client.mqttv3.MqttPersistenceException;
 import br.com.anteros.core.log.Logger;
 import br.com.anteros.core.log.LoggerProvider;
 import br.com.anteros.core.utils.StringUtils;
@@ -252,9 +247,8 @@ public abstract class AbstractDeviceController
 				try {
 					this.clientMqtt.reconnect();
 				} catch (MqttException e) {
-					Integer code = new Integer(e.getReasonCode());
-					if (code.equals(new Integer(32110)) || code.equals(new Integer(32102))) {
-						SleepUtil.sleepMillis(5000);
+					if (e.getReasonCode() == MqttException.REASON_CODE_CONNECT_IN_PROGRESS || e.getReasonCode() == MqttException.REASON_CODE_CLIENT_DISCONNECTING) {
+						SleepUtil.sleepMillis(2000);
 					} else {
 						e.printStackTrace();
 					}
@@ -332,14 +326,9 @@ public abstract class AbstractDeviceController
 				thing = part.getOwner();
 			}
 			LOG.info("Despachando ação para coisa " + thing + " parte " + part);
-			try {
-			this.dispatchAction(Action.of(thing, part, receivedPayload), null);
-			} catch (Exception e) {
-				if (clientMqtt != null && clientMqtt.isConnected()) {
-					MqttHelper.publishError(e, device.getThingID(), clientMqtt);
-				}
-				e.printStackTrace();
-			}
+
+			new Thread(new DispatcherAction(Action.of(thing, part, receivedPayload),null,clientMqtt.getServerURI(),clientMqtt.getOptions().getUserName(),
+					new String(clientMqtt.getOptions().getPassword()))).run();
 		}
 
 	}
@@ -348,6 +337,106 @@ public abstract class AbstractDeviceController
 
 	protected abstract Device doCreateDevice(String deviceName, IpAddress ipAddress, String description,
 			String topicError, Integer intervalPublishingTelemetry, String hostnameACL);
+
+
+
+	class DispatcherAction implements Runnable {
+
+		private final String userName;
+		private final String password;
+		private final String uri;
+		private Action action;
+		private String value;
+		private  AnterosMqttClient clientMqtt;
+
+		public DispatcherAction(Action action, String value, String uri, String userName, String password) {
+			this.action = action;
+			this.value = value;
+			this.userName = userName;
+			this.password = password;
+			this.uri = uri;
+		}
+
+		public void dispatchMessage(String topic, String message) {
+			if ((StringUtils.isNotEmpty(topic) || StringUtils.isNotEmpty(message))) {
+				try {
+					MqttMessage msg = new MqttMessage(message.getBytes());
+					msg.setQos(1);
+					this.clientMqtt.publish(topic, msg);
+					LOG.info("Publicando mensagem para " + topic);
+					LOG.info("Mensagem: " + message);
+				} catch (MqttPersistenceException e) {
+					e.printStackTrace();
+				} catch (MqttException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+
+		@Override
+		public void run() {
+			try {
+				if (action.getThing() != null) {
+					Actuator<?> actuator = actuators
+							.discoverActuatorToThing(action.getPart() != null ? action.getPart() : action.getThing());
+					if (actuator != null) {
+						if (action.canExecute()) {
+							try {
+								LOG.info("Executando ação " + action);
+								if (actuator instanceof Collector) {
+									((Collector) actuator).getListener();
+									actuator.executeAction(action.getReceivedPayload(),
+											action.getPart() != null ? action.getPart() : action.getThing());
+								} else {
+									actuator.executeAction(action.getReceivedPayload(),
+											action.getPart() != null ? action.getPart() : action.getThing());
+								}
+							} catch (Exception e) {
+								LOG.error("Ocorreu erro ao executar ação " + action);
+								JsonObject jsonMessage = Json.createObjectBuilder()
+										.add("thing",
+												action.getPart().getThingID() != null ? action.getPart().getThingID()
+														: action.getThing().getThingID())
+										.add("message", "" + e.getMessage()).build();
+								try {
+									LOG.error("Enviando mensagem de erro para " + device.getTopicError());
+									LOG.error("Mensagem de Erro: " + e.getMessage());
+									this.clientMqtt = MqttHelper.createMqttClient(uri,AnterosMqttClient.generateClientId(),userName, password,true,true);
+									this.clientMqtt.connect();
+									this.clientMqtt.publish(device.getTopicError(), jsonMessage.toString().getBytes(), 0,
+											false);
+								} catch (MqttException e1) {
+									LOG.error(e1.getMessage());
+								}
+							}
+						}
+					}
+				}
+
+				if ((StringUtils.isNotEmpty(action.getMessage()) || StringUtils.isNotEmpty(value))
+						&& (action.getTopics() != null)) {
+					if (this.clientMqtt==null){
+						this.clientMqtt = MqttHelper.createMqttClient(uri,AnterosMqttClient.generateClientId(),userName, password,true,true);
+						this.clientMqtt.connect();
+					}
+					for (String topic : action.getTopics()) {
+						this.dispatchMessage(topic, StringUtils.isNotEmpty(value) ? value : action.getMessage());
+					}
+				}
+			} catch (MqttSecurityException e) {
+				e.printStackTrace();
+			} catch (MqttException e) {
+				e.printStackTrace();
+			} finally {
+				if (clientMqtt != null) {
+					try {
+						clientMqtt.disconnect();
+					} catch (MqttException e) {
+					}
+				}
+			}
+		}
+	}
 
 	public void dispatchMessage(String topic, String message) {
 		if ((StringUtils.isNotEmpty(topic) || StringUtils.isNotEmpty(message))) {
@@ -366,49 +455,6 @@ public abstract class AbstractDeviceController
 		}
 	}
 
-	public void dispatchAction(Action action, String value) {
-		if (action.getThing() != null) {
-			Actuator<?> actuator = actuators
-					.discoverActuatorToThing(action.getPart() != null ? action.getPart() : action.getThing());
-			if (actuator != null) {
-				if (action.canExecute()) {
-					try {
-						LOG.info("Executando ação " + action);
-						if (actuator instanceof Collector) {
-							((Collector) actuator).getListener();
-							actuator.executeAction(action.getReceivedPayload(),
-									action.getPart() != null ? action.getPart() : action.getThing());
-						} else {
-							actuator.executeAction(action.getReceivedPayload(),
-									action.getPart() != null ? action.getPart() : action.getThing());
-						}
-					} catch (Exception e) {
-						LOG.error("Ocorreu erro ao executar ação " + action);
-						JsonObject jsonMessage = Json.createObjectBuilder()
-								.add("thing",
-										action.getPart().getThingID() != null ? action.getPart().getThingID()
-												: action.getThing().getThingID())
-								.add("message", "" + e.getMessage()).build();
-						try {
-							LOG.error("Enviando mensagem de erro para " + device.getTopicError());
-							LOG.error("Mensagem de Erro: " + e.getMessage());
-							this.clientMqtt.publish(device.getTopicError(), jsonMessage.toString().getBytes(), 0,
-									false);
-						} catch (MqttException e1) {
-							LOG.error(e1.getMessage());
-						}
-					}
-				}
-			}
-		}
-
-		if ((StringUtils.isNotEmpty(action.getMessage()) || StringUtils.isNotEmpty(value))
-				&& (action.getTopics() != null)) {
-			for (String topic : action.getTopics()) {
-				this.dispatchMessage(topic, StringUtils.isNotEmpty(value) ? value : action.getMessage());
-			}
-		}
-	}
 
 	public void loadConfiguration(DeviceNode itemNode, Plant plant) {
 		Place place = (Place) plant.getItemByName(itemNode.getItemNodeOwner().getItemName());
@@ -585,8 +631,8 @@ public abstract class AbstractDeviceController
 			try {
 				this.clientMqtt.reconnect();
 			} catch (MqttException e) {
-				if (new Integer(e.getReasonCode()).equals(new Integer(32110))) {
-					SleepUtil.sleepMillis(5000);
+				if (e.getReasonCode() == MqttException.REASON_CODE_CONNECT_IN_PROGRESS || e.getReasonCode() == MqttException.REASON_CODE_CLIENT_DISCONNECTING) {
+					SleepUtil.sleepMillis(2000);
 				} else {
 					e.printStackTrace();
 				}
@@ -594,6 +640,7 @@ public abstract class AbstractDeviceController
 				ex.printStackTrace();
 			}
 		}
+
 		if (this.sendMsgServiceStarted && this.clientMqtt.isConnected()) {
 			LOG.info("Enviando notificação sobre serviço iniciado.");
 			String msg = "{\"status\":\"running\", \"message\": \"Serviço iniciado com sucesso!\"}";

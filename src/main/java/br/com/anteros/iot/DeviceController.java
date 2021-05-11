@@ -25,11 +25,9 @@ public interface DeviceController extends ThingController {
 	public void setServiceListener(AnterosIOTServiceListener listener);
 	
 	public AnterosIOTServiceListener getServiceListener();
-	
-	public void dispatchAction(Action action, String value);
 
 	public void dispatchMessage(String topic, String message);
-	
+
 	public void publishError(Exception ex, String deviceName) throws MqttPersistenceException, MqttException;		
 	
 	public void publishBoot(String deviceName) throws MqttPersistenceException, MqttException;

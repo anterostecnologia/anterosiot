@@ -115,8 +115,8 @@ public class VehicleEntranceTriggerCollector extends MqttCollector
 					try {
 						this.AnterosMqttClient.reconnect();
 					} catch (MqttException e) {
-						if (new Integer(e.getReasonCode()).equals(new Integer(32110))) {
-							SleepUtil.sleepMillis(5000);
+						if (e.getReasonCode() == MqttException.REASON_CODE_CONNECT_IN_PROGRESS || e.getReasonCode() == MqttException.REASON_CODE_CLIENT_DISCONNECTING) {
+							SleepUtil.sleepMillis(2000);
 						} else {
 							e.printStackTrace();
 						}

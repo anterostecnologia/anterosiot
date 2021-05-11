@@ -143,7 +143,7 @@ public class AnterosIOTConfiguration {
 
 			AnterosMqttClient clientMqtt = null;
 			try {
-				clientMqtt = MqttHelper.createMqttClient(broker, clientId, username, password, false, true);
+				clientMqtt = MqttHelper.createMqttClient(broker, clientId, username, password, true, true);
 			} catch (MqttException e1) {
 				serviceListener.onErrorConnectingMqttServer(e1.getMessage());
 				e1.printStackTrace();

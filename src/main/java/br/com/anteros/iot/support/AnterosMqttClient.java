@@ -2,11 +2,7 @@ package br.com.anteros.iot.support;
 
 import java.util.concurrent.ScheduledExecutorService;
 
-import br.com.anteros.client.mqttv3.MqttClient;
-import br.com.anteros.client.mqttv3.MqttClientPersistence;
-import br.com.anteros.client.mqttv3.MqttConnectOptions;
-import br.com.anteros.client.mqttv3.MqttException;
-import br.com.anteros.client.mqttv3.MqttSecurityException;
+import br.com.anteros.client.mqttv3.*;
 
 public class AnterosMqttClient extends MqttClient {
 	
@@ -52,7 +48,20 @@ public class AnterosMqttClient extends MqttClient {
 	public void setOptions(MqttConnectOptions options) {
 		this.options = options;
 	}
-	
-	
 
+	@Override
+	public void publish(String topic, MqttMessage message) throws MqttException {
+		if (!this.isConnected()){
+			this.reconnect();
+		}
+		super.publish(topic, message);
+	}
+
+	@Override
+	public void publish(String topic, byte[] payload, int qos, boolean retained) throws MqttException {
+		if (!this.isConnected()){
+			this.reconnect();
+		}
+		super.publish(topic, payload, qos, retained);
+	}
 }

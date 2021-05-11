@@ -178,7 +178,7 @@ public class AnterosIOTService implements Runnable, MqttCallback, MqttCallbackEx
 		LOG.info("Conectando servidor broker MQTT do device controller... " + broker);
 
 		try {
-			client = MqttHelper.createMqttClient(broker, clientId, username, password, false, true, this);
+			client = MqttHelper.createMqttClient(broker, clientId, username, password, true, true, this);
 			client.connect();
 		} catch (MqttException e1) {
 			String msg = "Ocorreu uma falha ao criar um cliente mqtt. O Sistema não continuará a inicialização.";
@@ -233,8 +233,8 @@ public class AnterosIOTService implements Runnable, MqttCallback, MqttCallbackEx
 				try {
 					this.client.reconnect();
 				} catch (MqttException e) {
-					if (new Integer(e.getReasonCode()).equals(new Integer(32110))) {
-						SleepUtil.sleepMillis(5000);
+					if (e.getReasonCode() == MqttException.REASON_CODE_CONNECT_IN_PROGRESS || e.getReasonCode() == MqttException.REASON_CODE_CLIENT_DISCONNECTING) {
+						SleepUtil.sleepMillis(2000);
 					} else {
 						e.printStackTrace();
 					}

@@ -30,7 +30,7 @@ public class BarrierSensorReaderCollector extends MqttCollector implements Runna
 
 	protected Boolean running = false;
 	protected Thread thread;
-	private AnterosMqttClient AnterosMqttClient;
+	private AnterosMqttClient clientMqtt;
 
 	private boolean alreadyConnectedOnce = false;
 
@@ -38,14 +38,14 @@ public class BarrierSensorReaderCollector extends MqttCollector implements Runna
 	public void run() {
 		LOG.info("Iniciando coletor do Leitor de sensor de barreira");
 		while (running) {
-			if (this.AnterosMqttClient != null && this.AnterosMqttClient.isConnected()) {
+			if (this.clientMqtt != null && this.clientMqtt.isConnected()) {
 				SleepUtil.sleepMillis(200);
-			} else if (this.AnterosMqttClient != null && alreadyConnectedOnce ) {
+			} else if (this.clientMqtt != null && alreadyConnectedOnce ) {
 				try {
-					this.AnterosMqttClient.reconnect();
+					this.clientMqtt.reconnect();
 				} catch (MqttException e) {
-					if (new Integer(e.getReasonCode()).equals(new Integer(32110))) {
-						SleepUtil.sleepMillis(5000);
+					if (e.getReasonCode() == MqttException.REASON_CODE_CONNECT_IN_PROGRESS || e.getReasonCode() == MqttException.REASON_CODE_CLIENT_DISCONNECTING) {
+						SleepUtil.sleepMillis(2000);
 					} else {
 						e.printStackTrace();
 					}
@@ -56,7 +56,7 @@ public class BarrierSensorReaderCollector extends MqttCollector implements Runna
 
 	@Override
 	protected Collector setAnterosMqttClient(AnterosMqttClient client) {
-		this.AnterosMqttClient = client;
+		this.clientMqtt = client;
 		return this;
 	}
 
@@ -72,13 +72,13 @@ public class BarrierSensorReaderCollector extends MqttCollector implements Runna
 
 	@Override
 	public void stopCollect() {
-		if (AnterosMqttClient != null) {
+		if (clientMqtt != null) {
 			try {
-				if (this.AnterosMqttClient.isConnected()) {
-					this.AnterosMqttClient.disconnect();
+				if (this.clientMqtt.isConnected()) {
+					this.clientMqtt.disconnect();
 				}
 				SleepUtil.sleepMillis(500);
-				AnterosMqttClient.close();
+				clientMqtt.close();
 			} catch (Exception e) {
 				e.printStackTrace();
 			}			
@@ -104,7 +104,7 @@ public class BarrierSensorReaderCollector extends MqttCollector implements Runna
 			alreadyConnectedOnce = true;
 		}
 		try {
-			this.AnterosMqttClient.subscribe("/" + ((BarrierSensorReader) this.thing).getItemId() + "/data", 1);
+			this.clientMqtt.subscribe("/" + ((BarrierSensorReader) this.thing).getItemId() + "/data", 1);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -113,10 +113,10 @@ public class BarrierSensorReaderCollector extends MqttCollector implements Runna
 	@Override
 	public void connectionLost(Throwable cause) {
 		try {
-			this.AnterosMqttClient.reconnect();
+			this.clientMqtt.reconnect();
 		} catch (MqttException e) {
-			if (new Integer(e.getReasonCode()).equals(new Integer(32110))) {
-				SleepUtil.sleepMillis(5000);
+			if (e.getReasonCode() == MqttException.REASON_CODE_CONNECT_IN_PROGRESS || e.getReasonCode() == MqttException.REASON_CODE_CLIENT_DISCONNECTING) {
+				SleepUtil.sleepMillis(1000);
 			} else {
 				e.printStackTrace();
 			}
