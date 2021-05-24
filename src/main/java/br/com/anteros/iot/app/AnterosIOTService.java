@@ -161,6 +161,10 @@ public class AnterosIOTService implements Runnable, MqttCallback, MqttCallbackEx
 
 	public void stop(){
 		running.set(false);
+		if (deviceController != null) {
+			serviceListener.onStopDeviceController();
+			deviceController.stop();
+		}
 	}
 
 	@Override
@@ -243,6 +247,8 @@ public class AnterosIOTService implements Runnable, MqttCallback, MqttCallbackEx
 
 			SleepUtil.sleepMillis(15000);
 		}
+
+
 
 	}
 

@@ -44,6 +44,7 @@ public class SimpleCollectorManager implements CollectorManager, CollectorListen
 		this.AnterosMqttClient = clientMqtt;
 		this.thread = new Thread(this);
 		thread.setName("Coletor de dados");
+		thread.setPriority(Thread.MAX_PRIORITY);
 		this.things = things;
 		this.actuators = actuators;
 		this.device = device;
@@ -73,6 +74,11 @@ public class SimpleCollectorManager implements CollectorManager, CollectorListen
 		if (paused) {
 			this.paused = false;
 		}
+	}
+
+	@Override
+	public boolean isRunning() {
+		return running;
 	}
 
 	public static SimpleCollectorManager of(AnterosMqttClient clientMqtt, Thing[] things, Actuators actuators, Device device,
@@ -181,7 +187,7 @@ public class SimpleCollectorManager implements CollectorManager, CollectorListen
 						if (AnterosMqttClient.isConnected()) {
 							AnterosMqttClient.publish(topic, message);
 							if (thing.showLog()) {
-								LOG.info("Coletado dado da coisa " + thing.getThingID() + " e enviado para o tópico " + topic+" => Value "+jsonMessage.toString());
+								LOG.info("Coletou dados da coisa " + thing.getThingID() + " e enviou para o tópico " + topic+" => Value "+jsonMessage.toString());
 							}
 						}
 					} catch (Exception e) {

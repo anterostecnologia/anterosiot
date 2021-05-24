@@ -125,12 +125,7 @@ public class MasterControllerRPi extends AbstractDeviceController implements Mas
 	}	
 
 	public void deliveryComplete(IMqttDeliveryToken token) {
-		try {
-			LOG.debug(
-					"Delivery token \"" + token.hashCode() + "\" received by instance \"" + getThingID() + "\"");
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+
 	}
 
 	@Override

@@ -11,5 +11,7 @@ public interface CollectorManager extends MqttCallback, Runnable {
 	public void stop();
 	
 	public void resume();
+
+	public boolean isRunning();
 	
 }

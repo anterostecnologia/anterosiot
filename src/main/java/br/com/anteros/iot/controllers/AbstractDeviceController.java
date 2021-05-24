@@ -3,13 +3,9 @@ package br.com.anteros.iot.controllers;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.time.Duration;
+import java.time.Instant;
+import java.util.*;
 
 import javax.json.Json;
 import javax.json.JsonObject;
@@ -64,6 +60,7 @@ public abstract class AbstractDeviceController
 	private boolean alreadyConnectedOnce = false;
 
 	private static final Logger LOG = LoggerProvider.getInstance().getLogger(AbstractDeviceController.class.getName());
+	private SimpleCollectorManager collectorManager;
 
 	public AbstractDeviceController() {
 
@@ -141,6 +138,7 @@ public abstract class AbstractDeviceController
 		this.sendMsgServiceStarted = false;
 		if (running) {
 			this.beforeStop();
+			stopCollectoresAndMqtt(collectorManager);
 			this.running = false;
 		}
 
@@ -223,7 +221,7 @@ public abstract class AbstractDeviceController
 		serviceListener.onStartCollectors(this);
 
 		LOG.info("Criando coletores de dados...");
-		CollectorManager collectorManager = SimpleCollectorManager.of(clientMqtt, things.toArray(new Thing[] {}),
+		collectorManager = SimpleCollectorManager.of(clientMqtt, things.toArray(new Thing[] {}),
 				actuators, device, username, password);
 		collectorManager.start();
 
@@ -256,23 +254,28 @@ public abstract class AbstractDeviceController
 			}
 		}
 
-		serviceListener.onStopCollectors(this);
-		LOG.info("Parando Coletores de dados...");
-		collectorManager.stop();
+		stopCollectoresAndMqtt(collectorManager);
 
-		LOG.info("Parando device controller " + this.getThingID());
+	}
 
-		try {
-			unSubscribe();
-			if (clientMqtt.isConnected()) {
-				clientMqtt.disconnect();
+	private void stopCollectoresAndMqtt(CollectorManager collectorManager) {
+		if (collectorManager.isRunning()) {
+			serviceListener.onStopCollectors(this);
+			LOG.info("Parando Coletores de dados...");
+			collectorManager.stop();
+
+			LOG.info("Parando device controller " + this.getThingID());
+
+			try {
+				unSubscribe();
+				if (clientMqtt.isConnected()) {
+					clientMqtt.disconnect();
+				}
+			} catch (MqttException e) {
+				LOG.error("Ocorreu uma falha ao deconectar: " + e.getMessage());
+				e.printStackTrace();
 			}
-		} catch (MqttException e) {
-			LOG.error("Ocorreu uma falha ao deconectar: " + e.getMessage());
-			e.printStackTrace();
 		}
-
-		this.thread.interrupt();
 	}
 
 	@Override
@@ -297,6 +300,8 @@ public abstract class AbstractDeviceController
 	}
 
 	public void messageArrived(String topic, MqttMessage message) throws Exception {
+
+		LOG.info("Recebeu mensagem device controller "+new String(message.getPayload()));
 
 		byte[] payload = message.getPayload();
 		JsonObject receivedPayload = null;
@@ -327,8 +332,11 @@ public abstract class AbstractDeviceController
 			}
 			LOG.info("Despachando ação para coisa " + thing + " parte " + part);
 
-			new Thread(new DispatcherAction(Action.of(thing, part, receivedPayload),null,clientMqtt.getServerURI(),clientMqtt.getOptions().getUserName(),
-					new String(clientMqtt.getOptions().getPassword()))).run();
+			Thread thread = new Thread(new DispatcherAction(Action.of(thing, part, receivedPayload), null, clientMqtt.getServerURI(), clientMqtt.getOptions().getUserName(),
+					new String(clientMqtt.getOptions().getPassword())));
+			thread.setName("Atuador coisa "+thing.getThingID());
+			thread.setPriority(Thread.MAX_PRIORITY);
+			thread.run();
 		}
 
 	}
@@ -375,9 +383,11 @@ public abstract class AbstractDeviceController
 
 		@Override
 		public void run() {
+			Instant start = Instant.now();
+			Actuator<?> actuator=null;
 			try {
 				if (action.getThing() != null) {
-					Actuator<?> actuator = actuators
+					actuator = actuators
 							.discoverActuatorToThing(action.getPart() != null ? action.getPart() : action.getThing());
 					if (actuator != null) {
 						if (action.canExecute()) {
@@ -428,6 +438,12 @@ public abstract class AbstractDeviceController
 			} catch (MqttException e) {
 				e.printStackTrace();
 			} finally {
+				Instant finish = Instant.now();
+				float timeElapsed = Duration.between(start, finish).toMillis() / 1000F;
+				if (actuator!=null) {
+					LOG.info("Executou ACAO " + (action.getAction()==null?"<NÃO INFORMADA>":action.getAction()) + " no atuador " + actuator.getClass().getSimpleName()+" inicio em "+start+" fim "+finish+" tempo "+timeElapsed+" segundos.");
+				}
+
 				if (clientMqtt != null) {
 					try {
 						clientMqtt.disconnect();

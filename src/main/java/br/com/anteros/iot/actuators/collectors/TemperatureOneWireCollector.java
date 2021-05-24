@@ -41,7 +41,7 @@ public class TemperatureOneWireCollector extends Collector implements Runnable {
 		if (thing instanceof TemperatureSensorOneWire) {
 			this.running = true;
 			thread = new Thread(this);
-			thread.setName("Coletor temperature one wire");
+			thread.setName("Coletor temperatura one wire");
 			thread.start();
 		}
 	}
