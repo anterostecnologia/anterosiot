@@ -336,7 +336,7 @@ public abstract class AbstractDeviceController
 					new String(clientMqtt.getOptions().getPassword())));
 			thread.setName("Atuador coisa "+thing.getThingID());
 			thread.setPriority(Thread.MAX_PRIORITY);
-			thread.run();
+			thread.start();
 		}
 
 	}
