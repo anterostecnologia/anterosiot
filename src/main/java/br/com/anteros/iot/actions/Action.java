@@ -12,13 +12,14 @@ public class Action {
 	private Thing thing;
 	private Part part;
 	private String action;
+	private String event;
 	private String message;
 	private String[] topics;
 	private JsonObject receivedPayload;
 	private ExecutionCondition executionCondition;
 
 	public Action(Thing thing, Part part, String action, String message, String[] topics, JsonObject receivedPayload,
-			ExecutionCondition executionCondition) {
+			ExecutionCondition executionCondition, String event) {
 		this.thing = thing;
 		this.part = part;
 		this.action = action;
@@ -26,6 +27,7 @@ public class Action {
 		this.topics = topics;
 		this.receivedPayload = receivedPayload;
 		this.executionCondition = executionCondition;
+		this.event = event;
 		configExecutionCondition();
 	}
 
@@ -43,12 +45,20 @@ public class Action {
 	}
 
 	public static Action of(Thing thing, Part part, String action, String message, String[] topics,
-			ExecutionCondition executionCondition) {
-		return new Action(thing, part, action, message, topics, null, executionCondition);
+			ExecutionCondition executionCondition, String event) {
+		return new Action(thing, part, action, message, topics, null, executionCondition, event);
 	}
 
-	public static Action of(Thing thing, Part part, JsonObject recivedPayload) {
-		return new Action(thing, part, null, null, null, recivedPayload, null);
+	public static Action of(Thing thing, Part part, JsonObject recivedPayload, String event) {
+		return new Action(thing, part, null, null, null, recivedPayload, null, event);
+	}
+
+	public String getEvent() {
+		return event;
+	}
+
+	public void setEvent(String event) {
+		this.event = event;
 	}
 
 	public Thing getThing() {
@@ -101,8 +111,16 @@ public class Action {
 
 	@Override
 	public String toString() {
-		return "Action [thing=" + thing + ", part=" + part + ", action=" + action + ", message=" + message + ", topics="
-				+ Arrays.toString(topics) + ", receivedPayload=" + receivedPayload + "]";
+		return "Action{" +
+				"thing=" + thing +
+				", part=" + part +
+				", action='" + action + '\'' +
+				", event='" + event + '\'' +
+				", message='" + message + '\'' +
+				", topics=" + Arrays.toString(topics) +
+				", receivedPayload=" + receivedPayload +
+				", executionCondition=" + executionCondition +
+				'}';
 	}
 
 	public ExecutionCondition getExecutionCondition() {
@@ -124,8 +142,6 @@ public class Action {
 			return false;
 		}
 
-		// Does comparison according with condition
-
 		if (executionCondition.getCondition().equals(Condition.EQUAL)) {
 			if (value.equalsIgnoreCase(executionCondition.getValue())) {
 				return true;
@@ -144,7 +160,6 @@ public class Action {
 	}
 
 	private String getConditionValue() {
-		// Get target's value of comparison
 		if (executionCondition.getTarget().equals(Target.STATUS)) {
 			return thing.getStatus();
 		}

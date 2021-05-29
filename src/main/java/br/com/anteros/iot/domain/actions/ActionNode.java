@@ -11,28 +11,39 @@ public class ActionNode extends PlantItemNode {
 	private ThingNode thing;
 	private PartNode part;
 	private String action;
+	private String event;
 	private String message;
 	private String[] topics;
 	private ExecutionCondition executionCondition;
 	
-	public ActionNode(ThingNode thing, PartNode part, String action, String message, String[] topics) {
+	public ActionNode(ThingNode thing, PartNode part, String action, String message, String[] topics, String event) {
 		super();
 		this.thing = thing;
 		this.part = part;
 		this.action = action;
 		this.message = message;
 		this.topics = topics;
+		this.event = event;
 	}
 	
-	public ActionNode(ThingNode thing, PartNode part, String action) {
+	public ActionNode(ThingNode thing, PartNode part, String action, String event) {
 		super();
 		this.thing = thing;
 		this.part = part;
 		this.action = action;
+		this.event = event;
 	}
 	
 	public ActionNode() {
 		
+	}
+
+	public String getEvent() {
+		return event;
+	}
+
+	public void setEvent(String event) {
+		this.event = event;
 	}
 
 	public ThingNode getThing() {

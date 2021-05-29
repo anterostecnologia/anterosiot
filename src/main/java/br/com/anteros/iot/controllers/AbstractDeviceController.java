@@ -332,7 +332,7 @@ public abstract class AbstractDeviceController
 			}
 			LOG.info("Despachando ação para coisa " + thing + " parte " + part);
 
-			Thread thread = new Thread(new DispatcherAction(Action.of(thing, part, receivedPayload), null, clientMqtt.getServerURI(), clientMqtt.getOptions().getUserName(),
+			Thread thread = new Thread(new DispatcherAction(Action.of(thing, part, receivedPayload,null), null, clientMqtt.getServerURI(), clientMqtt.getOptions().getUserName(),
 					new String(clientMqtt.getOptions().getPassword())));
 			thread.setName("Atuador coisa "+thing.getThingID());
 			thread.setPriority(Thread.MAX_PRIORITY);

@@ -259,7 +259,7 @@ public class AnterosIOTConfiguration {
 
 							targetActions
 									.add(Action.of(targetActionThing, targetActionPart, targetActionNode.getAction(),
-											targetActionNode.getMessage(), targetActionNode.getTopics(), targetActionNode.getExecutionCondition()));
+											targetActionNode.getMessage(), targetActionNode.getTopics(), targetActionNode.getExecutionCondition(), targetActionNode.getEvent()));
 
 						}
 						LOG.info("Criando ações exceção da trigger...");
@@ -278,7 +278,7 @@ public class AnterosIOTConfiguration {
 							exceptionActions.add(Action.of(exceptionActionThing, exceptionActionPart,
 									exceptionAction.getAction(),
 									exceptionAction.getMessage(),
-									exceptionAction.getTopics(), exceptionAction.getExecutionCondition()));
+									exceptionAction.getTopics(), exceptionAction.getExecutionCondition(), exceptionAction.getEvent()));
 							}
 						}
 

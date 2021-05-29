@@ -79,6 +79,7 @@ public class Trigger {
 		JsonObjectBuilder builder = Json.createObjectBuilder();
 
 		builder.add("action", action.getAction());
+		builder.add("event", action.getEvent());
 		builder.add("executionCondition",
 				Json.createObjectBuilder().add("condition", action.getExecutionCondition().getCondition().toString())
 						.add("value", action.getExecutionCondition().getValue())
