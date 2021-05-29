@@ -5,6 +5,8 @@ import java.util.Map;
 
 import javax.json.JsonObject;
 
+import br.com.anteros.iot.IOTContext;
+import br.com.anteros.iot.StatusListener;
 import com.pi4j.io.gpio.GpioController;
 import com.pi4j.io.gpio.GpioPinDigitalOutput;
 
@@ -31,8 +33,11 @@ public class LedActuator implements Actuator<Boolean> {
 		return thing instanceof Semaphore;
 	}
 
-	public Boolean executeAction(JsonObject recivedPayload, Thing thing) {
-		String action = recivedPayload.getString("action");
+	public Boolean executeAction(IOTContext context) {
+		JsonObject receivedPayload = context.getReceivedPayload();
+		Thing thing = context.getThing();
+		StatusListener listener = context.getListener();
+		String action = receivedPayload.getString("action");
 		if (thing instanceof LedSemaphore || thing instanceof Led) {
 			if (action.equals(ON)) {
 				GpioController gpio = Pi4JHelper.getGpioController();

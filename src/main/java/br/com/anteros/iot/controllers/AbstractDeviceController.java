@@ -12,20 +12,13 @@ import javax.json.JsonObject;
 import javax.json.JsonReader;
 
 import br.com.anteros.client.mqttv3.*;
+import br.com.anteros.iot.*;
 import com.diozero.util.SleepUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import br.com.anteros.core.log.Logger;
 import br.com.anteros.core.log.LoggerProvider;
 import br.com.anteros.core.utils.StringUtils;
-import br.com.anteros.iot.Actuator;
-import br.com.anteros.iot.Actuators;
-import br.com.anteros.iot.Collector;
-import br.com.anteros.iot.Device;
-import br.com.anteros.iot.DeviceController;
-import br.com.anteros.iot.DeviceStatus;
-import br.com.anteros.iot.Part;
-import br.com.anteros.iot.Thing;
 import br.com.anteros.iot.actions.Action;
 import br.com.anteros.iot.actuators.collectors.CollectorManager;
 import br.com.anteros.iot.actuators.collectors.SimpleCollectorManager;
@@ -40,7 +33,7 @@ import br.com.anteros.iot.support.MqttHelper;
 import br.com.anteros.iot.things.devices.IpAddress;
 
 public abstract class AbstractDeviceController
-		implements DeviceController, MqttCallback, MqttCallbackExtended, Runnable {
+		implements DeviceController, MqttCallback, MqttCallbackExtended, Runnable, StatusListener {
 
 	private PlantItemNode node;
 	protected Device device;
@@ -346,6 +339,22 @@ public abstract class AbstractDeviceController
 	protected abstract Device doCreateDevice(String deviceName, IpAddress ipAddress, String description,
 			String topicError, Integer intervalPublishingTelemetry, String hostnameACL);
 
+	@Override
+	public void onStatusChanged(Thing thing) {
+		if (thing instanceof PlantItem) {
+			String topic = ((PlantItem) thing).getPath() + "/status";
+			LOG.info("Enviando notificação sobre serviço iniciado.");
+			String msg = "{\"status\":\""+thing.getStatus()+"\"}";
+			MqttMessage message = new MqttMessage(msg.getBytes());
+			try {
+				this.clientMqtt.publish(topic, message);
+			} catch (MqttPersistenceException e1) {
+				e1.printStackTrace();
+			} catch (MqttException e1) {
+				e1.printStackTrace();
+			}
+		}
+	}
 
 
 	class DispatcherAction implements Runnable {
@@ -395,11 +404,13 @@ public abstract class AbstractDeviceController
 								LOG.info("Executando ação " + action);
 								if (actuator instanceof Collector) {
 									((Collector) actuator).getListener();
-									actuator.executeAction(action.getReceivedPayload(),
-											action.getPart() != null ? action.getPart() : action.getThing());
+									actuator.executeAction(IOTContext.of(action.getReceivedPayload(),
+											action.getPart() != null ? action.getPart() : action.getThing(),
+											AbstractDeviceController.this));
 								} else {
-									actuator.executeAction(action.getReceivedPayload(),
-											action.getPart() != null ? action.getPart() : action.getThing());
+									actuator.executeAction(IOTContext.of(action.getReceivedPayload(),
+											action.getPart() != null ? action.getPart() : action.getThing(),
+											AbstractDeviceController.this));
 								}
 							} catch (Exception e) {
 								LOG.error("Ocorreu erro ao executar ação " + action);

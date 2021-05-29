@@ -5,6 +5,8 @@ import java.util.Map;
 
 import javax.json.JsonObject;
 
+import br.com.anteros.iot.IOTContext;
+import br.com.anteros.iot.StatusListener;
 import com.diozero.util.SleepUtil;
 import com.diozero.ws281xj.LedDriverInterface;
 import com.diozero.ws281xj.PixelAnimations;
@@ -35,8 +37,11 @@ public class RingStripLED12Actuator implements Actuator<Boolean> {
 	}
 
 	@Override
-	public Boolean executeAction(JsonObject recivedPayload, Thing thing) {
-		String action = recivedPayload.getString("action");
+	public Boolean executeAction(IOTContext context) {
+		JsonObject receivedPayload = context.getReceivedPayload();
+		Thing thing = context.getThing();
+		StatusListener listener = context.getListener();
+		String action = receivedPayload.getString("action");
 		if (action.equals(ON)) {
 			if (thread != null)
 				thread.interrupt();

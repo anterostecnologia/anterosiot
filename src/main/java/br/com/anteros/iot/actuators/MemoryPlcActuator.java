@@ -4,6 +4,8 @@ import java.util.Properties;
 
 import javax.json.JsonObject;
 
+import br.com.anteros.iot.IOTContext;
+import br.com.anteros.iot.StatusListener;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -32,8 +34,11 @@ public class MemoryPlcActuator implements Actuator<Boolean> {
 	}
 
 	@Override
-	public Boolean executeAction(JsonObject recivedPayload, Thing thing) {
-		String action = recivedPayload.get("action").toString();
+	public Boolean executeAction(IOTContext context) {
+		JsonObject receivedPayload = context.getReceivedPayload();
+		Thing thing = context.getThing();
+		StatusListener listener = context.getListener();
+		String action = receivedPayload.get("action").toString();
 		MemoryPlc memory = (MemoryPlc) thing;
 
 		if (memory.getModifyType().equals(ModifyType.READ)) {

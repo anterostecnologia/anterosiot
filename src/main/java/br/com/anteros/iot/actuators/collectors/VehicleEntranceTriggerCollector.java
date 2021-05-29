@@ -12,6 +12,7 @@ import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonReader;
 
+import br.com.anteros.iot.*;
 import com.diozero.util.SleepUtil;
 
 import br.com.anteros.client.mqttv3.IMqttDeliveryToken;
@@ -22,9 +23,6 @@ import br.com.anteros.client.mqttv3.MqttMessage;
 import br.com.anteros.core.log.Logger;
 import br.com.anteros.core.log.LoggerProvider;
 import br.com.anteros.core.utils.Assert;
-import br.com.anteros.iot.Actuator;
-import br.com.anteros.iot.Collector;
-import br.com.anteros.iot.Thing;
 import br.com.anteros.iot.support.AnterosMqttClient;
 import br.com.anteros.iot.things.VehicleEntranceTrigger;
 import br.com.anteros.iot.triggers.ShotMoment;
@@ -219,7 +217,10 @@ public class VehicleEntranceTriggerCollector extends MqttCollector
 	}
 
 	@Override
-	public Boolean executeAction(JsonObject receivedPayload, Thing thing) {
+	public Boolean executeAction(IOTContext context) {
+		JsonObject receivedPayload = context.getReceivedPayload();
+		Thing thing = context.getThing();
+		StatusListener listener = context.getListener();
 		String action = receivedPayload.getString("action");
 		MqttMessage messageMQTT = null;
 		BlockingQueue<MqttMessage> queue = VehicleEntranceTriggerCollector.mapMqttMessage.get(thing);

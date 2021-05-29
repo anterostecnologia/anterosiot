@@ -5,6 +5,8 @@ import java.util.Map;
 
 import javax.json.JsonObject;
 
+import br.com.anteros.iot.IOTContext;
+import br.com.anteros.iot.StatusListener;
 import com.diozero.util.SleepUtil;
 import com.pi4j.io.gpio.GpioController;
 import com.pi4j.io.gpio.GpioPinDigitalOutput;
@@ -27,8 +29,11 @@ public class MagneticLockActuator implements Actuator<Boolean> {
 	}
 
 	@Override
-	public Boolean executeAction(JsonObject recivedPayload, Thing thing) {
-		String action = recivedPayload.getString("action");
+	public Boolean executeAction(IOTContext context) {
+		JsonObject receivedPayload = context.getReceivedPayload();
+		Thing thing = context.getThing();
+		StatusListener listener = context.getListener();
+		String action = receivedPayload.getString("action");
 		if (thing instanceof MagneticLock) {
 			if (action.equals(OPEN)) {
 				GpioController gpio = Pi4JHelper.getGpioController();
