@@ -17,7 +17,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import com.diozero.util.SleepUtil;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -162,6 +161,13 @@ public class AnterosIOTService implements Runnable, MqttCallback, MqttCallbackEx
 	public void stop(){
 		running.set(false);
 		if (deviceController != null) {
+			if (this.client != null) {
+				try {
+					this.client.disconnect();
+				} catch (MqttException e) {
+				}
+				this.client = null;
+			}
 			serviceListener.onStopDeviceController();
 			deviceController.stop();
 		}
@@ -171,17 +177,16 @@ public class AnterosIOTService implements Runnable, MqttCallback, MqttCallbackEx
 	public void run() {
 
 		running.set(true);
-		LOG.debug("Iniciando Anteros IOT Service...");
-
-		serviceListener.onConnectingMqttServer();
-
-		String broker = "tcp://" + hostMqtt + ":" + (port == null ? 1883 : port);
-		String clientId = deviceName.split("-")[0];
-		actionsTopic = "/" + deviceName;
-
-		LOG.info("Conectando servidor broker MQTT do device controller... " + broker);
-
 		try {
+			LOG.debug("Iniciando Anteros IOT Service...");
+
+			serviceListener.onConnectingMqttServer();
+
+			String broker = "tcp://" + hostMqtt + ":" + (port == null ? 1883 : port);
+			String clientId = deviceName.split("-")[0];
+			actionsTopic = "/" + deviceName;
+
+			LOG.info("Conectando servidor broker MQTT do device controller... " + broker);
 			client = MqttHelper.createMqttClient(broker, clientId, username, password, true, true, this);
 			client.connect();
 		} catch (MqttException e1) {
@@ -190,9 +195,8 @@ public class AnterosIOTService implements Runnable, MqttCallback, MqttCallbackEx
 			serviceListener.onErrorConnectingMqttServer(msg);
 			e1.printStackTrace();
 		}
-
 		try {
-			startService();
+			startController();
 			LOG.debug("Serviço inicializado. Device running = " + deviceController.getRunning());
 		} catch (Exception e1) {
 			if (client.isConnected()) {
@@ -252,8 +256,14 @@ public class AnterosIOTService implements Runnable, MqttCallback, MqttCallbackEx
 
 	}
 
-	private void startService() throws JsonParseException, JsonMappingException, IOException {
+	private void stopController(){
+		serviceListener.onStopDeviceController();
+		if (deviceController != null)
+			deviceController.stop();
+		SleepUtil.sleepMillis(5000);
+	}
 
+	private void startController() throws JsonParseException, JsonMappingException, IOException {
 		if ((fileConfig != null || streamConfig != null)) {
 			LOG.info("Lendo configuração e criando device controller...");
 			if (mapper == null) {
@@ -423,12 +433,10 @@ public class AnterosIOTService implements Runnable, MqttCallback, MqttCallbackEx
 					this.fileConfig = newConfigFile;
 				}
 
-				serviceListener.onStopDeviceController();
-				if (deviceController != null)
-					deviceController.stop();
-				SleepUtil.sleepMillis(1000);
+				stopController();
+
 				try {
-					startService();
+					startController();
 					MqttMessage msg = new MqttMessage();
 					msg.setQos(1);
 					if (streamConfig != null) {
@@ -460,7 +468,7 @@ public class AnterosIOTService implements Runnable, MqttCallback, MqttCallbackEx
 				deviceController.stop();
 				SleepUtil.sleepMillis(5000);
 				try {
-					startService();
+					startController();
 				} catch (Exception e) {
 					String payload = "{\"status\": \"error\",\"message\": \"" + e.getMessage() + "\"}";
 					MqttMessage msg = new MqttMessage(payload.getBytes());
