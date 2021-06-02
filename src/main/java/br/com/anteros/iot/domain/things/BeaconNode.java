@@ -89,7 +89,12 @@ public class BeaconNode extends ControllerNode implements Configurable {
 
 		return null;
 	}
-	
+
+	@Override
+	public String getThingType() {
+		return DomainConstants.BEACON;
+	}
+
 	public BeaconNode() {
 		super();
 	}

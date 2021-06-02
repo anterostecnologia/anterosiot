@@ -10,6 +10,7 @@ import br.com.anteros.iot.DeviceController;
 import br.com.anteros.iot.Part;
 import br.com.anteros.iot.Thing;
 import br.com.anteros.iot.actuators.collectors.CollectResult;
+import br.com.anteros.iot.domain.DomainConstants;
 import br.com.anteros.iot.domain.PlantItemNode;
 import br.com.anteros.iot.domain.things.CameraQRCodeReaderNode;
 import br.com.anteros.iot.plant.PlantItem;
@@ -56,6 +57,11 @@ public class CameraQRCodeReader extends PlantItem implements Thing, Publishable 
 	@Override
 	public void setUserData(Object data){
 		this.userData = data;
+	}
+
+	@Override
+	public String getThingType() {
+		return DomainConstants.CAMERA_QR_CODE;
 	}
 
 	public Set<Part> getParts() {

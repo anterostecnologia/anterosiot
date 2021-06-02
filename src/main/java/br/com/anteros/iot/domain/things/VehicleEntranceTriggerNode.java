@@ -112,6 +112,11 @@ public class VehicleEntranceTriggerNode extends ControllerNode implements Config
 
 	}
 
+	@Override
+	public String getThingType() {
+		return DomainConstants.GATE_TRIGGER;
+	}
+
 	public String[] getTopics() {
 		return topics;
 	}

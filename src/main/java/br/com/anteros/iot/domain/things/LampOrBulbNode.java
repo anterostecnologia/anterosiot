@@ -35,6 +35,11 @@ public class LampOrBulbNode extends ThingNode {
 		return mapper.writeValueAsString(node);
 	}
 
+	@Override
+	public String getThingType() {
+		return DomainConstants.LAMP;
+	}
+
 	public int getPin() {
 		return pin;
 	}

@@ -20,7 +20,12 @@ public class CameraMotionDetectorNode extends ThingNode {
 	public String parseConfig(ObjectMapper mapper, PlantItemNode node) throws JsonProcessingException {
 		return mapper.writeValueAsString(node);
 	}
-	
+
+	@Override
+	public String getThingType() {
+		return DomainConstants.CAMERA_MOTION_DETECTOR;
+	}
+
 	public CameraMotionDetectorNode() {
 		super();
 	}

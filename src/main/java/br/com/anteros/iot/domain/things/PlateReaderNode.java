@@ -29,5 +29,10 @@ public class PlateReaderNode extends ThingNode {
 		return mapper.writeValueAsString(node);
 	}
 
+	@Override
+	public String getThingType() {
+		return DomainConstants.PLATE_READER;
+	}
+
 
 }

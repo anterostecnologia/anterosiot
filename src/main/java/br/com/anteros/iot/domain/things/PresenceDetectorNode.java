@@ -52,5 +52,10 @@ public class PresenceDetectorNode extends ThingNode {
 		return mapper.writeValueAsString(node);
 	}
 
+	@Override
+	public String getThingType() {
+		return DomainConstants.PRESENCE_DETECTOR;
+	}
+
 
 }

@@ -89,7 +89,12 @@ public class BarrierSensorReaderNode extends ControllerNode implements Configura
 
 		return null;
 	}
-	
+
+	@Override
+	public String getThingType() {
+		return DomainConstants.BARRIER_SENSOR_READER;
+	}
+
 	public BarrierSensorReaderNode() {
 		super();
 	}

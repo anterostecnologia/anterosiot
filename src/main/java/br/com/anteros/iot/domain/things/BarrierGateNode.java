@@ -30,6 +30,11 @@ public class BarrierGateNode extends ThingNode {
 		return mapper.writeValueAsString(node);
 	}
 
+	@Override
+	public String getThingType() {
+		return DomainConstants.BARRIER_GATE;
+	}
+
 	public int getPin() {
 		return pin;
 	}

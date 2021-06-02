@@ -48,6 +48,8 @@ public interface Thing {
 
 	public void setUserData(Object data);
 
+	public String getThingType();
+
 	default public boolean hasTriggers(ShotMoment type, String actionOrValue) {
 		for (Trigger trigger : getTriggers()) {
 			if (StringUtils.isEmpty(trigger.getWhenCondition().getActionOrValue())

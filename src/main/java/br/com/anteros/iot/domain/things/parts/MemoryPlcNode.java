@@ -41,6 +41,11 @@ public class MemoryPlcNode extends PartNode {
 		return mapper.writeValueAsString(node);
 	}
 
+	@Override
+	public String getThingType() {
+		return DomainConstants.MEMORY_PLC;
+	}
+
 	public MemoryPlcNode() {
 		super();
 	}

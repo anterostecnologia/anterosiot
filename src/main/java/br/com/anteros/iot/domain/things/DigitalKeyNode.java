@@ -115,6 +115,11 @@ public class DigitalKeyNode extends ControllerNode implements Configurable {
 
 	}
 
+	@Override
+	public String getThingType() {
+		return DomainConstants.DIGITAL_KEY;
+	}
+
 	public String[] getTopics() {
 		return topics;
 	}

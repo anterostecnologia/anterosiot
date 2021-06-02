@@ -10,7 +10,7 @@ import br.com.anteros.iot.domain.PlantItemNode;
 import br.com.anteros.iot.domain.ThingNode;
 import br.com.anteros.iot.things.LampSonoff;
 
-@JsonTypeName(DomainConstants.LAMP)
+@JsonTypeName(DomainConstants.LAMP_SONOFF)
 public class LampSonoffNode extends ThingNode {
 
 	private String topic;
@@ -38,6 +38,11 @@ public class LampSonoffNode extends ThingNode {
 	@Override
 	public String parseConfig(ObjectMapper mapper, PlantItemNode node) throws JsonProcessingException {
 		return mapper.writeValueAsString(node);
+	}
+
+	@Override
+	public String getThingType() {
+		return DomainConstants.LAMP_SONOFF;
 	}
 
 	public String getTopic() {

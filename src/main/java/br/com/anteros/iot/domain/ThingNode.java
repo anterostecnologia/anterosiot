@@ -83,5 +83,7 @@ public abstract class ThingNode extends PlantItemNode {
 		return null;
 	}
 
+	public abstract String getThingType();
+
 
 }

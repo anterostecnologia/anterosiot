@@ -10,6 +10,7 @@ import br.com.anteros.iot.DeviceController;
 import br.com.anteros.iot.Part;
 import br.com.anteros.iot.Thing;
 import br.com.anteros.iot.controllers.AbstractDeviceController;
+import br.com.anteros.iot.domain.DomainConstants;
 import br.com.anteros.iot.domain.PlantItemNode;
 import br.com.anteros.iot.plant.PlantItem;
 import br.com.anteros.iot.things.devices.telemetry.TelemetryStrategy;
@@ -202,6 +203,11 @@ public class Computer extends PlantItem implements Device {
 	@Override
 	public void setUserData(Object data){
 		this.userData = data;
+	}
+
+	@Override
+	public String getThingType() {
+		return DomainConstants.MASTER_COMPUTER;
 	}
 
 }

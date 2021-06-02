@@ -158,6 +158,11 @@ public class RFIDReaderNode extends ControllerNode implements Configurable {
 
 	}
 
+	@Override
+	public String getThingType() {
+		return DomainConstants.RFID_NODE;
+	}
+
 	public String[] getTopics() {
 		return topics;
 	}

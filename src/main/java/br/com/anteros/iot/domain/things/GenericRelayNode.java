@@ -31,6 +31,11 @@ public class GenericRelayNode extends ThingNode {
 		return mapper.writeValueAsString(node);
 	}
 
+	@Override
+	public String getThingType() {
+		return DomainConstants.GENERIC_RELAY;
+	}
+
 	public int getPin() {
 		return pin;
 	}

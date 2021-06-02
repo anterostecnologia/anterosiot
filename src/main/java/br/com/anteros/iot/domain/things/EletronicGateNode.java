@@ -30,6 +30,11 @@ public class EletronicGateNode extends ThingNode {
 		return mapper.writeValueAsString(node);
 	}
 
+	@Override
+	public String getThingType() {
+		return DomainConstants.ELETRONIC_GATE;
+	}
+
 	public int getPin() {
 		return pin;
 	}

@@ -8,6 +8,7 @@ import br.com.anteros.iot.DeviceController;
 import br.com.anteros.iot.Part;
 import br.com.anteros.iot.Thing;
 import br.com.anteros.iot.actuators.collectors.CollectResult;
+import br.com.anteros.iot.domain.DomainConstants;
 import br.com.anteros.iot.domain.PlantItemNode;
 import br.com.anteros.iot.domain.things.parts.MemoryPlcNode;
 import br.com.anteros.iot.parts.exception.IllegalPartException;
@@ -62,7 +63,12 @@ public class MemoryPlc extends PlantItem implements Part, Publishable {
 	public void setUserData(Object data){
 		this.userData = data;
 	}
-	
+
+	@Override
+	public String getThingType() {
+		return DomainConstants.MEMORY_PLC;
+	}
+
 
 	@Override
 	public Set<Part> getParts() {

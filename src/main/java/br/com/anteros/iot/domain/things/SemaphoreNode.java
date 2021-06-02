@@ -39,4 +39,9 @@ public class SemaphoreNode extends ThingNode {
 		return mapper.writeValueAsString(node);
 	}
 
+	@Override
+	public String getThingType() {
+		return DomainConstants.SEMAPHORE;
+	}
+
 }

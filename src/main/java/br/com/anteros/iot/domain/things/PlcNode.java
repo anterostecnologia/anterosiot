@@ -52,6 +52,11 @@ public class PlcNode extends ThingNode {
 		return mapper.writeValueAsString(node);
 	}
 
+	@Override
+	public String getThingType() {
+		return DomainConstants.PLC;
+	}
+
 	public String getModbusProtocol() {
 		return modbusProtocol;
 	}

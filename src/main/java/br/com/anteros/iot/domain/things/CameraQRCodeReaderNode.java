@@ -20,7 +20,12 @@ public class CameraQRCodeReaderNode extends ThingNode  {
 	public String parseConfig(ObjectMapper mapper, PlantItemNode node) throws JsonProcessingException {
 		return mapper.writeValueAsString(node);
 	}
-	
+
+	@Override
+	public String getThingType() {
+		return DomainConstants.CAMERA_QR_CODE;
+	}
+
 	public int getIntervalToReadSameQrCode() {
 		return intervalToReadSameQrCode;
 	}

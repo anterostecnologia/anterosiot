@@ -9,6 +9,7 @@ import br.com.anteros.iot.DeviceController;
 import br.com.anteros.iot.Part;
 import br.com.anteros.iot.Thing;
 import br.com.anteros.iot.actuators.collectors.CollectResult;
+import br.com.anteros.iot.domain.DomainConstants;
 import br.com.anteros.iot.domain.PlantItemNode;
 import br.com.anteros.iot.domain.things.VehicleEntranceTriggerNode;
 import br.com.anteros.iot.triggers.Trigger;
@@ -40,6 +41,11 @@ public class VehicleEntranceTrigger extends ControllerThing implements Publishab
 	@Override
 	public Object getUserData() {
 		return "TAG_PEDESTRE";
+	}
+
+	@Override
+	public String getThingType() {
+		return DomainConstants.VEHICLE_ENTRANCE_TRIGGER;
 	}
 
 	public void setStatus(String status) {

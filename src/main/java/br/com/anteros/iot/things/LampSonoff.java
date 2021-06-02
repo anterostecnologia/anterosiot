@@ -7,6 +7,7 @@ import java.util.Set;
 import br.com.anteros.iot.DeviceController;
 import br.com.anteros.iot.Part;
 import br.com.anteros.iot.Thing;
+import br.com.anteros.iot.domain.DomainConstants;
 import br.com.anteros.iot.domain.PlantItemNode;
 import br.com.anteros.iot.domain.things.LampSonoffNode;
 import br.com.anteros.iot.plant.PlantItem;
@@ -38,6 +39,11 @@ public class LampSonoff extends PlantItem implements Thing {
 	@Override
 	public void setUserData(Object data){
 		this.userData = data;
+	}
+
+	@Override
+	public String getThingType() {
+		return DomainConstants.LAMP_SONOFF;
 	}
 
 	public String getThingID() {

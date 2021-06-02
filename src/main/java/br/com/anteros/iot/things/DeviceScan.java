@@ -9,6 +9,7 @@ import br.com.anteros.iot.DeviceController;
 import br.com.anteros.iot.Part;
 import br.com.anteros.iot.Thing;
 import br.com.anteros.iot.actuators.collectors.CollectResult;
+import br.com.anteros.iot.domain.DomainConstants;
 import br.com.anteros.iot.domain.PlantItemNode;
 import br.com.anteros.iot.domain.things.DeviceScanNode;
 import br.com.anteros.iot.triggers.Trigger;
@@ -101,6 +102,11 @@ public class DeviceScan extends ControllerThing implements Publishable {
 	@Override
 	public Trigger[] getTriggers() {
 		return triggers.toArray(new Trigger[] {});
+	}
+
+	@Override
+	public String getThingType() {
+		return DomainConstants.DEVICE_SCAN;
 	}
 
 	@Override

@@ -110,6 +110,11 @@ public class DeviceScanNode extends ControllerNode implements Configurable {
 
 	}
 
+	@Override
+	public String getThingType() {
+		return DomainConstants.DEVICE_SCAN;
+	}
+
 	public String[] getTopics() {
 		return topics;
 	}

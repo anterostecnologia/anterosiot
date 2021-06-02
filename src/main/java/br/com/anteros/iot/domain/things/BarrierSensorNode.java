@@ -20,7 +20,12 @@ public class BarrierSensorNode extends ThingNode {
 	public String parseConfig(ObjectMapper mapper, PlantItemNode node) throws JsonProcessingException {
 		return mapper.writeValueAsString(node);
 	}
-	
+
+	@Override
+	public String getThingType() {
+		return DomainConstants.BARRIER_SENSOR;
+	}
+
 	public BarrierSensorNode() {
 		super();
 	}

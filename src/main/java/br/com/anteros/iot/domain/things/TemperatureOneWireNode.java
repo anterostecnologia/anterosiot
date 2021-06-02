@@ -55,6 +55,11 @@ public class TemperatureOneWireNode extends ThingNode {
 		return mapper.writeValueAsString(node);
 	}
 
+	@Override
+	public String getThingType() {
+		return DomainConstants.TEMPERATURE_ONE_WIRE;
+	}
+
 	public TemperatureScale getScale() {
 		return scale;
 	}

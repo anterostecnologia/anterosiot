@@ -34,6 +34,11 @@ public class RedLEDSemaphorePartNode extends PartNode {
 		return mapper.writeValueAsString(node);
 	}
 
+	@Override
+	public String getThingType() {
+		return DomainConstants.RED_LED_SEMAPHORE;
+	}
+
 	public int getPin() {
 		return pin;
 	}

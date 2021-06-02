@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import br.com.anteros.iot.domain.DomainConstants;
 import org.apache.commons.lang3.StringUtils;
 
 import br.com.anteros.core.utils.ReflectionUtils;
@@ -286,5 +287,10 @@ public class RaspberryPI extends PlantItem implements Device, Publishable   {
 	@Override
 	public void setUserData(Object data){
 		this.userData = data;
+	}
+
+	@Override
+	public String getThingType() {
+		return DomainConstants.MASTER_RPI;
 	}
 }

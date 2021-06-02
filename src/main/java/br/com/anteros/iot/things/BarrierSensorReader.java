@@ -6,6 +6,7 @@ import java.util.Set;
 import br.com.anteros.iot.DeviceController;
 import br.com.anteros.iot.Part;
 import br.com.anteros.iot.Thing;
+import br.com.anteros.iot.domain.DomainConstants;
 import br.com.anteros.iot.domain.PlantItemNode;
 import br.com.anteros.iot.domain.things.BarrierSensorReaderNode;
 import br.com.anteros.iot.triggers.Trigger;
@@ -58,6 +59,11 @@ public class BarrierSensorReader extends ControllerThing {
 	@Override
 	public void setUserData(Object data){
 		this.userData = data;
+	}
+
+	@Override
+	public String getThingType() {
+		return DomainConstants.BARRIER_SENSOR_READER;
 	}
 
 	public Set<Part> getParts() {

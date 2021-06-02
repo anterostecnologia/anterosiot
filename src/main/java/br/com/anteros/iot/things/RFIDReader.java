@@ -9,6 +9,7 @@ import br.com.anteros.iot.DeviceController;
 import br.com.anteros.iot.Part;
 import br.com.anteros.iot.Thing;
 import br.com.anteros.iot.actuators.collectors.CollectResult;
+import br.com.anteros.iot.domain.DomainConstants;
 import br.com.anteros.iot.domain.PlantItemNode;
 import br.com.anteros.iot.domain.things.RFIDModel;
 import br.com.anteros.iot.domain.things.RFIDReaderNode;
@@ -113,6 +114,11 @@ public class RFIDReader extends ControllerThing implements Publishable {
 	@Override
 	public Trigger[] getTriggers() {
 		return triggers.toArray(new Trigger[] {});
+	}
+
+	@Override
+	public String getThingType() {
+		return DomainConstants.RFID_NODE;
 	}
 
 	@Override

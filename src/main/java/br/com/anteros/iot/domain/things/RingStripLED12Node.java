@@ -55,7 +55,12 @@ public class RingStripLED12Node extends ThingNode {
 	public String parseConfig(ObjectMapper mapper, PlantItemNode node) throws JsonProcessingException {
 		return mapper.writeValueAsString(node);
 	}
-	
+
+	@Override
+	public String getThingType() {
+		return DomainConstants.RING_STRIP_LED12;
+	}
+
 	public int getPin() {
 		return pin;
 	}

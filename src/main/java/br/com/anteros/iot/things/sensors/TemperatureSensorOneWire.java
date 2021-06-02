@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
+import br.com.anteros.iot.domain.DomainConstants;
 import com.pi4j.temperature.TemperatureScale;
 
 import br.com.anteros.core.utils.ArrayUtils;
@@ -64,6 +65,11 @@ public class TemperatureSensorOneWire extends PlantItem implements Sensor {
 	@Override
 	public void setUserData(Object data){
 		this.userData = data;
+	}
+
+	@Override
+	public String getThingType() {
+		return DomainConstants.TEMPERATURE_ONE_WIRE;
 	}
 
 	public Set<Part> getParts() {

@@ -7,6 +7,7 @@ import java.util.Set;
 import br.com.anteros.iot.DeviceController;
 import br.com.anteros.iot.Part;
 import br.com.anteros.iot.Thing;
+import br.com.anteros.iot.domain.DomainConstants;
 import br.com.anteros.iot.domain.PlantItemNode;
 import br.com.anteros.iot.parts.exception.IllegalPartException;
 import br.com.anteros.iot.plant.PlantItem;
@@ -48,6 +49,11 @@ public class YellowLEDSemaphorePart extends PlantItem implements Part, LedSemaph
 	@Override
 	public void setUserData(Object data){
 		this.userData = data;
+	}
+
+	@Override
+	public String getThingType() {
+		return DomainConstants.YELLOW_LED_SEMAPHORE;
 	}
 
 	public Set<Part> getParts() {

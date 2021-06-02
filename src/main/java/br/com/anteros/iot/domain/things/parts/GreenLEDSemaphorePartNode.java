@@ -41,4 +41,9 @@ public class GreenLEDSemaphorePartNode extends PartNode {
 		return mapper.writeValueAsString(node);
 	}
 
+	@Override
+	public String getThingType() {
+		return DomainConstants.GREEN_LED_SEMAPHORE;
+	}
+
 }

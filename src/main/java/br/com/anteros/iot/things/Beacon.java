@@ -7,6 +7,7 @@ import java.util.Set;
 import br.com.anteros.iot.DeviceController;
 import br.com.anteros.iot.Part;
 import br.com.anteros.iot.Thing;
+import br.com.anteros.iot.domain.DomainConstants;
 import br.com.anteros.iot.domain.PlantItemNode;
 import br.com.anteros.iot.domain.things.BeaconNode;
 import br.com.anteros.iot.triggers.Trigger;
@@ -99,6 +100,11 @@ public class Beacon extends ControllerThing {
 	@Override
 	public Trigger[] getTriggers() {
 		return triggers.toArray(new Trigger[] {});
+	}
+
+	@Override
+	public String getThingType() {
+		return DomainConstants.BEACON;
 	}
 
 
