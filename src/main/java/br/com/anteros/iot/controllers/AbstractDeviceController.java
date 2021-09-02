@@ -313,7 +313,7 @@ public abstract class AbstractDeviceController
 
 		if (receivedPayload != null && thing != null && receivedPayload.containsKey("action")) {
 			LOG.info("=> Mensagem recebida: \"" + message.toString() + "\" no tópico \"" + topic.toString()
-					+ "\" para instancia \"" + getThingID() + "\"");
+					+ "\" para instância \"" + getThingID() + "\"");
 
 			LOG.info(receivedPayload);
 			LOG.info("Coisa " + thing + " responsável pelo tópico " + topic);

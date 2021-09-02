@@ -50,7 +50,12 @@ public class Action {
 	}
 
 	public static Action of(Thing thing, Part part, JsonObject recivedPayload, String event) {
-		return new Action(thing, part, null, null, null, recivedPayload, null, event);
+		String action = null;
+		try {
+			action = recivedPayload.getString("action");
+		} catch (Exception e){
+		}
+		return new Action(thing, part, action, null, null, recivedPayload, null, event);
 	}
 
 	public String getEvent() {
