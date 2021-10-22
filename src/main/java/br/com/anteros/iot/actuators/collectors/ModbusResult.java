@@ -13,6 +13,11 @@ public class ModbusResult implements CollectResult {
 	}
 
 	@Override
+	public Object getImage() {
+		return null;
+	}
+
+	@Override
 	public JsonObjectBuilder toJson(JsonObjectBuilder builder) {
 		builder.add("oldValue", oldValue == null ? "" : oldValue.toString()).add("newValue",
 				newValue == null ? "" : newValue.toString());
@@ -52,6 +57,11 @@ public class ModbusResult implements CollectResult {
 		if (newValue==null)
 			return "";
 		return newValue.toString();
+	}
+
+	@Override
+	public String getImageAsString() {
+		return null;
 	}
 
 	public void setValue(Object oldValue, Object newValue) {

@@ -38,6 +38,11 @@ public class TemperatureResult implements CollectResult {
 	}
 
 	@Override
+	public Object getImage() {
+		return null;
+	}
+
+	@Override
 	public JsonObjectBuilder toJson(JsonObjectBuilder builder) {
 		builder.add("oldTemperature",oldTemperature).add("newTemperature",newTemperature);
 		return builder;
@@ -49,6 +54,11 @@ public class TemperatureResult implements CollectResult {
 		if (newTemperature==null)
 			return "";
 		return newTemperature.toString();
+	}
+
+	@Override
+	public String getImageAsString() {
+		return null;
 	}
 
 }

@@ -27,6 +27,11 @@ public class TelemetryResult implements TelemetryCollectResult {
 	}
 
 	@Override
+	public Object getImage() {
+		return null;
+	}
+
+	@Override
 	public JsonObjectBuilder toJson(JsonObjectBuilder builder) {
 		Json.createObjectBuilder(value);
 		return builder.addAll(Json.createObjectBuilder(value));
@@ -47,6 +52,11 @@ public class TelemetryResult implements TelemetryCollectResult {
 		} catch (IOException e) {
 		}
 		return jsonString;
+	}
+
+	@Override
+	public String getImageAsString() {
+		return null;
 	}
 
 	@Override

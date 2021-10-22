@@ -297,6 +297,7 @@ public class AnterosIOTService implements Runnable, MqttCallback, MqttCallbackEx
 			if (deviceController != null) {
 				serviceListener.onStartDeviceController(deviceController.getDevice());
 				deviceController.start();
+				serviceListener.onAfterBuildDeviceController(deviceController);
 			}
 
 		} else {

@@ -29,7 +29,7 @@ public interface AnterosIOTServiceListener {
 
 	public void onBeforeBuildDeviceController();
 
-	public void onAfterBuildDeviceController();
+	public void onAfterBuildDeviceController(AbstractDeviceController abstractDeviceController);
 	
 	public void onStopDeviceController();
 

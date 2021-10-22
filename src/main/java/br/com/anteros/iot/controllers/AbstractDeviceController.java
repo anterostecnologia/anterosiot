@@ -131,7 +131,7 @@ public abstract class AbstractDeviceController
 		this.sendMsgServiceStarted = false;
 		if (running) {
 			this.beforeStop();
-			stopCollectoresAndMqtt(collectorManager);
+			stopCollectorsAndMqtt(collectorManager);
 			this.running = false;
 		}
 
@@ -247,11 +247,11 @@ public abstract class AbstractDeviceController
 			}
 		}
 
-		stopCollectoresAndMqtt(collectorManager);
+		stopCollectorsAndMqtt(collectorManager);
 
 	}
 
-	private void stopCollectoresAndMqtt(CollectorManager collectorManager) {
+	private void stopCollectorsAndMqtt(CollectorManager collectorManager) {
 		if (collectorManager.isRunning()) {
 			serviceListener.onStopCollectors(this);
 			LOG.info("Parando Coletores de dados...");

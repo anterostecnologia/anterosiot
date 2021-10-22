@@ -125,7 +125,7 @@ public class AnterosIotService implements AnterosIOTServiceListener {
 	}
 
 	@Override
-	public void onAfterBuildDeviceController() {
+	public void onAfterBuildDeviceController(AbstractDeviceController abstractDeviceController) {
 		// TODO Auto-generated method stub
 		
 	}

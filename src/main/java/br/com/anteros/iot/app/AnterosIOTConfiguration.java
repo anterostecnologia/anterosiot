@@ -293,7 +293,7 @@ public class AnterosIOTConfiguration {
 			
 		}
 
-		serviceListener.onAfterBuildDeviceController();
+		serviceListener.onAfterBuildDeviceController(deviceResult);
 		deviceResult.setNode(node);
 		return deviceResult;
 	}
