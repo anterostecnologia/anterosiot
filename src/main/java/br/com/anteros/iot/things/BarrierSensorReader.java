@@ -18,6 +18,8 @@ public class BarrierSensorReader extends ControllerThing {
 	protected Set<Trigger> triggers = new HashSet<>();
 	protected String[] topics;
 	protected Object userData;
+	protected String status;
+	protected String lastValue;
 	
 
 	public BarrierSensorReader() {
@@ -44,11 +46,21 @@ public class BarrierSensorReader extends ControllerThing {
 	}
 
 	public String getStatus() {
-		return null;
+		return status;
 	}
 	
 	public void setStatus(java.lang.String status) {
-		
+		this.status = status;
+	}
+
+	@Override
+	public String getLastValue() {
+		return lastValue;
+	}
+
+	@Override
+	public void setLastValue(String value) {
+		this.lastValue = value;
 	}
 
 	@Override

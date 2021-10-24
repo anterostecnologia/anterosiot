@@ -28,6 +28,8 @@ public class OdroidC2 extends PlantItem implements Device {
 	private String secondarySSID;
 	private String secondaryPassword;
 	private Object userData;
+	protected String status;
+	protected String lastValue;
 
 	public OdroidC2(String id, IpAddress ipAddress) {
 		this.itemId = id;
@@ -39,12 +41,22 @@ public class OdroidC2 extends PlantItem implements Device {
 	}
 
 	public String getStatus() {
-		return null;
+		return status;
 	}
 	
 	public void setStatus(java.lang.String status) {
 		
-	}	
+	}
+
+	@Override
+	public String getLastValue() {
+		return lastValue;
+	}
+
+	@Override
+	public void setLastValue(String value) {
+		this.lastValue = value;
+	}
 
 	public Set<Part> getParts() {
 		return Collections.unmodifiableSet(new HashSet<Part>());

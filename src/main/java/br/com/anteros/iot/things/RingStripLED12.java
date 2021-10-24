@@ -28,6 +28,8 @@ public class RingStripLED12 extends PlantItem implements Thing {
 	protected int numPixels = 60;
 	protected Set<Trigger> triggers = new LinkedHashSet<>();
 	protected Object userData;
+	protected String status;
+	protected String lastValue;
 	
 	protected RingStripLED12(String id, int pin, LEDDisplayType ledType, int animateMiliseconds,
 			int brightness, int numPixels ) {
@@ -62,11 +64,21 @@ public class RingStripLED12 extends PlantItem implements Thing {
 	}
 
 	public String getStatus() {
-		return null;
+		return status;
 	}
 	
 	public void setStatus(java.lang.String status) {
-		
+		this.status = status;
+	}
+
+	@Override
+	public String getLastValue() {
+		return lastValue;
+	}
+
+	@Override
+	public void setLastValue(String value) {
+		this.lastValue = value;
 	}
 
 	@Override

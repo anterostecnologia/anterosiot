@@ -29,6 +29,8 @@ public class Plc extends PlantItem implements Thing {
 	protected Set<Trigger> triggers = new HashSet<>();
 	protected Set<Part> memories = new LinkedHashSet<Part>();
 	protected Object userData;
+	protected String status;
+	protected String lastValue;
 	
 	public Plc() {
 		super();
@@ -44,11 +46,21 @@ public class Plc extends PlantItem implements Thing {
 	}
 
 	public String getStatus() {
-		return null;
+		return status;
 	}
 	
 	public void setStatus(java.lang.String status) {
-		
+		this.status = status;
+	}
+
+	@Override
+	public String getLastValue() {
+		return lastValue;
+	}
+
+	@Override
+	public void setLastValue(String value) {
+		this.lastValue = value;
 	}
 
 	@Override

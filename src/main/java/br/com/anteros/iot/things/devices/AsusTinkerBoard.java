@@ -26,6 +26,8 @@ public class AsusTinkerBoard extends PlantItem implements Device {
 	private String secondarySSID;
 	private String secondaryPassword;
 	protected Object userData;
+	protected String status;
+	protected String lastValue;
 	
 	protected DeviceController deviceController;
 	
@@ -46,7 +48,17 @@ public class AsusTinkerBoard extends PlantItem implements Device {
 	
 	public void setStatus(java.lang.String status) {
 		
-	}	
+	}
+
+	@Override
+	public String getLastValue() {
+		return lastValue;
+	}
+
+	@Override
+	public void setLastValue(String value) {
+		this.lastValue = value;
+	}
 
 	public Set<Part> getParts() {
 		return Collections.unmodifiableSet(new HashSet<Part>());

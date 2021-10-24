@@ -22,6 +22,8 @@ public class DeviceScan extends ControllerThing implements Publishable {
 
 	protected String[] topics;
 	protected Set<Trigger> triggers = new HashSet<>();
+	protected String status;
+	protected String lastValue;
 
 	public DeviceScan(PlantItemNode node) {
 		this.loadConfiguration(node);
@@ -32,11 +34,21 @@ public class DeviceScan extends ControllerThing implements Publishable {
 	}
 
 	public String getStatus() {
-		return null;
+		return this.status;
 	}
 	
 	public void setStatus(java.lang.String status) {
-		
+		this.status = status;
+	}
+
+	@Override
+	public String getLastValue() {
+		return lastValue;
+	}
+
+	@Override
+	public void setLastValue(String value) {
+		this.lastValue = value;
 	}
 
 	public Set<Part> getParts() {

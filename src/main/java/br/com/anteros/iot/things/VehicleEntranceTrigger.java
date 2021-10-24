@@ -24,6 +24,7 @@ public class VehicleEntranceTrigger extends ControllerThing implements Publishab
 	protected Set<Trigger> triggers = new HashSet<>();
 
 	protected String status;
+	protected String lastValue;
 
 	public VehicleEntranceTrigger(PlantItemNode node) {
 		this.loadConfiguration(node);
@@ -50,6 +51,16 @@ public class VehicleEntranceTrigger extends ControllerThing implements Publishab
 
 	public void setStatus(String status) {
 		this.status = status;
+	}
+
+	@Override
+	public String getLastValue() {
+		return lastValue;
+	}
+
+	@Override
+	public void setLastValue(String value) {
+		this.lastValue = value;
 	}
 
 	public Set<Part> getParts() {

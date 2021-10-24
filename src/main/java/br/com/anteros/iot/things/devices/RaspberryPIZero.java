@@ -39,7 +39,8 @@ public class RaspberryPIZero extends PlantItem implements Device, Publishable {
 	private String secondarySSID;
 	private String secondaryPassword;
 	private Integer intervalPublishingTelemetry;
-
+	protected String status;
+	protected String lastValue;
 	protected DeviceController deviceController;
 	protected boolean needsPropagation;
 
@@ -67,10 +68,21 @@ public class RaspberryPIZero extends PlantItem implements Device, Publishable {
 	}
 
 	public String getStatus() {
-		return null;
+		return status;
 	}
 
 	public void setStatus(java.lang.String status) {
+		this.status = status;
+	}
+
+	@Override
+	public String getLastValue() {
+		return lastValue;
+	}
+
+	@Override
+	public void setLastValue(String value) {
+		this.lastValue = value;
 	}
 
 	public Set<Part> getParts() {

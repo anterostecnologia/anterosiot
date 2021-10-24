@@ -19,6 +19,8 @@ public class EletronicGate extends PlantItem implements Thing {
 	protected Set<Trigger> triggers = new HashSet<>();
 	protected int pin;
 	protected Object userData = "TAG_PEDESTRE";
+	protected String status;
+	protected String lastValue;
 
 	public EletronicGate() {
 	}
@@ -34,11 +36,21 @@ public class EletronicGate extends PlantItem implements Thing {
 	}
 
 	public String getStatus() {
-		return null;
+		return this.status;
 	}
 	
 	public void setStatus(java.lang.String status) {
-		
+		this.status = status;
+	}
+
+	@Override
+	public String getLastValue() {
+		return lastValue;
+	}
+
+	@Override
+	public void setLastValue(String value) {
+		this.lastValue = value;
 	}
 
 	@Override

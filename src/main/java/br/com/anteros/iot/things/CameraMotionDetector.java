@@ -21,9 +21,12 @@ public class CameraMotionDetector extends PlantItem implements Thing, Publishabl
 	protected boolean needsPropagation;
 	protected Set<Trigger> triggers = new HashSet<>();
 	protected Object userData;
-
+	protected String status;
+	protected String _lastValue;
 	protected String[] topics;
 	protected String url;
+	protected String lastValue;
+
 	
 	public CameraMotionDetector() {
 	}
@@ -38,11 +41,21 @@ public class CameraMotionDetector extends PlantItem implements Thing, Publishabl
 	}
 
 	public String getStatus() {
-		return null;
+		return status;
 	}
 	
 	public void setStatus(java.lang.String status) {
-		
+		this.status = status;
+	}
+
+	@Override
+	public String getLastValue() {
+		return lastValue;
+	}
+
+	@Override
+	public void setLastValue(String value) {
+		this.lastValue = value;
 	}
 
 	@Override

@@ -46,6 +46,8 @@ public class RaspberryPI extends PlantItem implements Device, Publishable   {
 	private boolean needsPropagation;
 	private TelemetryConfiguration telemetryConfiguration = TelemetryConfiguration.of(this);
 	private Object userData;
+	protected String status;
+	protected String lastValue;
 
 
 	protected RaspberryPI(String id, IpAddress ipAddress,String description, String topicError, Integer intervalPublishingTelemetry, String hostnameACL) {
@@ -71,12 +73,22 @@ public class RaspberryPI extends PlantItem implements Device, Publishable   {
 	}
 
 	public String getStatus() {
-		return null;
+		return status;
 	}
 	
 	public void setStatus(java.lang.String status) {
-		
-	}	
+		this.status = status;
+	}
+
+	@Override
+	public String getLastValue() {
+		return lastValue;
+	}
+
+	@Override
+	public void setLastValue(String value) {
+		this.lastValue = value;
+	}
 
 	public Set<Part> getParts() {
 		return Collections.unmodifiableSet(new HashSet<Part>());

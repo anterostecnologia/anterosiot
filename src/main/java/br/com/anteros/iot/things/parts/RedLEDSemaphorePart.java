@@ -20,7 +20,8 @@ public class RedLEDSemaphorePart extends PlantItem implements Part, LedSemaphore
 	protected int pin;
 	protected String thingId;
 	protected DeviceController deviceController;
-	
+	protected String status;
+	protected String lastValue;
 	protected boolean needsPropagation;
 	
 	protected Set<Trigger> triggers = new HashSet<>();
@@ -46,7 +47,17 @@ public class RedLEDSemaphorePart extends PlantItem implements Part, LedSemaphore
 	}
 	
 	public void setStatus(java.lang.String status) {
-		
+		this.status = status;
+	}
+
+	@Override
+	public String getLastValue() {
+		return lastValue;
+	}
+
+	@Override
+	public void setLastValue(String value) {
+		this.lastValue = value;
 	}
 
 	public Set<Part> getParts() {

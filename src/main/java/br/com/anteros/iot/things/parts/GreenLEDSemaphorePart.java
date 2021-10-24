@@ -23,6 +23,8 @@ public class GreenLEDSemaphorePart extends PlantItem implements Part, LedSemapho
 	protected boolean needsPropagation;
 	protected Set<Trigger> triggers = new HashSet<>();
 	private Object userData;
+	protected String status;
+	protected String lastValue;
 
 	private GreenLEDSemaphorePart(String id, Semaphore owner, int pin) {
 		this.itemOwner = owner;
@@ -41,11 +43,21 @@ public class GreenLEDSemaphorePart extends PlantItem implements Part, LedSemapho
 	}
 
 	public String getStatus() {
-		return null;
+		return status;
 	}
 	
 	public void setStatus(java.lang.String status) {
-		
+		this.status = status;
+	}
+
+	@Override
+	public String getLastValue() {
+		return lastValue;
+	}
+
+	@Override
+	public void setLastValue(String value) {
+		this.lastValue = value;
 	}
 
 	public Set<Part> getParts() {

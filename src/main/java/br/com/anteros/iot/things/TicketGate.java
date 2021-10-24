@@ -17,6 +17,8 @@ public class TicketGate extends PlantItem implements Thing {
 	protected boolean needsPropagation;
 	protected Set<Trigger> triggers = new HashSet<>();
 	protected Object userData = "TAG_PEDESTRE";
+	protected String status;
+	protected String lastValue;
 
 	public TicketGate() {
 	}
@@ -26,11 +28,21 @@ public class TicketGate extends PlantItem implements Thing {
 	}
 
 	public String getStatus() {
-		return null;
+		return status;
 	}
 	
 	public void setStatus(java.lang.String status) {
-		
+		this.status = status;
+	}
+
+	@Override
+	public String getLastValue() {
+		return lastValue;
+	}
+
+	@Override
+	public void setLastValue(String value) {
+		this.lastValue = value;
 	}
 
 	@Override

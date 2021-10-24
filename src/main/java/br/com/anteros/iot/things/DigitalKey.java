@@ -24,6 +24,8 @@ public class DigitalKey extends ControllerThing implements Publishable {
 	protected String[] topics;
 	protected AccessType accessType;
 	protected Set<Trigger> triggers = new HashSet<>();
+	protected String status;
+	protected String lastValue;
 
 	public DigitalKey(PlantItemNode node) {
 		this.loadConfiguration(node);
@@ -38,7 +40,17 @@ public class DigitalKey extends ControllerThing implements Publishable {
 	}
 	
 	public void setStatus(java.lang.String status) {
-		
+		this.status = status;
+	}
+
+	@Override
+	public String getLastValue() {
+		return lastValue;
+	}
+
+	@Override
+	public void setLastValue(String value) {
+		this.lastValue = value;
 	}
 
 	public Set<Part> getParts() {

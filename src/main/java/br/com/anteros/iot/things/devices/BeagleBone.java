@@ -28,6 +28,8 @@ public class BeagleBone extends PlantItem implements Device {
 	private String secondarySSID;
 	private String secondaryPassword;
 	protected Object userData;
+	protected String status;
+	protected String lastValue;
 	
 	public BeagleBone(String id, IpAddress ipAddress) {
 		this.itemId = id;
@@ -43,8 +45,18 @@ public class BeagleBone extends PlantItem implements Device {
 	}
 	
 	public void setStatus(java.lang.String status) {
-		
-	}	
+		this.status = status;
+	}
+
+	@Override
+	public String getLastValue() {
+		return lastValue;
+	}
+
+	@Override
+	public void setLastValue(String value) {
+		this.lastValue = value;
+	}
 
 	public Set<Part> getParts() {
 		return Collections.unmodifiableSet(new HashSet<Part>());

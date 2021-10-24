@@ -17,6 +17,8 @@ public class CameraALPR extends PlantItem implements Thing {
 	protected boolean needsPropagation;
 	protected Set<Trigger> triggers = new HashSet<>();
 	protected Object userData;
+	protected String status;
+	protected String lastValue;
 	
 	public CameraALPR() {
 	}
@@ -26,11 +28,21 @@ public class CameraALPR extends PlantItem implements Thing {
 	}
 
 	public String getStatus() {
-		return null;
+		return status;
 	}
 	
 	public void setStatus(java.lang.String status) {
-		
+		this.status = status;
+	}
+
+	@Override
+	public String getLastValue() {
+		return lastValue;
+	}
+
+	@Override
+	public void setLastValue(String value) {
+		this.lastValue = value;
 	}
 
 	public Set<Part> getParts() {

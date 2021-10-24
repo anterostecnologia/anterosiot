@@ -20,6 +20,8 @@ public class LampOrBulb extends PlantItem implements Thing {
 	protected int pin;
 	protected Set<Trigger> triggers = new HashSet<>();
 	protected Object userData;
+	protected String status;
+	protected String lastValue;
 
 	protected LampOrBulb(String id, int pin) {
 		this.itemId = id;
@@ -56,7 +58,17 @@ public class LampOrBulb extends PlantItem implements Thing {
 	}
 	
 	public void setStatus(java.lang.String status) {
-		
+		this.status = status;
+	}
+
+	@Override
+	public String getLastValue() {
+		return lastValue;
+	}
+
+	@Override
+	public void setLastValue(String value) {
+		this.lastValue = value;
 	}
 
 	public Set<Part> getParts() {
@@ -72,7 +84,6 @@ public class LampOrBulb extends PlantItem implements Thing {
 	}
 
 	public Thing removePart(Part part) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -90,13 +101,11 @@ public class LampOrBulb extends PlantItem implements Thing {
 
 	@Override
 	public Thing loadConfiguration(PlantItemNode node) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	protected boolean acceptThisTypeOfPlantItem(Class<?> child) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 

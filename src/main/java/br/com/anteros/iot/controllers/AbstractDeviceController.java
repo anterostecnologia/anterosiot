@@ -344,7 +344,7 @@ public abstract class AbstractDeviceController
 		if (thing instanceof PlantItem) {
 			String topic = ((PlantItem) thing).getPath() + "/status";
 			LOG.info("Enviando notificação sobre serviço iniciado.");
-			String msg = "{\"status\":\""+thing.getStatus()+"\"}";
+			String msg = "{\"status\":\""+thing.getStatus()+"\", \"lastValue\":\""+thing.getLastValue()+"}";
 			MqttMessage message = new MqttMessage(msg.getBytes());
 			try {
 				this.clientMqtt.publish(topic, message);

@@ -24,6 +24,8 @@ public class CameraQRCodeReader extends PlantItem implements Thing, Publishable 
 	protected Set<Trigger> triggers = new HashSet<>();
 	protected int intervalToReadSameQrCode = 5000;
 	protected Object userData = "TAG_PEDESTRE";
+	protected String status;
+	protected String lastValue;
 
 	public int getIntervalToReadSameQrCode() {
 		return intervalToReadSameQrCode;
@@ -42,11 +44,21 @@ public class CameraQRCodeReader extends PlantItem implements Thing, Publishable 
 	}
 
 	public String getStatus() {
-		return null;
+		return status;
 	}
 	
 	public void setStatus(java.lang.String status) {
-		
+		this.status = status;
+	}
+
+	@Override
+	public String getLastValue() {
+		return lastValue;
+	}
+
+	@Override
+	public void setLastValue(String value) {
+		this.lastValue = value;
 	}
 
 	@Override

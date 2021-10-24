@@ -19,6 +19,8 @@ public class EletronicLock extends PlantItem implements Thing {
 	protected Set<Trigger> triggers = new HashSet<>();
 	protected int pin;
 	protected Object userData = "TAG_PEDESTRE";
+	protected String status;
+	protected String lastValue;
 	
 	public EletronicLock() {
 	}
@@ -53,43 +55,46 @@ public class EletronicLock extends PlantItem implements Thing {
 	}
 	
 	public void setStatus(java.lang.String status) {
-		
+		this.status = status;
+	}
+
+	@Override
+	public String getLastValue() {
+		return lastValue;
+	}
+
+	@Override
+	public void setLastValue(String value) {
+		this.lastValue = value;
 	}
 
 	public Set<Part> getParts() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	public boolean hasParts() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	public Thing addPart(Part part) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	public Thing removePart(Part part) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	public Part getPartById(String part) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public Thing loadConfiguration(PlantItemNode node) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 	
 	@Override
 	protected boolean acceptThisTypeOfPlantItem(Class<?> child) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 

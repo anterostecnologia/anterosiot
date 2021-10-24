@@ -18,6 +18,10 @@ public interface Thing {
 
 	public void setStatus(String status);
 
+	public String getLastValue();
+
+	public void setLastValue(String value);
+
 	public Set<Part> getParts();
 
 	public boolean hasParts();
