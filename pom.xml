@@ -14,7 +14,7 @@
 		<bintray.package>anteros-iot</bintray.package>
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
-		<jackson.version>2.9.10</jackson.version>
+		<jackson.version>2.12.6.1</jackson.version>
 	</properties>
 
 	<name>Anteros IOT</name>
